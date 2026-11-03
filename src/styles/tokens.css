@@ -1,0 +1,42 @@
+/* Design tokens (brief Section 4.2). Custom properties only.
+   Every text pairing was measured against WCAG AA and passes at its rendered
+   size with the brief's own values, so none were changed:
+     --deep on --clear 15.2, --paper on --deep 16.4, --pool on --clear 4.70,
+     --pool-on-deep on --deep 6.67, --algae on --clear 4.64,
+     --algae-on-deep on --deep 7.78, --silt-deep on --clear 6.19,
+     --caution on --deep 10.1, --caution-deep on --clear 5.54,
+     --slate on --clear 5.09, --slate-on-deep on --deep 7.03,
+     --deep on --caution 10.1 (audit mode). */
+:root {
+  --deep: #0f1d26; /* deep water. Dark slide ground, body text on light */
+  --clear: #edf2f4; /* clear water. Light slide ground */
+  --paper: #f8fafb; /* raised surfaces, image tiles */
+  --pool: #1e6fb0; /* us: company, clarifier, the one CTA */
+  --pool-on-deep: #5fa8e0; /* pool blue for text and rules on --deep */
+  --algae: #2f7a4c; /* anti-algae product only */
+  --algae-on-deep: #6fbf8e;
+  --silt: #a88b5e; /* the problem: cloudy water. Fill only */
+  --silt-deep: #6e5530; /* silt for text on light grounds */
+  --caution: #e8c33a; /* unproven. Assumption tags on --deep */
+  --caution-deep: #7a5c06; /* the only yellow allowed as text on light */
+  --slate: #5b6870; /* captions, sources on light */
+  --slate-on-deep: #9aa8b0; /* captions, sources on dark */
+
+  /* Supporting surfaces, derived from --deep. */
+  --deep-lifted: #1a2c38; /* notes, sources, proof cards on dark. --paper 13.5, --slate-on-deep 5.9 */
+  --letterbox: #081117;
+  /* Sampled from the edge of pool-pack-bottles.png (its studio ground). */
+  --bottles-ground: #566f86;
+
+  /* Type: Fraunces and IBM Plex Sans, with real fallbacks for no internet. */
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-sans: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", Arial, system-ui, sans-serif;
+
+  /* Space: 96px margin, 72px gutter, 8px rhythm. */
+  --margin: 96px;
+  --gutter: 72px;
+  --rail-h: 56px;
+  --radius: 3px;
+
+  --slide-ms: 220ms;
+}

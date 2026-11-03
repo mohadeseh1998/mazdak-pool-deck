@@ -1,0 +1,821 @@
+/* Global frame, type scale, shared components, print. Adapted from Gate 1. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--letterbox);
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 20px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-variant-numeric: tabular-nums;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol,
+dl,
+dd,
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+strong {
+  font-weight: 600;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus {
+  outline: none;
+}
+
+/* Focus ring: 2px pool blue, offset 2px (brief Section 8). */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* Grounds. Every colour decision reads from these, so print can    */
+/* flip the dark slides to --clear in one place.                    */
+/* ---------------------------------------------------------------- */
+
+.ground-deep {
+  --bg: var(--deep);
+  --fg: var(--paper);
+  --fg-muted: var(--slate-on-deep);
+  --rule: rgb(248 250 251 / 0.18);
+  --assume-line: var(--caution);
+  --assume-text: var(--caution);
+  --us: var(--pool-on-deep);
+  --algae-text: var(--algae-on-deep);
+  --focus: var(--pool-on-deep);
+  --card-bg: var(--deep-lifted);
+  --card-fg: var(--paper);
+}
+
+.ground-clear {
+  --bg: var(--clear);
+  --fg: var(--deep);
+  --fg-muted: var(--slate);
+  --rule: rgb(15 29 38 / 0.16);
+  --assume-line: var(--caution-deep);
+  --assume-text: var(--caution-deep);
+  --us: var(--pool);
+  --algae-text: var(--algae);
+  --focus: var(--pool);
+  --card-bg: var(--paper);
+  --card-fg: var(--deep);
+}
+
+/* ---------------------------------------------------------------- */
+/* Stage                                                            */
+/* ---------------------------------------------------------------- */
+
+.letterbox {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--letterbox);
+}
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  overflow: hidden;
+  transform-origin: center;
+  background: var(--deep);
+}
+
+/* Motion: one 220ms horizontal translate between slides, no fade. */
+.track {
+  display: flex;
+  width: calc(1600px * 8);
+  height: 900px;
+  transition: transform var(--slide-ms) ease-out;
+}
+
+.slide {
+  position: relative;
+  flex: 0 0 1600px;
+  width: 1600px;
+  height: 900px;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.slide__body {
+  position: absolute;
+  inset: 0 0 var(--rail-h) 0;
+  padding: 72px var(--margin) 40px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Type scale (brief Section 4.3), on the 1600 by 900 canvas         */
+/* ---------------------------------------------------------------- */
+
+.t-deck-headline,
+.t-headline,
+.t-figure,
+.logo-text {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
+}
+
+.t-deck-headline {
+  font-size: 88px;
+  line-height: 1.02;
+  letter-spacing: -0.022em;
+}
+
+.t-headline {
+  font-size: 64px;
+  line-height: 1.06;
+  letter-spacing: -0.018em;
+  max-width: 1408px;
+}
+
+.t-lead {
+  font-size: 26px;
+  line-height: 1.5;
+  letter-spacing: -0.004em;
+  max-width: 62ch;
+}
+
+.t-body {
+  font-size: 20px;
+  line-height: 1.55;
+  max-width: 62ch;
+}
+
+.t-figure {
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+}
+
+.t-label {
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+}
+
+.t-caption {
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--fg-muted);
+  max-width: 62ch;
+}
+
+/* ---------------------------------------------------------------- */
+/* Squares: evidence marks and list markers                         */
+/* ---------------------------------------------------------------- */
+
+.sq {
+  display: inline-block;
+  flex: none;
+  width: 10px;
+  height: 10px;
+}
+
+.sq--pool {
+  background: var(--us);
+}
+
+.sq--algae {
+  background: var(--algae-text);
+}
+
+.sq--silt {
+  background: var(--silt);
+}
+
+.sq--outline {
+  border: 1.5px solid var(--fg);
+}
+
+/* ---------------------------------------------------------------- */
+/* Claims (brief Section 6), same system as Gate 1                   */
+/* ---------------------------------------------------------------- */
+
+.claim--assume {
+  cursor: help;
+}
+
+.claim--assume .claim__text {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--assume-line);
+  text-underline-offset: 5px;
+  text-decoration-skip-ink: none;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.claim--assume:focus-visible {
+  outline-offset: 4px;
+}
+
+/* A 1px bracket outline, not a pill, not a badge, not all caps. */
+.claim__tag {
+  position: relative;
+  display: inline-block;
+  padding: 3px 7px 4px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--assume-text);
+  white-space: nowrap;
+  vertical-align: 0.12em;
+  text-decoration: none;
+  font-variation-settings: normal;
+}
+
+.claim__tag::before,
+.claim__tag::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border: 1px solid currentColor;
+}
+
+.claim__tag::before {
+  left: 0;
+  border-right: 0;
+}
+
+.claim__tag::after {
+  right: 0;
+  border-left: 0;
+}
+
+/* Audit mode (key A): every assumption fills solid caution yellow. */
+.is-audit .claim--assume .claim__text,
+.is-audit .claim--assume .claim__tag {
+  background: var(--caution);
+  color: var(--deep);
+  text-decoration-color: var(--deep);
+}
+
+/* The proof card: hover or keyboard focus. One of two places with a shadow. */
+.claim-card {
+  position: absolute;
+  z-index: 40;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  color: var(--card-fg);
+  font-size: 15px;
+  line-height: 1.45;
+  box-shadow: 0 10px 28px rgb(8 17 23 / 0.28);
+  pointer-events: none;
+}
+
+.claim-card--above {
+  transform: translateY(-100%);
+}
+
+.claim-card__lead {
+  font-weight: 600;
+}
+
+/* Cards are portalled to the stage, so they take the active slide's ground. */
+.stage:has(.slide.ground-clear[aria-hidden="false"]) .claim-card {
+  --card-bg: var(--paper);
+  --card-fg: var(--deep);
+  border: 1px solid rgb(15 29 38 / 0.12);
+}
+
+.stage:has(.slide.ground-deep[aria-hidden="false"]) .claim-card {
+  --card-bg: var(--deep-lifted);
+  --card-fg: var(--paper);
+  border: 1px solid rgb(248 250 251 / 0.14);
+}
+
+/* ---------------------------------------------------------------- */
+/* Logo                                                             */
+/* ---------------------------------------------------------------- */
+
+.logo {
+  display: inline-block;
+  line-height: 0;
+}
+
+.logo img {
+  display: block;
+  height: auto;
+}
+
+/* On dark grounds: a small paper tile, 10px padding, 3px radius. */
+.logo--tile {
+  padding: 10px;
+  border-radius: var(--radius);
+  background: var(--paper);
+}
+
+.logo-text {
+  display: inline-block;
+  color: var(--fg);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+/* ---------------------------------------------------------------- */
+/* Footer rail: logo, slide title, timer, progress, n of 8           */
+/* ---------------------------------------------------------------- */
+
+.rail {
+  position: absolute;
+  left: var(--margin);
+  right: var(--margin);
+  bottom: 0;
+  height: var(--rail-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid var(--rule);
+  font-size: 15px;
+  line-height: 1;
+  color: var(--fg-muted);
+}
+
+.rail__start,
+.rail__end {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.rail__logo.logo--tile {
+  padding: 6px 8px;
+}
+
+.rail__logo.logo-text {
+  font-size: 16px;
+}
+
+.rail__count {
+  min-width: 52px;
+  text-align: right;
+}
+
+.rail__audit {
+  font-weight: 600;
+  color: var(--assume-text);
+}
+
+.timer-footer {
+  color: var(--us);
+  font-weight: 500;
+}
+
+.timer-footer__digits {
+  font-variant-numeric: tabular-nums;
+}
+
+.key {
+  display: inline-block;
+  min-width: 22px;
+  padding: 3px 6px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Progress rail: eight segments, the current one filled pool blue. */
+.progress {
+  display: flex;
+  gap: 5px;
+}
+
+.progress__seg {
+  width: 22px;
+  height: 10px;
+  padding: 0;
+  border: 1px solid var(--fg-muted);
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.progress__seg:hover {
+  border-color: var(--fg);
+}
+
+.progress__seg.is-current {
+  border-color: var(--us);
+  background: var(--us);
+}
+
+/* ---------------------------------------------------------------- */
+/* On-screen controls: appear on mouse move, fade after 2.5 s        */
+/* ---------------------------------------------------------------- */
+
+.controls {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms linear;
+}
+
+.controls.is-visible,
+.controls:focus-within {
+  opacity: 1;
+}
+
+.controls__btn {
+  position: absolute;
+  top: 408px;
+  width: 44px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.controls:not(.is-visible):not(:focus-within) .controls__btn {
+  pointer-events: none;
+}
+
+.controls__btn:hover {
+  border-color: var(--fg);
+}
+
+.controls__btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.controls__btn--prev {
+  left: 24px;
+}
+
+.controls__btn--next {
+  right: 24px;
+}
+
+.controls__btn path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+/* ---------------------------------------------------------------- */
+/* Presenter notes (N) and source register (S)                      */
+/* ---------------------------------------------------------------- */
+
+.notes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--rail-h);
+  z-index: 30;
+  max-height: 520px;
+  overflow: auto;
+  padding: 32px var(--margin) 36px;
+  background: var(--deep-lifted);
+  color: var(--paper);
+  border-top: 3px solid var(--pool-on-deep);
+  --fg: var(--paper);
+  --fg-muted: var(--slate-on-deep);
+  --assume-line: var(--caution);
+  --assume-text: var(--caution);
+  --focus: var(--pool-on-deep);
+}
+
+.notes__heading {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--slate-on-deep);
+  margin-bottom: 12px;
+}
+
+.notes__text {
+  max-width: 72ch;
+  font-size: 24px;
+  line-height: 1.45;
+}
+
+.notes__text + .notes__text {
+  margin-top: 12px;
+}
+
+.sources {
+  position: absolute;
+  inset: 0 0 var(--rail-h) 0;
+  z-index: 35;
+  padding: 56px var(--margin) 32px;
+  background: var(--deep-lifted);
+  color: var(--paper);
+  overflow: auto;
+  --fg-muted: var(--slate-on-deep);
+  --focus: var(--pool-on-deep);
+}
+
+.sources__heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
+  font-size: 44px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+.sources__checked {
+  margin: 8px 0 28px;
+  font-size: 18px;
+  color: var(--slate-on-deep);
+}
+
+.sources__list {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.sources__row {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 24px;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.sources__row dt {
+  color: var(--slate-on-deep);
+  font-weight: 500;
+}
+
+.sources__row dd {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 16px;
+}
+
+.sources__used {
+  color: var(--pool-on-deep);
+}
+
+.sources__url {
+  flex-basis: 100%;
+  font-size: 15px;
+  color: var(--slate-on-deep);
+  overflow-wrap: anywhere;
+}
+
+.sources__hint {
+  font-size: 15px;
+  color: var(--slate-on-deep);
+}
+
+/* ---------------------------------------------------------------- */
+/* Zoomable images and the lightbox                                 */
+/* ---------------------------------------------------------------- */
+
+.zoom {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.zoom img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.button {
+  padding: 8px 14px;
+  border: 1px solid var(--deep);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--deep);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--deep);
+  color: var(--paper);
+}
+
+/* The other place with a shadow. */
+.lightbox {
+  max-width: 94vw;
+  max-height: 94vh;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--deep);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.45);
+  --focus: var(--pool);
+}
+
+.lightbox::backdrop {
+  background: rgb(8 17 23 / 0.88);
+}
+
+.lightbox__panel {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.lightbox__img {
+  display: block;
+  max-width: calc(94vw - 32px);
+  max-height: calc(94vh - 96px);
+  object-fit: contain;
+}
+
+.lightbox__caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 14px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--slate);
+}
+
+/* ---------------------------------------------------------------- */
+/* Motion budget                                                    */
+/* ---------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .controls {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Print: eight landscape pages, dark grounds inverted to --clear    */
+/* ---------------------------------------------------------------- */
+
+@page {
+  size: 1600px 900px;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body,
+  #root {
+    height: auto;
+    background: var(--clear);
+  }
+
+  .letterbox {
+    position: static;
+    overflow: visible;
+    background: none;
+  }
+
+  .stage {
+    position: static;
+    height: auto !important;
+    transform: none !important;
+    overflow: visible;
+    background: none;
+  }
+
+  .track {
+    display: block;
+    width: 1600px;
+    height: auto;
+    transform: none !important;
+    transition: none;
+  }
+
+  .slide {
+    break-after: page;
+    page-break-after: always;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .slide:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .ground-deep {
+    --bg: var(--clear);
+    --fg: var(--deep);
+    --fg-muted: var(--slate);
+    --rule: rgb(15 29 38 / 0.16);
+    --assume-line: var(--caution-deep);
+    --assume-text: var(--caution-deep);
+    --us: var(--pool);
+    --algae-text: var(--algae);
+  }
+
+  .controls,
+  .notes,
+  .sources,
+  .claim-card,
+  .rail__audit,
+  .progress,
+  .timer-footer,
+  .lightbox {
+    display: none !important;
+  }
+
+  /* Assumption tags print as visible bracketed text. */
+  .claim__tag {
+    padding: 0;
+  }
+
+  .claim__tag::before,
+  .claim__tag::after {
+    position: static;
+    width: auto;
+    border: 0;
+  }
+
+  .claim__tag::before {
+    content: "[";
+  }
+
+  .claim__tag::after {
+    content: "]";
+  }
+}

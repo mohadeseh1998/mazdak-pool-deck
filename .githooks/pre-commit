@@ -1,0 +1,3 @@
+#!/bin/sh
+# Blocks commits that add an em dash, a Section 11 item or a banned word.
+exec node scripts/check-content.mjs

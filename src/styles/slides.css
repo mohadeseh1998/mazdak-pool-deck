@@ -1,0 +1,894 @@
+/* Per-slide layout on the 1600 by 900 stage. 96px margin, 72px gutter. */
+
+/* Display numerals everywhere: tabular, lining. */
+.t-figure,
+.timer__figure,
+.budget__amount,
+.prices__value,
+.live__num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ================================================================ */
+/* 1. Title                                                         */
+/* ================================================================ */
+
+.slide--1 .slide__body {
+  inset: 0;
+  padding: 0;
+}
+
+/* The bottles take the right 46 percent, full height, so the rail stops short. */
+.slide--1 .rail {
+  right: calc(736px + 64px);
+}
+
+.title {
+  position: absolute;
+  inset: 0;
+}
+
+.title__text {
+  position: absolute;
+  top: 0;
+  left: var(--margin);
+  bottom: var(--rail-h);
+  width: calc(864px - var(--margin) - 64px);
+  display: flex;
+  flex-direction: column;
+  padding: 72px 0 40px;
+}
+
+.title--solo .title__text {
+  width: calc(1600px - 2 * var(--margin));
+}
+
+.title__logo {
+  align-self: flex-start;
+}
+
+.title__main {
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 40px 0;
+}
+
+.title--solo .t-deck-headline {
+  font-size: 112px;
+}
+
+.title__sub {
+  margin-top: 32px;
+  max-width: 30ch;
+  font-size: 26px;
+  line-height: 1.5;
+  letter-spacing: -0.004em;
+  color: var(--paper);
+}
+
+.title__identity {
+  margin-top: 24px;
+  max-width: 62ch;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.title__honesty {
+  padding-left: 20px;
+  border-left: 3px solid var(--caution);
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--paper);
+  max-width: 56ch;
+}
+
+.title__hint {
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--slate-on-deep);
+}
+
+.title__photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 736px;
+  height: 900px;
+  background: var(--bottles-ground);
+}
+
+.title__photo img {
+  object-fit: cover;
+}
+
+/* ================================================================ */
+/* 2. Problem                                                       */
+/* ================================================================ */
+
+.problem__band {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 900px;
+  background: var(--silt);
+}
+
+.problem {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.problem__lead {
+  margin-top: 32px;
+}
+
+.problem__blocks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  margin-top: 56px;
+  max-width: 1240px;
+}
+
+.problem__heading {
+  margin-bottom: 8px;
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.problem__foot {
+  margin-top: auto;
+}
+
+.problem__focus {
+  max-width: 62ch;
+  padding-top: 20px;
+  border-top: 1px solid var(--pool);
+  font-size: 20px;
+  line-height: 1.55;
+}
+
+.problem__who {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--fg-muted);
+}
+
+/* ================================================================ */
+/* 3. Our answer                                                    */
+/* ================================================================ */
+
+.answer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.answer__cols {
+  display: grid;
+  grid-template-columns: 488px 372px minmax(0, 1fr);
+  column-gap: 64px;
+  align-items: start;
+  margin-top: 48px;
+}
+
+.answer--solo .answer__cols {
+  grid-template-columns: 640px minmax(0, 1fr);
+  column-gap: 120px;
+}
+
+.answer__product + .answer__product {
+  margin-top: 32px;
+}
+
+.answer__name {
+  margin-bottom: 6px;
+  font-size: 24px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.answer__name--pool {
+  color: var(--pool);
+}
+
+.answer__name--algae {
+  color: var(--algae);
+}
+
+.answer__one {
+  margin-top: 28px;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--slate);
+}
+
+.answer__photo {
+  width: 372px;
+  height: 420px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bottles-ground);
+}
+
+.answer__photo img {
+  object-fit: contain;
+}
+
+.answer__foot {
+  margin-top: auto;
+  max-width: 100%;
+}
+
+/* Price strip (brief Section 7.3) */
+.prices__heading {
+  margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+}
+
+.prices__row + .prices__row {
+  margin-top: 18px;
+}
+
+.prices__row--ours:first-of-type,
+.prices__row:not(.prices__row--ours) + .prices__row--ours {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+}
+
+.prices__text {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 18px;
+  line-height: 1.3;
+  color: var(--slate);
+}
+
+.prices__label {
+  display: flex;
+  flex-direction: column;
+}
+
+.prices__qualifier {
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.prices__value {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.prices__row--ours .prices__text {
+  color: var(--pool);
+  font-weight: 600;
+}
+
+/* Plex, not Fraunces, at this size: Fraunces' display 3 reads as a 5 from the back of the room. */
+.prices__row--ours .prices__value {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.prices__track {
+  position: relative;
+  height: 6px;
+  margin-top: 8px;
+  background: rgb(15 29 38 / 0.06);
+}
+
+.prices__bar {
+  position: absolute;
+  top: 1px;
+  height: 4px;
+  background: rgb(168 139 94 / 0.7);
+}
+
+.prices__row--ours .prices__bar {
+  top: 0;
+  height: 6px;
+  background: var(--pool);
+}
+
+/* ================================================================ */
+/* 4. Ali's video                                                   */
+/* ================================================================ */
+
+.slide--4 .slide__body {
+  padding-top: 56px;
+}
+
+.vid {
+  width: 1120px;
+  margin: 0 auto;
+}
+
+.vid__headline {
+  margin-bottom: 24px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+.video__frame {
+  position: relative;
+  width: 1120px;
+  height: 630px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: #000;
+}
+
+.video__iframe,
+.video__native,
+.video__poster,
+.video__poster-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video__native {
+  background: #000;
+}
+
+.video__poster-img {
+  object-fit: cover;
+}
+
+/* The bottles fallback poster sits whole on its own studio ground. */
+.video__poster--bottles {
+  background: var(--bottles-ground);
+}
+
+.video__poster--bottles .video__poster-img {
+  object-fit: contain;
+}
+
+.video__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgb(15 29 38 / 0.4);
+}
+
+.video__play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 112px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  padding: 0 0 0 8px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--pool);
+  color: var(--paper);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.video__play:hover {
+  background: #185d94;
+}
+
+.video__play path {
+  fill: currentColor;
+}
+
+.video__play[aria-busy="true"] {
+  opacity: 0.7;
+}
+
+.video__unavailable {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 24px 32px;
+  border-radius: var(--radius);
+  background: var(--deep);
+  text-align: center;
+  font-size: 22px;
+  line-height: 1.5;
+}
+
+.video__unavailable a {
+  color: var(--pool-on-deep);
+}
+
+.video__hint {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: var(--deep);
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.video__caption {
+  margin-top: 16px;
+  font-size: 15px;
+  line-height: 1.45;
+  text-align: center;
+  color: var(--slate-on-deep);
+}
+
+.video__print-url {
+  display: none;
+}
+
+/* ================================================================ */
+/* 5. Live test, the signature slide                                */
+/* ================================================================ */
+
+.live {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  column-gap: var(--gutter);
+  height: 100%;
+}
+
+.live--solo {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.live__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.timer {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.timer__figure {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
+  font-size: 168px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--pool-on-deep);
+}
+
+/* With no T pressed, the same slot reads "about 5 minutes", sized to fit. */
+.timer__figure--words {
+  font-size: 104px;
+  line-height: 1.6154; /* keeps the 168px slot height */
+}
+
+.timer__print {
+  display: none;
+}
+
+.timer__caption {
+  margin-top: 16px;
+  font-size: 26px;
+  line-height: 1.5;
+  color: var(--paper);
+}
+
+.live__beakers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 48px;
+  margin-top: 48px;
+}
+
+.live__beakers li,
+.checklist li {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-size: 20px;
+  line-height: 1.55;
+}
+
+.live__beakers .sq,
+.checklist .sq {
+  transform: translateY(-1px);
+}
+
+.live__steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 40px;
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+
+.live__steps li {
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.live__num {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  /* Optical size matched to 34px so the 1 never reads as an l. */
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 34;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--pool-on-deep);
+}
+
+.live__unb {
+  margin-top: auto;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.live__photo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+.live__img {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 400px;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.live__img img {
+  object-fit: cover;
+}
+
+.live__photo .t-caption {
+  max-width: 400px;
+}
+
+/* ================================================================ */
+/* 6. Team                                                          */
+/* ================================================================ */
+
+.team {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.team__people {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  margin-top: 48px;
+  max-width: 1280px;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Circular crop, 200px, as on the Gate 1 team slide. */
+.person__face {
+  display: grid;
+  place-items: center;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--deep);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 56px;
+  letter-spacing: -0.02em;
+}
+
+.person__face img {
+  display: block;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.person__name {
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.person__role {
+  margin-top: 2px;
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--slate);
+}
+
+.person__bio {
+  margin-top: 14px;
+  max-width: 54ch;
+}
+
+.team__shared {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  font-size: 20px;
+  line-height: 1.55;
+}
+
+/* ================================================================ */
+/* 7. Progress and next steps                                       */
+/* ================================================================ */
+
+.progress-slide__cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  margin-top: 48px;
+}
+
+.progress-slide__heading {
+  margin-bottom: 20px;
+  font-size: 24px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.checklist {
+  display: grid;
+  gap: 10px;
+}
+
+/* ================================================================ */
+/* 8. The ask                                                       */
+/* ================================================================ */
+
+.ask {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ask__headline span {
+  display: block;
+}
+
+.ask__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  column-gap: 64px;
+  margin-top: 36px;
+}
+
+.budget {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.budget__col-line {
+  width: 150px;
+}
+
+.budget__col-amount {
+  width: 128px;
+}
+
+.budget__col-funded {
+  width: 300px;
+}
+
+.budget th,
+.budget td {
+  padding: 8px 16px 8px 0;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: 400;
+}
+
+.budget thead th {
+  padding-top: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--slate-on-deep);
+  border-bottom: 1px solid var(--rule);
+}
+
+.budget tbody th {
+  font-weight: 600;
+}
+
+.budget tbody tr {
+  border-bottom: 1px solid var(--rule);
+}
+
+.budget .budget__amount {
+  padding-right: 24px;
+  text-align: right;
+  font-family: var(--font-display);
+  font-weight: 600;
+  /* Optical size matched to 24px; the 88 cut is for the 56px ask. */
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 24;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.budget thead .budget__amount {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* $60 [assumption]: the tag sits under the figure so amounts stay aligned. */
+.budget .budget__amount .claim {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.budget__funded {
+  font-size: 16px;
+  color: var(--slate-on-deep);
+}
+
+.budget__total th,
+.budget__total td {
+  padding-top: 14px;
+  font-weight: 600;
+}
+
+.budget__ask th {
+  padding-top: 14px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--pool-on-deep);
+  vertical-align: middle;
+}
+
+.budget .budget__ask .budget__amount {
+  padding-top: 10px;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--pool-on-deep);
+}
+
+.ask__footnote {
+  margin-top: 14px;
+  max-width: none;
+  color: var(--slate-on-deep);
+}
+
+.ask__run {
+  padding-top: 36px;
+}
+
+.checklist--run {
+  gap: 18px;
+}
+
+.ask__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--gutter);
+  margin-top: auto;
+}
+
+.ask__other {
+  max-width: none;
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--paper);
+}
+
+.ask__contact {
+  font-size: 15px;
+  color: var(--slate-on-deep);
+  white-space: nowrap;
+}
+
+/* ================================================================ */
+/* Print                                                            */
+/* ================================================================ */
+
+@media print {
+  .title__sub,
+  .title__honesty,
+  .ask__other {
+    color: var(--deep);
+  }
+
+  .title__identity,
+  .live__unb,
+  .budget thead th,
+  .budget__funded,
+  .ask__footnote,
+  .ask__contact,
+  .video__caption {
+    color: var(--slate);
+  }
+
+  .title__hint {
+    display: none;
+  }
+
+  .timer__figure,
+  .timer__caption,
+  .live__num,
+  .budget__ask th,
+  .budget .budget__ask .budget__amount {
+    color: var(--pool);
+  }
+
+  /* The timer prints as "Live demo". */
+  .timer__figure {
+    display: none;
+  }
+
+  .timer__print {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 104px;
+    line-height: 1.6154;
+    color: var(--pool);
+  }
+
+  /* The video prints as its poster plus the address. */
+  .video__frame {
+    background: var(--bottles-ground);
+  }
+
+  .video__play,
+  .video__hint,
+  .video__iframe {
+    display: none;
+  }
+
+  .video__print-url {
+    display: block;
+    margin-top: 8px;
+    text-align: center;
+    font-size: 20px;
+    color: var(--deep);
+  }
+}
+
+/* Logo fallback on the title slide: the name in the display font. */
+.title__logo.logo-text {
+  font-size: 34px;
+  line-height: 1.1;
+}
