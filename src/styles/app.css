@@ -142,7 +142,7 @@ button {
   display: flex;
   width: calc(1600px * 8);
   height: 900px;
-  transition: transform var(--slide-ms) ease-out;
+  transition: transform var(--slide-ms) var(--ease-in-out);
 }
 
 .slide {
@@ -159,6 +159,12 @@ button {
   position: absolute;
   inset: 0 0 var(--rail-h) 0;
   padding: 72px var(--margin) 40px;
+  transition: opacity 420ms ease;
+}
+
+/* The slide that is leaving dims as it slides away, so the eye follows the new one. */
+.slide[aria-hidden="true"] .slide__body {
+  opacity: 0;
 }
 
 /* ---------------------------------------------------------------- */
@@ -181,9 +187,9 @@ button {
 }
 
 .t-headline {
-  font-size: 64px;
-  line-height: 1.06;
-  letter-spacing: -0.018em;
+  font-size: 72px;
+  line-height: 1.04;
+  letter-spacing: -0.022em;
   max-width: 1408px;
 }
 
@@ -321,7 +327,8 @@ button {
   position: absolute;
   z-index: 40;
   padding: 14px 16px;
-  border-radius: var(--radius);
+  border-radius: 12px;
+  animation: panel-fade 260ms ease;
   background: var(--card-bg);
   color: var(--card-fg);
   font-size: 15px;
@@ -447,28 +454,48 @@ button {
 }
 
 /* Progress rail: eight segments, the current one filled pool blue. */
+/* Progress: eight dots; the current one stretches into a pool-blue pill. */
 .progress {
   display: flex;
-  gap: 5px;
+  align-items: center;
+  gap: 2px;
 }
 
 .progress__seg {
-  width: 22px;
-  height: 10px;
+  position: relative;
+  width: 16px;
+  height: 24px;
   padding: 0;
-  border: 1px solid var(--fg-muted);
-  border-radius: 0;
+  border: 0;
   background: transparent;
   cursor: pointer;
+  transition: width 600ms var(--ease-out);
 }
 
-.progress__seg:hover {
-  border-color: var(--fg);
+.progress__seg::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--fg-muted);
+  opacity: 0.45;
+  transition: background-color 400ms ease, opacity 400ms ease;
+}
+
+.progress__seg:hover::after {
+  opacity: 0.9;
 }
 
 .progress__seg.is-current {
-  border-color: var(--us);
+  width: 36px;
+}
+
+.progress__seg.is-current::after {
   background: var(--us);
+  opacity: 1;
 }
 
 /* ---------------------------------------------------------------- */
@@ -491,18 +518,25 @@ button {
 
 .controls__btn {
   position: absolute;
-  top: 408px;
-  width: 44px;
-  height: 64px;
+  top: 418px;
+  width: 56px;
+  height: 56px;
   display: grid;
   place-items: center;
   padding: 0;
   border: 1px solid var(--rule);
-  border-radius: var(--radius);
-  background: var(--bg);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   color: var(--fg);
   cursor: pointer;
   pointer-events: auto;
+  transition: transform 300ms var(--ease-out), border-color 200ms ease;
+}
+
+.controls__btn:hover:not(:disabled) {
+  transform: scale(1.06);
 }
 
 .controls:not(.is-visible):not(:focus-within) .controls__btn {
@@ -545,7 +579,10 @@ button {
   max-height: 520px;
   overflow: auto;
   padding: 32px var(--margin) 36px;
-  background: var(--deep-lifted);
+  background: var(--glass-deep);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  animation: panel-rise 520ms var(--ease-out);
   color: var(--paper);
   border-top: 3px solid var(--pool-on-deep);
   --fg: var(--paper);
@@ -577,7 +614,10 @@ button {
   inset: 0 0 var(--rail-h) 0;
   z-index: 35;
   padding: 56px var(--margin) 32px;
-  background: var(--deep-lifted);
+  background: var(--glass-deep);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  animation: panel-fade 420ms var(--ease-out);
   color: var(--paper);
   overflow: auto;
   --fg-muted: var(--slate-on-deep);
@@ -680,7 +720,8 @@ button {
   max-height: 94vh;
   padding: 0;
   border: 0;
-  border-radius: var(--radius);
+  border-radius: var(--radius-media);
+  overflow: hidden;
   background: var(--paper);
   color: var(--deep);
   box-shadow: 0 24px 60px rgb(0 0 0 / 0.45);
@@ -688,7 +729,33 @@ button {
 }
 
 .lightbox::backdrop {
-  background: rgb(8 17 23 / 0.88);
+  background: rgb(8 17 23 / 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.lightbox[open] {
+  animation: lightbox-in 560ms var(--ease-out);
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+@keyframes panel-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@keyframes panel-fade {
+  from {
+    opacity: 0;
+  }
 }
 
 .lightbox__panel {
@@ -721,8 +788,19 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .track,
-  .controls {
+  .controls,
+  .slide__body,
+  .progress__seg,
+  .progress__seg::after,
+  .controls__btn {
     transition: none;
+  }
+
+  .notes,
+  .sources,
+  .claim-card,
+  .lightbox[open] {
+    animation: none;
   }
 }
 
@@ -762,6 +840,12 @@ button {
     width: 1600px;
     height: auto;
     transform: none !important;
+    transition: none;
+  }
+
+  .slide__body,
+  .slide[aria-hidden="true"] .slide__body {
+    opacity: 1;
     transition: none;
   }
 

@@ -892,3 +892,217 @@
   font-size: 34px;
   line-height: 1.1;
 }
+
+/* ================================================================ */
+/* Motion: cloudy to clear                                          */
+/* Each slide arrives in one sequence. Headlines resolve from a soft */
+/* blur into focus, like water clearing; then the supporting lines   */
+/* follow a beat apart. Nothing moves once a slide has settled,      */
+/* except the timer digits. Timing tokens live in tokens.css.        */
+/* ================================================================ */
+
+.slide [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity var(--reveal-ms) var(--ease-out),
+    transform var(--reveal-ms) var(--ease-out),
+    filter var(--clear-ms) var(--ease-out);
+}
+
+.slide [data-reveal="clear"] {
+  filter: blur(16px);
+  transform: translateY(20px) scale(0.985);
+  transform-origin: left center;
+}
+
+.slide [data-reveal="row"] {
+  transform: translateY(14px);
+}
+
+.slide.is-entered [data-reveal] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition-delay: calc(var(--reveal-delay) + var(--i, 0) * var(--beat));
+}
+
+.slide.is-entered [data-reveal="clear"] {
+  transition-duration: var(--clear-ms);
+}
+
+/* Slide 1: the bottles settle from a slow push-in. */
+.title__photo {
+  overflow: hidden;
+}
+
+.title__photo img {
+  opacity: 0;
+  transform: scale(1.12);
+  transition:
+    opacity 1200ms ease,
+    transform 2800ms var(--ease-out);
+}
+
+.slide.is-entered .title__photo img {
+  opacity: 1;
+  transform: none;
+}
+
+/* Slide 2: the silt band pours in from the top. */
+.problem__band {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 1800ms var(--ease-out);
+}
+
+.slide.is-entered .problem__band {
+  transform: none;
+}
+
+/* Photographs and the video rise into place, slightly scaled. */
+.answer__photo,
+.live__img,
+.video__frame {
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  transition:
+    opacity 1100ms ease,
+    transform 1600ms var(--ease-out);
+}
+
+.slide.is-entered .answer__photo,
+.slide.is-entered .live__img,
+.slide.is-entered .video__frame {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--reveal-delay) + 2 * var(--beat));
+}
+
+/* A gentle lift under the pointer on photographs that open full size. */
+.answer__photo img,
+.live__img img {
+  transition: transform 700ms var(--ease-out);
+}
+
+.answer__photo:hover img,
+.live__img:hover img {
+  transform: scale(1.03);
+}
+
+/* Slide 3: each price bar draws itself along the $0 to $70 scale. */
+.prices__bar {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1400ms var(--ease-out);
+}
+
+.slide.is-entered .prices__bar {
+  transform: none;
+  transition-delay: calc(var(--reveal-delay) + (var(--i, 0) + 1.5) * var(--beat));
+}
+
+/* Slide 5: a changing digit drops into place, out of a slight blur. */
+.timer__digit,
+.timer__colon {
+  display: inline-block;
+}
+
+.timer__digit {
+  animation: digit-in 560ms var(--ease-out);
+}
+
+@keyframes digit-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.28em);
+    filter: blur(6px);
+  }
+}
+
+/* ================================================================ */
+/* Polish: softer media corners, balanced vertical space            */
+/* ================================================================ */
+
+.answer__photo,
+.live__img,
+.video__frame {
+  border-radius: var(--radius-media);
+}
+
+/* Content groups sit in the optical middle between headline and rail. */
+.problem__blocks {
+  margin-top: auto;
+}
+
+.problem__foot {
+  margin-top: auto;
+}
+
+.answer__cols {
+  margin-top: auto;
+  align-items: center;
+}
+
+.answer__foot {
+  margin-top: auto;
+}
+
+.team__people {
+  margin-top: auto;
+}
+
+.progress-slide {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.progress-slide__cols {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* Spec-sheet rules above the two problem blocks. */
+.problem__block {
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+/* ================================================================ */
+/* Reduced motion and print: everything simply present              */
+/* ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .slide [data-reveal],
+  .title__photo img,
+  .problem__band,
+  .answer__photo,
+  .live__img,
+  .video__frame,
+  .prices__bar {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  .timer__digit {
+    animation: none;
+  }
+}
+
+@media print {
+  .slide [data-reveal],
+  .title__photo img,
+  .problem__band,
+  .answer__photo,
+  .live__img,
+  .video__frame,
+  .prices__bar {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}

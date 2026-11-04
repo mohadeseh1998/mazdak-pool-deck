@@ -54,7 +54,17 @@ export function DemoTimer({ variant }: { variant: "hero" | "footer" }) {
       {elapsed === null ? (
         <p className="timer__figure timer__figure--words">{liveSlide.timerNotStarted}</p>
       ) : (
-        <p className="timer__figure">{formatElapsed(elapsed)}</p>
+        <p className="timer__figure">
+          {/* Each digit is keyed by its value, so only a digit that changes
+              rolls in. Nothing else on the slide moves. */}
+          {formatElapsed(elapsed)
+            .split("")
+            .map((ch, i, all) => (
+              <span key={`${all.length - i}-${ch}`} className={ch === ":" ? "timer__colon" : "timer__digit"}>
+                {ch}
+              </span>
+            ))}
+        </p>
       )}
       <p className="timer__print">{liveSlide.timerPrint}</p>
       <p className="timer__caption">{liveSlide.timerCaption}</p>

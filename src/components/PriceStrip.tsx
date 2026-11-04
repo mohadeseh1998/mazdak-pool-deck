@@ -1,5 +1,6 @@
 import { PRICE_SCALE_MAX, priceHeading, priceRows } from "../content/pricing";
 import { Claim } from "./Claim";
+import { reveal } from "./reveal";
 
 const pct = (n: number) => `${(n / PRICE_SCALE_MAX) * 100}%`;
 
@@ -11,10 +12,17 @@ const pct = (n: number) => `${(n / PRICE_SCALE_MAX) * 100}%`;
 export function PriceStrip() {
   return (
     <section className="prices" aria-label={priceHeading}>
-      <h3 className="prices__heading">{priceHeading}</h3>
+      <h3 className="prices__heading" {...reveal(3)}>
+        {priceHeading}
+      </h3>
       <ul className="prices__list">
-        {priceRows.map((row) => (
-          <li key={row.id} className={`prices__row${row.ours ? " prices__row--ours" : ""}`} data-sources={row.sources.join(" ")}>
+        {priceRows.map((row, i) => (
+          <li
+            key={row.id}
+            className={`prices__row${row.ours ? " prices__row--ours" : ""}`}
+            data-sources={row.sources.join(" ")}
+            {...reveal(3.6 + i * 0.6 + (row.ours ? 0.8 : 0))}
+          >
             <div className="prices__text">
               <span className="prices__label">
                 <span>{row.label}</span>
