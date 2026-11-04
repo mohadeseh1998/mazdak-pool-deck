@@ -7,11 +7,11 @@ import { VideoPanel } from "../components/VideoPanel";
 export function VideoSlide({ index }: { index: number }) {
   const { active } = useDeck();
   return (
-    <SlideFrame slide={c} index={index}>
-      <div className="vid">
-        <h2 className="vid__headline" {...reveal(0, "clear")}>
-          {c.headline}
-        </h2>
+    <SlideFrame slide={c} index={index} className="vid">
+      <h2 className="t-headline t-headline--sm" {...reveal(1, "clear")}>
+        {c.headline}
+      </h2>
+      <div className="pop vid__wrap">
         <VideoPanel video={c.video} active={active === index} />
       </div>
     </SlideFrame>

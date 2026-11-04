@@ -20,44 +20,47 @@ function DemoHint() {
   }, []);
   if (!fresh && !notes) return null;
   return (
-    <p className="title__hint" role="status">
+    <p className="hero__hint" role="status">
       {c.demoHint.before} <kbd className="key">{c.demoHint.key}</kbd> {c.demoHint.after}
     </p>
   );
 }
 
+/**
+ * The hero, composed like the top of an Apple product page: name, a very large
+ * headline, one line, then the product itself, floating on the dark ground.
+ * The honesty line sits over the product's base in a frosted pill.
+ */
 export function TitleSlide({ index }: { index: number }) {
-  const photo = assets.bottles;
+  // The cut-out floats on the page; the original studio photo is the fallback
+  // and is what opens full size.
+  const thumb = assets.bottlesCutout ?? assets.bottles;
+  const floating = !!assets.bottlesCutout;
   return (
-    <SlideFrame slide={c} index={index}>
-      <div className={`title${photo ? "" : " title--solo"}`}>
-        <div className="title__text">
-          <div className="title__logo-wrap" {...reveal(0)}>
-            <Logo ground={c.ground} width={300} className="title__logo" />
-          </div>
-          <div className="title__main">
-            <h1 className="t-deck-headline" {...reveal(1, "clear")}>
-              {c.headline}
-            </h1>
-            <p className="title__sub" {...reveal(3)}>
-              <Plain text={c.sub} />
-            </p>
-            <p className="title__identity" {...reveal(4)}>
-              {c.identity}
-            </p>
-          </div>
-          <p className="title__honesty" {...reveal(5.5)}>
-            <Plain text={c.honesty} />
-          </p>
-          <DemoHint />
-        </div>
-        {/* Bottles: kept on their own studio ground, which runs edge to edge in this
-            panel. The panel colour is sampled from the image edge so a crop never
-            shows a seam. Background removal was not used: on the light slide 3
-            ground white bottles would lose their outline. On entry the photo
-            settles from a slow push-in. */}
-        {photo && <ZoomImage className="title__photo" src={photo} alt={c.bottlesAlt} caption={c.sub} />}
+    <SlideFrame slide={c} index={index} className={`hero${thumb ? "" : " hero--solo"}`}>
+      <div className="hero__logo" {...reveal(0)}>
+        <Logo ground={c.ground} width={220} />
       </div>
+      <h1 className="t-hero" {...reveal(1, "clear")}>
+        {c.headline.map((line) => (
+          <span key={line}>{line}</span>
+        ))}
+      </h1>
+      <p className="hero__sub" {...reveal(3)}>
+        <Plain text={c.sub} />
+      </p>
+      <p className="hero__identity" {...reveal(3.8)}>
+        {c.identity}
+      </p>
+      {thumb && assets.bottles && (
+        <div className={`hero__product${floating ? " is-floating" : ""}`}>
+          <ZoomImage src={assets.bottles} thumb={thumb} alt={c.bottlesAlt} caption={c.sub} className="pop" />
+        </div>
+      )}
+      <p className="hero__honesty" {...reveal(6)}>
+        <Plain text={c.honesty} />
+      </p>
+      <DemoHint />
     </SlideFrame>
   );
 }

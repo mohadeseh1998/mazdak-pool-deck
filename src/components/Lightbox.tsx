@@ -45,7 +45,13 @@ export function Lightbox({ image, onClose }: Props) {
 }
 
 /** A slide image that opens the lightbox at full size. */
-export function ZoomImage({ src, alt, caption, className = "" }: LightboxImage & { className?: string }) {
+export function ZoomImage({
+  src,
+  alt,
+  caption,
+  className = "",
+  thumb,
+}: LightboxImage & { className?: string; /** What the slide shows, if not the full image. */ thumb?: string }) {
   const { openLightbox } = useDeck();
   return (
     <button
@@ -54,7 +60,7 @@ export function ZoomImage({ src, alt, caption, className = "" }: LightboxImage &
       aria-label={ui.openImage(caption)}
       onClick={(e) => openLightbox({ src, alt, caption }, e.currentTarget)}
     >
-      <img src={src} alt={alt} draggable={false} />
+      <img src={thumb ?? src} alt={alt} draggable={false} />
     </button>
   );
 }

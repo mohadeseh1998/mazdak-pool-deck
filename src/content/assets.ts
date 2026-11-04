@@ -22,6 +22,8 @@ const pick = (name: string): string | undefined => byName.get(name.toLowerCase()
 export const assets = {
   logo: pick("logo.png"),
   bottles: pick("pool-pack-bottles.png"),
+  /** The same photo with its studio ground removed (rembg), for the dark page. */
+  bottlesCutout: pick("pool-pack-bottles-cutout.webp"),
   jarTest: pick("jar-test.jpg"),
   mohadeseh: pick("mohadeseh-zamani.jpg"),
   ali: pick("ali-kalateh.jpg"),

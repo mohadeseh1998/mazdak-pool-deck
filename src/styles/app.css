@@ -1,4 +1,4 @@
-/* Global frame, type scale, shared components, print. Adapted from Gate 1. */
+/* The page frame, type, shared components and print. */
 
 *,
 *::before,
@@ -6,22 +6,29 @@
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
+/* One tall page that snaps section by section. */
+html {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  background: var(--deep);
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {
-  background: var(--letterbox);
+  margin: 0;
+  background: var(--deep);
   color: var(--paper);
-  font-family: var(--font-sans);
+  font-family: var(--font);
   font-size: 20px;
-  line-height: 1.55;
+  line-height: 1.5;
+  font-optical-sizing: auto;
+  font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-variant-numeric: tabular-nums;
 }
 
 h1,
@@ -61,9 +68,9 @@ button {
   outline: none;
 }
 
-/* Focus ring: 2px pool blue, offset 2px (brief Section 8). */
+/* Focus ring: 2px pool blue, offset 2px. */
 :focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--pool-on-deep);
   outline-offset: 2px;
   border-radius: var(--radius);
 }
@@ -84,146 +91,207 @@ button {
   border: 0;
 }
 
-/* ---------------------------------------------------------------- */
-/* Grounds. Every colour decision reads from these, so print can    */
-/* flip the dark slides to --clear in one place.                    */
-/* ---------------------------------------------------------------- */
-
 .ground-deep {
   --bg: var(--deep);
   --fg: var(--paper);
   --fg-muted: var(--slate-on-deep);
-  --rule: rgb(248 250 251 / 0.18);
   --assume-line: var(--caution);
   --assume-text: var(--caution);
   --us: var(--pool-on-deep);
   --algae-text: var(--algae-on-deep);
-  --focus: var(--pool-on-deep);
-  --card-bg: var(--deep-lifted);
-  --card-fg: var(--paper);
-}
-
-.ground-clear {
-  --bg: var(--clear);
-  --fg: var(--deep);
-  --fg-muted: var(--slate);
-  --rule: rgb(15 29 38 / 0.16);
-  --assume-line: var(--caution-deep);
-  --assume-text: var(--caution-deep);
-  --us: var(--pool);
-  --algae-text: var(--algae);
-  --focus: var(--pool);
-  --card-bg: var(--paper);
-  --card-fg: var(--deep);
 }
 
 /* ---------------------------------------------------------------- */
-/* Stage                                                            */
+/* Sections: full screen, ground edge to edge, a scaled 1600 by 900  */
+/* canvas centred inside.                                           */
 /* ---------------------------------------------------------------- */
-
-.letterbox {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  background: var(--letterbox);
-}
-
-.stage {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  overflow: hidden;
-  transform-origin: center;
-  background: var(--deep);
-}
-
-/* Motion: one 220ms horizontal translate between slides, no fade. */
-.track {
-  display: flex;
-  width: calc(1600px * 8);
-  height: 900px;
-  transition: transform var(--slide-ms) var(--ease-in-out);
-}
 
 .slide {
   position: relative;
-  flex: 0 0 1600px;
-  width: 1600px;
-  height: 900px;
+  height: 100vh;
   overflow: hidden;
   background: var(--bg);
   color: var(--fg);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
-.slide__body {
+.canvas {
   position: absolute;
-  inset: 0 0 var(--rail-h) 0;
-  padding: 72px var(--margin) 40px;
-  transition: opacity 420ms ease;
+  left: 50%;
+  top: 50%;
+  width: 1600px;
+  height: 900px;
+  transform-origin: center;
 }
 
-/* The slide that is leaving dims as it slides away, so the eye follows the new one. */
-.slide[aria-hidden="true"] .slide__body {
-  opacity: 0;
+/* Each section is a centred column: eyebrow, headline, then its content. */
+.frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 150px var(--margin) 56px;
+  text-align: center;
 }
 
-/* ---------------------------------------------------------------- */
-/* Type scale (brief Section 4.3), on the 1600 by 900 canvas         */
-/* ---------------------------------------------------------------- */
-
-.t-deck-headline,
-.t-headline,
-.t-figure,
-.logo-text {
-  font-family: var(--font-display);
+/* The eyebrow: the section's name, small and bold above its headline. */
+.eyebrow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100px;
+  z-index: 1;
+  font-size: 24px;
+  line-height: 1.2;
   font-weight: 600;
-  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: var(--fg);
 }
 
-.t-deck-headline {
-  font-size: 88px;
+/* Sections leaving the screen dim, so the eye stays on the current one. */
+.slide .frame,
+.slide .eyebrow {
+  transition: opacity 600ms ease;
+}
+
+.slide:not(.is-active) .frame,
+.slide:not(.is-active) .eyebrow {
+  opacity: 0.3;
+}
+
+/* ---------------------------------------------------------------- */
+/* Type, on the canvas                                              */
+/* ---------------------------------------------------------------- */
+
+.t-hero {
+  font-size: 104px;
   line-height: 1.02;
-  letter-spacing: -0.022em;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.t-hero span {
+  display: block;
 }
 
 .t-headline {
-  font-size: 72px;
-  line-height: 1.04;
-  letter-spacing: -0.022em;
-  max-width: 1408px;
+  font-size: 76px;
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  max-width: 1300px;
+  text-wrap: balance;
+}
+
+.t-headline--sm {
+  font-size: 56px;
 }
 
 .t-lead {
+  margin-top: 24px;
+  max-width: 1040px;
   font-size: 26px;
-  line-height: 1.5;
-  letter-spacing: -0.004em;
-  max-width: 62ch;
-}
-
-.t-body {
-  font-size: 20px;
-  line-height: 1.55;
-  max-width: 62ch;
-}
-
-.t-figure {
-  font-size: 56px;
-  line-height: 1;
-  letter-spacing: -0.015em;
-}
-
-.t-label {
-  font-size: 16px;
-  line-height: 1.35;
+  line-height: 1.45;
   font-weight: 500;
-  letter-spacing: 0.005em;
+  letter-spacing: -0.012em;
+  color: var(--fg-muted);
+  text-wrap: balance;
 }
 
 .t-caption {
   font-size: 15px;
   line-height: 1.45;
   color: var(--fg-muted);
-  max-width: 62ch;
+}
+
+/* Figures line up wherever they appear. */
+.t-caption,
+.t-lead,
+.card,
+.prices,
+.budget,
+.topbar {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- */
+/* Cards: Apple's raised tiles                                      */
+/* ---------------------------------------------------------------- */
+
+.cards {
+  display: grid;
+  gap: var(--gutter);
+  width: 100%;
+  text-align: left;
+}
+
+.cards--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 1280px;
+}
+
+.card {
+  position: relative;
+  padding: 40px 44px;
+  border-radius: var(--radius-card);
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  text-align: left;
+}
+
+.card--wide {
+  width: 100%;
+  max-width: 1280px;
+}
+
+.card__title {
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.card__body {
+  margin-top: 12px;
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+.tone-pool {
+  color: var(--pool-on-deep);
+}
+
+.tone-algae {
+  color: var(--algae-on-deep);
+}
+
+/* A coloured line along the card's top edge carries its meaning. */
+.card--silt::before,
+.card--pool::before,
+.card--algae::before {
+  content: "";
+  position: absolute;
+  left: 44px;
+  right: 44px;
+  top: 0;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+}
+
+.card--silt::before {
+  background: var(--silt);
+}
+
+.card--pool::before {
+  background: var(--pool-on-deep);
+}
+
+.card--algae::before {
+  background: var(--algae-on-deep);
 }
 
 /* ---------------------------------------------------------------- */
@@ -235,6 +303,7 @@ button {
   flex: none;
   width: 10px;
   height: 10px;
+  border-radius: 2px;
 }
 
 .sq--pool {
@@ -250,7 +319,7 @@ button {
 }
 
 .sq--outline {
-  border: 1.5px solid var(--fg);
+  border: 1.5px solid var(--fg-muted);
 }
 
 /* ---------------------------------------------------------------- */
@@ -281,7 +350,7 @@ button {
   position: relative;
   display: inline-block;
   padding: 3px 7px 4px;
-  font-family: var(--font-sans);
+  font-family: var(--font);
   font-size: 14px;
   font-weight: 600;
   font-style: normal;
@@ -291,7 +360,6 @@ button {
   white-space: nowrap;
   vertical-align: 0.12em;
   text-decoration: none;
-  font-variation-settings: normal;
 }
 
 .claim__tag::before,
@@ -322,19 +390,23 @@ button {
   text-decoration-color: var(--deep);
 }
 
-/* The proof card: hover or keyboard focus. One of two places with a shadow. */
+/* The proof card: hover or keyboard focus. */
 .claim-card {
   position: absolute;
   z-index: 40;
   padding: 14px 16px;
-  border-radius: 12px;
-  animation: panel-fade 260ms ease;
-  background: var(--card-bg);
-  color: var(--card-fg);
+  border-radius: 14px;
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgb(248 250 251 / 0.14);
+  color: var(--paper);
   font-size: 15px;
   line-height: 1.45;
-  box-shadow: 0 10px 28px rgb(8 17 23 / 0.28);
+  text-align: left;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
   pointer-events: none;
+  animation: fade-in 240ms ease;
 }
 
 .claim-card--above {
@@ -343,19 +415,6 @@ button {
 
 .claim-card__lead {
   font-weight: 600;
-}
-
-/* Cards are portalled to the stage, so they take the active slide's ground. */
-.stage:has(.slide.ground-clear[aria-hidden="false"]) .claim-card {
-  --card-bg: var(--paper);
-  --card-fg: var(--deep);
-  border: 1px solid rgb(15 29 38 / 0.12);
-}
-
-.stage:has(.slide.ground-deep[aria-hidden="false"]) .claim-card {
-  --card-bg: var(--deep-lifted);
-  --card-fg: var(--paper);
-  border: 1px solid rgb(248 250 251 / 0.14);
 }
 
 /* ---------------------------------------------------------------- */
@@ -372,7 +431,8 @@ button {
   height: auto;
 }
 
-/* On dark grounds: a small paper tile, 10px padding, 3px radius. */
+/* On the dark page the logo sits on a small paper tile so its blue box and
+   green text stay readable. */
 .logo--tile {
   padding: 10px;
   border-radius: var(--radius);
@@ -381,62 +441,92 @@ button {
 
 .logo-text {
   display: inline-block;
-  color: var(--fg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--paper);
   white-space: nowrap;
-  letter-spacing: -0.01em;
 }
 
 /* ---------------------------------------------------------------- */
-/* Footer rail: logo, slide title, timer, progress, n of 8           */
+/* Top bar: frosted, fixed, scaled with the canvas                   */
 /* ---------------------------------------------------------------- */
 
-.rail {
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--rule);
+}
+
+.topbar__inner {
   position: absolute;
-  left: var(--margin);
-  right: var(--margin);
-  bottom: 0;
-  height: var(--rail-h);
+  left: 50%;
+  top: 0;
+  width: 1600px;
+  height: 56px;
+  padding: 0 var(--margin);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  border-top: 1px solid var(--rule);
+  transform-origin: top center;
   font-size: 15px;
   line-height: 1;
-  color: var(--fg-muted);
 }
 
-.rail__start,
-.rail__end {
+.topbar__start,
+.topbar__end {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-.rail__logo.logo--tile {
-  padding: 6px 8px;
+.topbar__logo.logo--tile {
+  padding: 5px 7px;
 }
 
-.rail__logo.logo-text {
-  font-size: 16px;
+.topbar__logo.logo-text {
+  font-size: 17px;
 }
 
-.rail__count {
+.topbar__title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+}
+
+.topbar__count {
   min-width: 52px;
   text-align: right;
+  color: var(--slate-on-deep);
 }
 
-.rail__audit {
+.topbar__audit {
   font-weight: 600;
-  color: var(--assume-text);
+  color: var(--caution);
 }
 
+/* The demo timer as the bar's one blue pill, like Apple's "Pre-order". */
 .timer-footer {
-  color: var(--us);
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  background: var(--pool);
+  color: var(--paper);
+  font-size: 15px;
+  font-weight: 600;
+  animation: fade-in 400ms ease;
 }
 
 .timer-footer__digits {
+  margin-left: 6px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -445,26 +535,80 @@ button {
   min-width: 22px;
   padding: 3px 6px;
   border: 1px solid currentColor;
-  border-radius: var(--radius);
-  font-family: var(--font-sans);
+  border-radius: 6px;
+  font-family: var(--font);
   font-size: 15px;
   font-weight: 600;
   line-height: 1;
   text-align: center;
 }
 
-/* Progress rail: eight segments, the current one filled pool blue. */
-/* Progress: eight dots; the current one stretches into a pool-blue pill. */
-.progress {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+/* ---------------------------------------------------------------- */
+/* The floating layer: pager, notes, sources                        */
+/* ---------------------------------------------------------------- */
+
+.hud {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
 }
 
-.progress__seg {
+.hud__stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1600px;
+  height: 900px;
+  transform-origin: center;
+}
+
+.hud__stage > * {
+  pointer-events: auto;
+}
+
+/* Pager: a frosted pill of dots and two round buttons. */
+.pager {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translate(-50%, 12px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 400ms ease,
+    transform 600ms var(--ease-out);
+}
+
+.pager.is-visible,
+.pager:focus-within {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.pager__dots,
+.pager__btn {
+  background: rgb(42 58 69 / 0.78);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.pager__dots {
+  display: flex;
+  align-items: center;
+  height: 52px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+}
+
+.pager__dot {
   position: relative;
-  width: 16px;
-  height: 24px;
+  width: 18px;
+  height: 52px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -472,124 +616,84 @@ button {
   transition: width 600ms var(--ease-out);
 }
 
-.progress__seg::after {
+.pager__dot::after {
   content: "";
   position: absolute;
-  left: 4px;
-  right: 4px;
-  top: 8px;
+  left: 5px;
+  right: 5px;
+  top: 22px;
   height: 8px;
   border-radius: 4px;
-  background: var(--fg-muted);
-  opacity: 0.45;
-  transition: background-color 400ms ease, opacity 400ms ease;
+  background: var(--slate-on-deep);
+  opacity: 0.7;
+  transition:
+    background-color 400ms ease,
+    opacity 400ms ease;
 }
 
-.progress__seg:hover::after {
-  opacity: 0.9;
-}
-
-.progress__seg.is-current {
-  width: 36px;
-}
-
-.progress__seg.is-current::after {
-  background: var(--us);
+.pager__dot:hover::after {
   opacity: 1;
 }
 
-/* ---------------------------------------------------------------- */
-/* On-screen controls: appear on mouse move, fade after 2.5 s        */
-/* ---------------------------------------------------------------- */
-
-.controls {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 300ms linear;
+.pager__dot.is-current {
+  width: 48px;
 }
 
-.controls.is-visible,
-.controls:focus-within {
+.pager__dot.is-current::after {
+  background: var(--paper);
   opacity: 1;
 }
 
-.controls__btn {
-  position: absolute;
-  top: 418px;
-  width: 56px;
-  height: 56px;
+.pager__btn {
+  width: 52px;
+  height: 52px;
   display: grid;
   place-items: center;
   padding: 0;
-  border: 1px solid var(--rule);
+  border: 0;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  color: var(--fg);
+  color: var(--paper);
   cursor: pointer;
-  pointer-events: auto;
-  transition: transform 300ms var(--ease-out), border-color 200ms ease;
+  transition: transform 300ms var(--ease-out);
 }
 
-.controls__btn:hover:not(:disabled) {
-  transform: scale(1.06);
+.pager__btn:hover:not(:disabled) {
+  transform: scale(1.07);
 }
 
-.controls:not(.is-visible):not(:focus-within) .controls__btn {
-  pointer-events: none;
-}
-
-.controls__btn:hover {
-  border-color: var(--fg);
-}
-
-.controls__btn:disabled {
-  opacity: 0.3;
+.pager__btn:disabled {
+  opacity: 0.35;
   cursor: default;
 }
 
-.controls__btn--prev {
-  left: 24px;
-}
-
-.controls__btn--next {
-  right: 24px;
-}
-
-.controls__btn path {
+.pager__btn path {
   fill: none;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* ---------------------------------------------------------------- */
-/* Presenter notes (N) and source register (S)                      */
-/* ---------------------------------------------------------------- */
-
+/* Presenter notes (N): the lower third, frosted. */
 .notes {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: var(--rail-h);
-  z-index: 30;
+  bottom: 0;
   max-height: 520px;
   overflow: auto;
-  padding: 32px var(--margin) 36px;
-  background: var(--glass-deep);
+  padding: 32px var(--margin) 40px;
+  background: var(--glass-strong);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  animation: panel-rise 520ms var(--ease-out);
-  color: var(--paper);
   border-top: 3px solid var(--pool-on-deep);
+  color: var(--paper);
+  text-align: left;
   --fg: var(--paper);
   --fg-muted: var(--slate-on-deep);
   --assume-line: var(--caution);
   --assume-text: var(--caution);
-  --focus: var(--pool-on-deep);
+  animation: rise-in 520ms var(--ease-out);
 }
 
 .notes__heading {
@@ -609,28 +713,25 @@ button {
   margin-top: 12px;
 }
 
+/* Source register (S). */
 .sources {
   position: absolute;
-  inset: 0 0 var(--rail-h) 0;
-  z-index: 35;
-  padding: 56px var(--margin) 32px;
-  background: var(--glass-deep);
+  inset: 56px 0 0 0;
+  padding: 48px var(--margin) 32px;
+  background: var(--glass-strong);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  animation: panel-fade 420ms var(--ease-out);
   color: var(--paper);
   overflow: auto;
-  --fg-muted: var(--slate-on-deep);
-  --focus: var(--pool-on-deep);
+  text-align: left;
+  animation: fade-in 420ms var(--ease-out);
 }
 
 .sources__heading {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
   font-size: 44px;
   line-height: 1.1;
-  letter-spacing: -0.015em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 .sources__checked {
@@ -699,63 +800,36 @@ button {
 }
 
 .button {
-  padding: 8px 14px;
-  border: 1px solid var(--deep);
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--deep);
+  padding: 9px 18px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--pool);
+  color: var(--paper);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
 
-.button:hover {
-  background: var(--deep);
-  color: var(--paper);
-}
-
-/* The other place with a shadow. */
 .lightbox {
   max-width: 94vw;
   max-height: 94vh;
   padding: 0;
   border: 0;
-  border-radius: var(--radius-media);
+  border-radius: var(--radius-card);
   overflow: hidden;
-  background: var(--paper);
-  color: var(--deep);
-  box-shadow: 0 24px 60px rgb(0 0 0 / 0.45);
-  --focus: var(--pool);
+  background: var(--card);
+  color: var(--paper);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.5);
 }
 
 .lightbox::backdrop {
-  background: rgb(8 17 23 / 0.72);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgb(8 17 23 / 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .lightbox[open] {
-  animation: lightbox-in 560ms var(--ease-out);
-}
-
-@keyframes lightbox-in {
-  from {
-    opacity: 0;
-    transform: scale(0.94);
-  }
-}
-
-@keyframes panel-rise {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-}
-
-@keyframes panel-fade {
-  from {
-    opacity: 0;
-  }
+  animation: lightbox-in 600ms var(--ease-out);
 }
 
 .lightbox__panel {
@@ -769,6 +843,7 @@ button {
   max-width: calc(94vw - 32px);
   max-height: calc(94vh - 96px);
   object-fit: contain;
+  border-radius: 16px;
 }
 
 .lightbox__caption {
@@ -776,36 +851,57 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding-top: 14px;
+  padding: 14px 4px 0;
   font-size: 15px;
   line-height: 1.4;
-  color: var(--slate);
+  color: var(--slate-on-deep);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
 }
 
 /* ---------------------------------------------------------------- */
-/* Motion budget                                                    */
+/* Reduced motion: no glide, no fades                               */
 /* ---------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .track,
-  .controls,
-  .slide__body,
-  .progress__seg,
-  .progress__seg::after,
-  .controls__btn {
+  .slide .frame,
+  .slide .eyebrow,
+  .pager,
+  .pager__dot,
+  .pager__dot::after,
+  .pager__btn {
     transition: none;
   }
 
   .notes,
   .sources,
   .claim-card,
+  .timer-footer,
   .lightbox[open] {
     animation: none;
   }
 }
 
 /* ---------------------------------------------------------------- */
-/* Print: eight landscape pages, dark grounds inverted to --clear    */
+/* Print: ten landscape pages on the light ground                   */
 /* ---------------------------------------------------------------- */
 
 @page {
@@ -815,41 +911,27 @@ button {
 
 @media print {
   html,
-  body,
-  #root {
-    height: auto;
+  body {
     background: var(--clear);
+    scroll-snap-type: none;
   }
 
-  .letterbox {
-    position: static;
-    overflow: visible;
-    background: none;
-  }
-
-  .stage {
-    position: static;
-    height: auto !important;
-    transform: none !important;
-    overflow: visible;
-    background: none;
-  }
-
-  .track {
-    display: block;
-    width: 1600px;
-    height: auto;
-    transform: none !important;
-    transition: none;
-  }
-
-  .slide__body,
-  .slide[aria-hidden="true"] .slide__body {
-    opacity: 1;
-    transition: none;
+  .ground-deep {
+    --bg: var(--clear);
+    --fg: var(--deep);
+    --fg-muted: var(--slate);
+    --assume-line: var(--caution-deep);
+    --assume-text: var(--caution-deep);
+    --us: var(--pool);
+    --algae-text: var(--algae);
+    --card: #ffffff;
+    --card-line: rgb(15 29 38 / 0.12);
+    --rule: rgb(15 29 38 / 0.16);
   }
 
   .slide {
+    width: 1600px;
+    height: 900px;
     break-after: page;
     page-break-after: always;
     -webkit-print-color-adjust: exact;
@@ -861,24 +943,28 @@ button {
     page-break-after: auto;
   }
 
-  .ground-deep {
-    --bg: var(--clear);
-    --fg: var(--deep);
-    --fg-muted: var(--slate);
-    --rule: rgb(15 29 38 / 0.16);
-    --assume-line: var(--caution-deep);
-    --assume-text: var(--caution-deep);
-    --us: var(--pool);
-    --algae-text: var(--algae);
+  .canvas {
+    transform: none !important;
+    left: 0;
+    top: 0;
   }
 
-  .controls,
-  .notes,
-  .sources,
+  .slide:not(.is-active) .frame,
+  .slide:not(.is-active) .eyebrow {
+    opacity: 1;
+  }
+
+  .tone-pool {
+    color: var(--pool);
+  }
+
+  .tone-algae {
+    color: var(--algae);
+  }
+
+  .topbar,
+  .hud,
   .claim-card,
-  .rail__audit,
-  .progress,
-  .timer-footer,
   .lightbox {
     display: none !important;
   }

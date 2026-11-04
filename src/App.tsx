@@ -2,28 +2,43 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DeckContext, type DeckState, type LightboxImage } from "./components/DeckContext";
 import { Lightbox } from "./components/Lightbox";
 import { PresenterNotes } from "./components/PresenterNotes";
+import { ProgressRail } from "./components/ProgressRail";
 import { SourcesOverlay } from "./components/SourcesOverlay";
-import { Stage, STAGE_W, useStageScale } from "./components/Stage";
+import { useStageScale } from "./components/Stage";
+import { TopBar } from "./components/TopBar";
 import { slides, SLIDE_COUNT, ui } from "./content/slides";
-import { useHash } from "./hooks/useHash";
+import { useReducedMotion } from "./hooks/useReducedMotion";
+import { useVerticalDeck } from "./hooks/useVerticalDeck";
 import { TitleSlide } from "./slides/01Title";
 import { ProblemSlide } from "./slides/02Problem";
 import { AnswerSlide } from "./slides/03Answer";
-import { VideoSlide } from "./slides/04Video";
-import { LiveTestSlide } from "./slides/05LiveTest";
-import { TeamSlide } from "./slides/06Team";
-import { ProgressSlide } from "./slides/07Progress";
-import { AskSlide } from "./slides/08Ask";
+import { PriceSlide } from "./slides/04Price";
+import { VideoSlide } from "./slides/05Video";
+import { LiveTestSlide } from "./slides/06LiveTest";
+import { TeamSlide } from "./slides/07Team";
+import { ProgressSlide } from "./slides/08Progress";
+import { AskSlide } from "./slides/09Ask";
+import { CloseSlide } from "./slides/10Close";
 
 const CONTROLS_MS = 2500;
 
+/** Wheel distance that counts as an intent to move, and the pause that ends a gesture. */
+const WHEEL_STEP = 40;
+const WHEEL_QUIET_MS = 180;
+const WHEEL_LOCK_MS = 700;
+
+/** Keys a browser would use to scroll the page. Space is left to buttons. */
+const PAGE_KEYS = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End"]);
+
 /**
- * Stage, keyboard, audit mode, notes, sources, lightbox and the demo timer.
- * Same interaction model and shortcuts as the Gate 1 deck (brief Section 8).
+ * One vertical page of ten full-screen sections. Same keys as the Gate 1 deck:
+ * arrows, Space, Page Up and Down, Home, End; A audit, N notes, S sources,
+ * T demo timer. Notes, sources and the pager sit in a fixed layer on top.
  */
 export function App() {
   const scale = useStageScale();
-  const [active, go] = useHash(SLIDE_COUNT);
+  const reduced = useReducedMotion();
+  const [active, go, base] = useVerticalDeck(SLIDE_COUNT, reduced);
   // All of this lives in memory only: no browser storage.
   const [audit, setAudit] = useState(false);
   const [notes, setNotes] = useState(false);
@@ -31,7 +46,6 @@ export function App() {
   const [timerStart, setTimerStart] = useState<number | null>(null);
   const [lightbox, setLightbox] = useState<LightboxImage | null>(null);
   const [controls, setControls] = useState(false);
-  const stageRef = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLElement | null>(null);
   const controlsTimer = useRef<number>();
 
@@ -45,10 +59,10 @@ export function App() {
     const el = trigger.current;
     trigger.current = null;
     // Return focus to the image that opened it.
-    window.requestAnimationFrame(() => el?.focus());
+    window.requestAnimationFrame(() => el?.focus({ preventScroll: true }));
   }, []);
 
-  const stageEl = useCallback(() => stageRef.current, []);
+  const stageEl = useCallback(() => document.querySelector<HTMLElement>(".slide.is-active .canvas"), []);
 
   const deck = useMemo<DeckState>(
     () => ({ active, audit, notes, go, openLightbox, stageEl, scale, timerStart }),
@@ -66,11 +80,14 @@ export function App() {
         if (e.key === "Escape") {
           e.preventDefault();
           (document.activeElement as HTMLElement | null)?.blur();
-          stageRef.current?.focus();
+        } else if (PAGE_KEYS.has(e.key) && target.tagName !== "VIDEO") {
+          // Nor may they scroll the page natively. The native video player
+          // keeps its own arrow keys for seeking and volume.
+          e.preventDefault();
         }
         return;
       }
-      const onControl = !!target?.closest?.("button, a, [tabindex]") && target !== stageRef.current;
+      const onControl = !!target?.closest?.("button, a, [tabindex]");
 
       // T starts the demo timer, T again restarts it, Shift+T stops and hides it.
       if (e.code === "KeyT") {
@@ -81,19 +98,21 @@ export function App() {
 
       switch (e.key) {
         case "ArrowRight":
+        case "ArrowDown":
         case "PageDown":
           e.preventDefault();
-          go(active + 1);
+          go(base() + 1);
           break;
         case "ArrowLeft":
+        case "ArrowUp":
         case "PageUp":
           e.preventDefault();
-          go(active - 1);
+          go(base() - 1);
           break;
         case " ":
           if (onControl) return; // Space activates the focused button instead
           e.preventDefault();
-          go(e.shiftKey ? active - 1 : active + 1);
+          go(base() + (e.shiftKey ? -1 : 1));
           break;
         case "Home":
           e.preventDefault();
@@ -123,66 +142,77 @@ export function App() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, go, lightbox]);
+  }, [go, base, lightbox]);
 
-  // On-screen controls appear on mouse move and fade after 2.5 seconds.
-  const onPointerMove = useCallback(() => {
-    setControls(true);
-    window.clearTimeout(controlsTimer.current);
-    controlsTimer.current = window.setTimeout(() => setControls(false), CONTROLS_MS);
+  // Mouse wheel and trackpad: one gesture moves exactly one section. A gesture
+  // is over once the wheel has been quiet for a moment, so trackpad momentum
+  // never skips a section. Overlays that scroll keep their own wheel.
+  // The gesture state outlives re-renders, so a section change mid-gesture
+  // never resets it.
+  const wheel = useRef({ acc: 0, lockedUntil: 0, last: 0, quiet: true });
+  useEffect(() => {
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || lightbox) return; // pinch zoom, or the image viewer
+      if ((e.target as HTMLElement | null)?.closest?.(".sources, .notes")) return;
+      e.preventDefault();
+      const w = wheel.current;
+      const now = performance.now();
+      if (now - w.last > WHEEL_QUIET_MS) w.quiet = true;
+      w.last = now;
+      if (now < w.lockedUntil || !w.quiet) return;
+      w.acc += e.deltaMode === 1 ? e.deltaY * 40 : e.deltaY;
+      if (Math.abs(w.acc) < WHEEL_STEP) return;
+      go(base() + (w.acc > 0 ? 1 : -1));
+      w.acc = 0;
+      w.quiet = false;
+      w.lockedUntil = now + WHEEL_LOCK_MS;
+    };
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, [go, base, lightbox]);
+
+  // The pager appears on mouse move and fades after 2.5 seconds.
+  useEffect(() => {
+    const onMove = () => {
+      setControls(true);
+      window.clearTimeout(controlsTimer.current);
+      controlsTimer.current = window.setTimeout(() => setControls(false), CONTROLS_MS);
+    };
+    window.addEventListener("pointermove", onMove);
+    return () => window.removeEventListener("pointermove", onMove);
   }, []);
 
   const current = slides[active];
 
   return (
     <DeckContext.Provider value={deck}>
+      <TopBar />
       <main className={`deck${audit ? " is-audit" : ""}`} aria-label={ui.deckLabel}>
-        <Stage ref={stageRef} scale={scale} onPointerMove={onPointerMove}>
-          <div className="track" style={{ transform: `translateX(${-active * STAGE_W}px)` }}>
-            <TitleSlide index={0} />
-            <ProblemSlide index={1} />
-            <AnswerSlide index={2} />
-            <VideoSlide index={3} />
-            <LiveTestSlide index={4} />
-            <TeamSlide index={5} />
-            <ProgressSlide index={6} />
-            <AskSlide index={7} />
-          </div>
+        <TitleSlide index={0} />
+        <ProblemSlide index={1} />
+        <AnswerSlide index={2} />
+        <PriceSlide index={3} />
+        <VideoSlide index={4} />
+        <LiveTestSlide index={5} />
+        <TeamSlide index={6} />
+        <ProgressSlide index={7} />
+        <AskSlide index={8} />
+        <CloseSlide index={9} />
+      </main>
 
-          <div className={`controls ground-${current.ground}${controls ? " is-visible" : ""}`}>
-            <button
-              type="button"
-              className="controls__btn controls__btn--prev"
-              aria-label={ui.prev}
-              disabled={active === 0}
-              onClick={() => go(active - 1)}
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M13 3 L6 10 L13 17" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="controls__btn controls__btn--next"
-              aria-label={ui.next}
-              disabled={active === SLIDE_COUNT - 1}
-              onClick={() => go(active + 1)}
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                <path d="M7 3 L14 10 L7 17" />
-              </svg>
-            </button>
-          </div>
-
+      {/* A fixed layer, scaled like the sections, for what floats above them. */}
+      <div className="hud">
+        <div className="hud__stage" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
+          <ProgressRail visible={controls} />
           {notes && <PresenterNotes notes={current.notes} n={current.n} total={SLIDE_COUNT} />}
           {sourcesOpen && <SourcesOverlay />}
-        </Stage>
+        </div>
+      </div>
 
-        <p className="visually-hidden" aria-live="polite">
-          {ui.announce(current.n, SLIDE_COUNT, current.title)}
-        </p>
-        <Lightbox image={lightbox} onClose={closeLightbox} />
-      </main>
+      <p className="visually-hidden" aria-live="polite">
+        {ui.announce(current.n, SLIDE_COUNT, current.title)}
+      </p>
+      <Lightbox image={lightbox} onClose={closeLightbox} />
     </DeckContext.Provider>
   );
 }

@@ -1,6 +1,6 @@
 # Mazdak Atlantic AgriAqua, pool line pitch
 
-An eight-slide web deck for the JHSC Summer Institute Funding Committee, Friday 6 November 2026.
+A one-page web deck for the JHSC Summer Institute Funding Committee, Friday 6 November 2026. Ten full-screen sections scroll vertically and snap into place, in the manner of an Apple product page.
 
 Live: https://mohadeseh1998.github.io/mazdak-pool-deck/
 
@@ -8,8 +8,9 @@ Live: https://mohadeseh1998.github.io/mazdak-pool-deck/
 
 | Key | What it does |
 |---|---|
-| Right, Left, Space, Page Up, Page Down | Next and previous slide |
-| Home, End | First and last slide |
+| Down, Right, Space, Page Down, mouse wheel | Next section |
+| Up, Left, Shift+Space, Page Up | Previous section |
+| Home, End | First and last section |
 | T | Start the demo timer. Press T again to restart it |
 | Shift+T | Stop and hide the timer |
 | N | Presenter notes |
@@ -17,7 +18,7 @@ Live: https://mohadeseh1998.github.io/mazdak-pool-deck/
 | S | Source register for every price |
 | Escape | Close notes, sources or the image viewer |
 
-Deep links: `#/1` to `#/8`. Click the jar test photo on slide 5 to open it full size.
+Deep links: `#/1` to `#/10`. Move the mouse to show the pager at the bottom. Click the jar test photo in section 6 to open it full size.
 
 On the day: open the link, press N, stir soil into both beakers, add the drops to beaker B, press T, and begin.
 

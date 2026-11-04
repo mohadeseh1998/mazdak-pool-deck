@@ -1,338 +1,303 @@
-/* Per-slide layout on the 1600 by 900 stage. 96px margin, 72px gutter. */
-
-/* Display numerals everywhere: tabular, lining. */
-.t-figure,
-.timer__figure,
-.budget__amount,
-.prices__value,
-.live__num {
-  font-variant-numeric: tabular-nums lining-nums;
-}
+/* Section layouts on the 1600 by 900 canvas, and the motion. */
 
 /* ================================================================ */
-/* 1. Title                                                         */
+/* 1. Hero                                                          */
 /* ================================================================ */
 
-.slide--1 .slide__body {
-  inset: 0;
-  padding: 0;
+.hero {
+  padding-top: 92px;
 }
 
-/* The bottles take the right 46 percent, full height, so the rail stops short. */
-.slide--1 .rail {
-  right: calc(736px + 64px);
+.hero__logo {
+  line-height: 0;
 }
 
-.title {
-  position: absolute;
-  inset: 0;
+.hero__logo .logo-text {
+  font-size: 32px;
 }
 
-.title__text {
-  position: absolute;
-  top: 0;
-  left: var(--margin);
-  bottom: var(--rail-h);
-  width: calc(864px - var(--margin) - 64px);
-  display: flex;
-  flex-direction: column;
-  padding: 72px 0 40px;
+.t-hero {
+  margin-top: 28px;
+  font-size: 88px;
 }
 
-.title--solo .title__text {
-  width: calc(1600px - 2 * var(--margin));
+.hero--solo .t-hero {
+  margin-top: 120px;
+  font-size: 120px;
 }
 
-.title__logo {
-  align-self: flex-start;
-}
-
-.title__main {
-  margin-top: auto;
-  margin-bottom: auto;
-  padding: 40px 0;
-}
-
-.title--solo .t-deck-headline {
-  font-size: 112px;
-}
-
-.title__sub {
-  margin-top: 32px;
-  max-width: 30ch;
-  font-size: 26px;
-  line-height: 1.5;
-  letter-spacing: -0.004em;
+.hero__sub {
+  margin-top: 18px;
+  font-size: 28px;
+  line-height: 1.35;
+  font-weight: 500;
+  letter-spacing: -0.015em;
   color: var(--paper);
 }
 
-.title__identity {
-  margin-top: 24px;
-  max-width: 62ch;
+.hero__identity {
+  margin-top: 10px;
   font-size: 16px;
-  line-height: 1.45;
+  line-height: 1.4;
   color: var(--slate-on-deep);
 }
 
-.title__honesty {
-  padding-left: 20px;
-  border-left: 3px solid var(--caution);
-  font-size: 20px;
-  line-height: 1.5;
-  color: var(--paper);
-  max-width: 56ch;
+/* The product floats on the page, lit from below by a pool of blue. */
+.hero__product {
+  position: absolute;
+  left: 50%;
+  bottom: 84px;
+  width: 372px;
+  height: 372px;
+  transform: translateX(-50%);
 }
 
-.title__hint {
+.hero__product::before {
+  content: "";
   position: absolute;
+  left: -260px;
+  right: -260px;
+  bottom: -40px;
+  height: 260px;
+  background: radial-gradient(closest-side, rgb(95 168 224 / 0.2), transparent);
+  pointer-events: none;
+}
+
+.hero__product .zoom {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__product img {
+  object-fit: contain;
+  filter: drop-shadow(0 30px 40px rgb(0 0 0 / 0.45));
+}
+
+/* Without the cut-out, the studio photo sits in a rounded tile. */
+.hero__product:not(.is-floating) .zoom {
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.hero__product:not(.is-floating) img {
+  filter: none;
+}
+
+/* The honesty line: a frosted pill over the product's base. */
+.hero__honesty {
+  position: absolute;
+  left: 0;
   right: 0;
-  bottom: 12px;
+  bottom: 26px;
+  z-index: 2;
+  width: fit-content;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 14px 28px 15px;
+  border-radius: var(--radius-pill);
+  background: var(--glass-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--card-line);
+  font-size: 17px;
+  line-height: 1.45;
+  text-align: center;
+  color: var(--paper);
+  box-shadow: inset 0 0 0 1px rgb(232 195 58 / 0.55);
+}
+
+.hero__hint {
+  position: absolute;
+  right: var(--margin);
+  top: 100px;
   font-size: 15px;
   line-height: 1;
   color: var(--slate-on-deep);
-}
-
-.title__photo {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 736px;
-  height: 900px;
-  background: var(--bottles-ground);
-}
-
-.title__photo img {
-  object-fit: cover;
 }
 
 /* ================================================================ */
 /* 2. Problem                                                       */
 /* ================================================================ */
 
-.problem__band {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 12px;
-  height: 900px;
-  background: var(--silt);
-}
-
-.problem {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.problem__lead {
-  margin-top: 32px;
-}
-
-.problem__blocks {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--gutter);
+.problem .cards {
   margin-top: 56px;
-  max-width: 1240px;
-}
-
-.problem__heading {
-  margin-bottom: 8px;
-  font-size: 20px;
-  line-height: 1.4;
-  font-weight: 600;
-}
-
-.problem__foot {
-  margin-top: auto;
 }
 
 .problem__focus {
-  max-width: 62ch;
-  padding-top: 20px;
-  border-top: 1px solid var(--pool);
-  font-size: 20px;
-  line-height: 1.55;
+  margin-top: 52px;
+  max-width: 980px;
+  font-size: 26px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--paper);
+  text-wrap: balance;
 }
 
 .problem__who {
-  margin-top: 20px;
+  margin-top: 18px;
   font-size: 16px;
   line-height: 1.45;
-  color: var(--fg-muted);
+  color: var(--slate-on-deep);
 }
 
 /* ================================================================ */
 /* 3. Our answer                                                    */
 /* ================================================================ */
 
-.answer {
-  display: flex;
-  flex-direction: column;
+.answer__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px minmax(0, 1fr);
+  gap: var(--gutter);
+  align-items: center;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.answer--solo .answer__stage {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 1280px;
+}
+
+.answer__product {
+  position: relative;
+  height: 460px;
+}
+
+.answer__product .zoom {
+  width: 100%;
   height: 100%;
 }
 
-.answer__cols {
-  display: grid;
-  grid-template-columns: 488px 372px minmax(0, 1fr);
-  column-gap: 64px;
-  align-items: start;
-  margin-top: 48px;
+.answer__product img {
+  object-fit: contain;
+  filter: drop-shadow(0 26px 34px rgb(0 0 0 / 0.45));
 }
 
-.answer--solo .answer__cols {
-  grid-template-columns: 640px minmax(0, 1fr);
-  column-gap: 120px;
-}
-
-.answer__product + .answer__product {
-  margin-top: 32px;
-}
-
-.answer__name {
-  margin-bottom: 6px;
-  font-size: 24px;
-  line-height: 1.3;
-  font-weight: 600;
-}
-
-.answer__name--pool {
-  color: var(--pool);
-}
-
-.answer__name--algae {
-  color: var(--algae);
+.answer__product:not(.is-floating) .zoom {
+  border-radius: var(--radius-card);
+  overflow: hidden;
 }
 
 .answer__one {
-  margin-top: 28px;
-  font-size: 16px;
-  line-height: 1.45;
-  color: var(--slate);
-}
-
-.answer__photo {
-  width: 372px;
-  height: 420px;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--bottles-ground);
-}
-
-.answer__photo img {
-  object-fit: contain;
-}
-
-.answer__foot {
   margin-top: auto;
-  max-width: 100%;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
 }
 
-/* Price strip (brief Section 7.3) */
-.prices__heading {
-  margin-bottom: 20px;
-  font-size: 16px;
-  line-height: 1.35;
+/* ================================================================ */
+/* 4. Price                                                         */
+/* ================================================================ */
+
+.price__label {
+  font-size: 30px;
+  line-height: 1.2;
   font-weight: 600;
-  letter-spacing: 0.005em;
+  letter-spacing: -0.02em;
+}
+
+.price__qualifier {
+  font-weight: 400;
+  color: var(--slate-on-deep);
+}
+
+.price__figure {
+  margin-top: 6px;
+  font-size: 168px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  color: var(--pool-on-deep);
+}
+
+.price__figure .claim__text {
+  text-underline-offset: 16px;
+  text-decoration-thickness: 3px;
+}
+
+.price__figure .claim__tag {
+  font-size: 18px;
+  letter-spacing: 0;
+  vertical-align: 1.4em;
+}
+
+.price__card {
+  max-width: 1120px;
+  margin-top: 40px;
+  padding: 18px 44px;
+}
+
+.prices__row {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr) 240px;
+  align-items: center;
+  gap: 32px;
+  min-height: 66px;
+  font-size: 20px;
+  color: var(--slate-on-deep);
 }
 
 .prices__row + .prices__row {
-  margin-top: 18px;
-}
-
-.prices__row--ours:first-of-type,
-.prices__row:not(.prices__row--ours) + .prices__row--ours {
-  margin-top: 28px;
-  padding-top: 22px;
   border-top: 1px solid var(--rule);
 }
 
-.prices__text {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  font-size: 18px;
-  line-height: 1.3;
-  color: var(--slate);
-}
-
-.prices__label {
-  display: flex;
-  flex-direction: column;
-}
-
 .prices__qualifier {
-  font-size: 15px;
-  font-weight: 400;
+  font-size: 16px;
 }
 
 .prices__value {
-  white-space: nowrap;
   text-align: right;
+  white-space: nowrap;
+  color: var(--paper);
 }
 
-.prices__row--ours .prices__text {
-  color: var(--pool);
-  font-weight: 600;
-}
-
-/* Plex, not Fraunces, at this size: Fraunces' display 3 reads as a 5 from the back of the room. */
+.prices__row--ours .prices__label,
 .prices__row--ours .prices__value {
-  font-size: 24px;
   font-weight: 600;
+  color: var(--pool-on-deep);
 }
 
 .prices__track {
   position: relative;
-  height: 6px;
-  margin-top: 8px;
-  background: rgb(15 29 38 / 0.06);
+  height: 8px;
+  border-radius: 4px;
+  background: rgb(248 250 251 / 0.08);
 }
 
 .prices__bar {
   position: absolute;
-  top: 1px;
-  height: 4px;
-  background: rgb(168 139 94 / 0.7);
+  top: 0;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--silt);
 }
 
 .prices__row--ours .prices__bar {
-  top: 0;
-  height: 6px;
-  background: var(--pool);
+  background: var(--pool-on-deep);
+}
+
+.price__foot {
+  margin-top: auto;
+  max-width: 1120px;
 }
 
 /* ================================================================ */
-/* 4. Ali's video                                                   */
+/* 5. Ali's video                                                   */
 /* ================================================================ */
 
-.slide--4 .slide__body {
-  padding-top: 56px;
-}
-
-.vid {
-  width: 1120px;
-  margin: 0 auto;
-}
-
-.vid__headline {
-  margin-bottom: 24px;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
-  font-size: 40px;
-  line-height: 1.1;
-  letter-spacing: -0.015em;
+.vid__wrap {
+  margin-top: 30px;
 }
 
 .video__frame {
   position: relative;
-  width: 1120px;
-  height: 630px;
+  width: 1000px;
+  height: 562px;
   overflow: hidden;
-  border-radius: var(--radius);
+  border-radius: var(--radius-card);
   background: #000;
 }
 
@@ -355,9 +320,8 @@
   object-fit: cover;
 }
 
-/* The bottles fallback poster sits whole on its own studio ground. */
 .video__poster--bottles {
-  background: var(--bottles-ground);
+  background: #22394a;
 }
 
 .video__poster--bottles .video__poster-img {
@@ -374,21 +338,23 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 112px;
-  height: 112px;
+  width: 104px;
+  height: 104px;
   display: grid;
   place-items: center;
   padding: 0 0 0 8px;
   border: 0;
   border-radius: 50%;
-  background: var(--pool);
-  color: var(--paper);
+  background: rgb(248 250 251 / 0.9);
+  color: var(--deep);
   transform: translate(-50%, -50%);
   cursor: pointer;
+  backdrop-filter: var(--glass-blur);
+  transition: transform 400ms var(--ease-out);
 }
 
 .video__play:hover {
-  background: #185d94;
+  transform: translate(-50%, -50%) scale(1.07);
 }
 
 .video__play path {
@@ -405,8 +371,8 @@
   top: 50%;
   transform: translate(-50%, -50%);
   padding: 24px 32px;
-  border-radius: var(--radius);
-  background: var(--deep);
+  border-radius: 20px;
+  background: var(--glass-strong);
   text-align: center;
   font-size: 22px;
   line-height: 1.5;
@@ -418,11 +384,11 @@
 
 .video__hint {
   position: absolute;
-  left: 16px;
-  bottom: 16px;
-  padding: 8px 12px;
-  border-radius: var(--radius);
-  background: var(--deep);
+  left: 20px;
+  bottom: 20px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--glass-strong);
   font-size: 15px;
   line-height: 1.3;
 }
@@ -440,45 +406,40 @@
 }
 
 /* ================================================================ */
-/* 5. Live test, the signature slide                                */
+/* 6. Live test, the signature section                              */
 /* ================================================================ */
 
-.live {
+.live__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 400px;
-  column-gap: var(--gutter);
-  height: 100%;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 72px;
+  width: 100%;
+  margin-top: 34px;
+  text-align: left;
 }
 
-.live--solo {
+.live--solo .live__grid {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.live__main {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
 .timer {
-  margin-top: 40px;
   text-align: center;
 }
 
 .timer__figure {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
-  font-size: 168px;
+  font-size: 176px;
   line-height: 1;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
   color: var(--pool-on-deep);
 }
 
 /* With no T pressed, the same slot reads "about 5 minutes", sized to fit. */
 .timer__figure--words {
   font-size: 104px;
-  line-height: 1.6154; /* keeps the 168px slot height */
+  line-height: 1.6923;
+  letter-spacing: -0.04em;
 }
 
 .timer__print {
@@ -486,523 +447,13 @@
 }
 
 .timer__caption {
-  margin-top: 16px;
+  margin-top: 10px;
   font-size: 26px;
-  line-height: 1.5;
-  color: var(--paper);
-}
-
-.live__beakers {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 48px;
-  margin-top: 48px;
-}
-
-.live__beakers li,
-.checklist li {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  font-size: 20px;
-  line-height: 1.55;
-}
-
-.live__beakers .sq,
-.checklist .sq {
-  transform: translateY(-1px);
-}
-
-.live__steps {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: 40px;
-  margin-top: 48px;
-  padding-top: 28px;
-  border-top: 1px solid var(--rule);
-}
-
-.live__steps li {
-  font-size: 20px;
-  line-height: 1.5;
-}
-
-.live__num {
-  display: block;
-  margin-bottom: 8px;
-  font-family: var(--font-display);
-  font-weight: 600;
-  /* Optical size matched to 34px so the 1 never reads as an l. */
-  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 34;
-  font-size: 34px;
-  line-height: 1;
-  color: var(--pool-on-deep);
-}
-
-.live__unb {
-  margin-top: auto;
-  font-size: 16px;
-  line-height: 1.45;
-  color: var(--slate-on-deep);
-}
-
-.live__photo {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-height: 0;
-}
-
-.live__img {
-  flex: 1 1 auto;
-  min-height: 0;
-  width: 400px;
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.live__img img {
-  object-fit: cover;
-}
-
-.live__photo .t-caption {
-  max-width: 400px;
-}
-
-/* ================================================================ */
-/* 6. Team                                                          */
-/* ================================================================ */
-
-.team {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.team__people {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--gutter);
-  margin-top: 48px;
-  max-width: 1280px;
-}
-
-.person {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-/* Circular crop, 200px, as on the Gate 1 team slide. */
-.person__face {
-  display: grid;
-  place-items: center;
-  width: 200px;
-  height: 200px;
-  overflow: hidden;
-  border-radius: 50%;
-  background: var(--deep);
-  color: var(--paper);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 56px;
-  letter-spacing: -0.02em;
-}
-
-.person__face img {
-  display: block;
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  object-position: center top;
-}
-
-.person__name {
-  font-size: 26px;
-  line-height: 1.25;
-  font-weight: 600;
-}
-
-.person__role {
-  margin-top: 2px;
-  font-size: 18px;
   line-height: 1.4;
-  color: var(--slate);
-}
-
-.person__bio {
-  margin-top: 14px;
-  max-width: 54ch;
-}
-
-.team__shared {
-  margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid var(--rule);
-  font-size: 20px;
-  line-height: 1.55;
-}
-
-/* ================================================================ */
-/* 7. Progress and next steps                                       */
-/* ================================================================ */
-
-.progress-slide__cols {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--gutter);
-  margin-top: 48px;
-}
-
-.progress-slide__heading {
-  margin-bottom: 20px;
-  font-size: 24px;
-  line-height: 1.3;
-  font-weight: 600;
-}
-
-.checklist {
-  display: grid;
-  gap: 10px;
-}
-
-/* ================================================================ */
-/* 8. The ask                                                       */
-/* ================================================================ */
-
-.ask {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.ask__headline span {
-  display: block;
-}
-
-.ask__cols {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  column-gap: 64px;
-  margin-top: 36px;
-}
-
-.budget {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 18px;
-  line-height: 1.4;
-}
-
-.budget__col-line {
-  width: 150px;
-}
-
-.budget__col-amount {
-  width: 128px;
-}
-
-.budget__col-funded {
-  width: 300px;
-}
-
-.budget th,
-.budget td {
-  padding: 8px 16px 8px 0;
-  text-align: left;
-  vertical-align: baseline;
-  font-weight: 400;
-}
-
-.budget thead th {
-  padding-top: 0;
-  font-size: 15px;
   font-weight: 500;
-  color: var(--slate-on-deep);
-  border-bottom: 1px solid var(--rule);
-}
-
-.budget tbody th {
-  font-weight: 600;
-}
-
-.budget tbody tr {
-  border-bottom: 1px solid var(--rule);
-}
-
-.budget .budget__amount {
-  padding-right: 24px;
-  text-align: right;
-  font-family: var(--font-display);
-  font-weight: 600;
-  /* Optical size matched to 24px; the 88 cut is for the 56px ask. */
-  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 24;
-  font-size: 24px;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
-
-.budget thead .budget__amount {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: 0;
-}
-
-/* $60 [assumption]: the tag sits under the figure so amounts stay aligned. */
-.budget .budget__amount .claim {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
-.budget__funded {
-  font-size: 16px;
-  color: var(--slate-on-deep);
-}
-
-.budget__total th,
-.budget__total td {
-  padding-top: 14px;
-  font-weight: 600;
-}
-
-.budget__ask th {
-  padding-top: 14px;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--pool-on-deep);
-  vertical-align: middle;
-}
-
-.budget .budget__ask .budget__amount {
-  padding-top: 10px;
-  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 88;
-  font-size: 56px;
-  line-height: 1;
-  letter-spacing: -0.015em;
-  color: var(--pool-on-deep);
-}
-
-.ask__footnote {
-  margin-top: 14px;
-  max-width: none;
-  color: var(--slate-on-deep);
-}
-
-.ask__run {
-  padding-top: 36px;
-}
-
-.checklist--run {
-  gap: 18px;
-}
-
-.ask__foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--gutter);
-  margin-top: auto;
-}
-
-.ask__other {
-  max-width: none;
-  font-size: 22px;
-  line-height: 1.5;
   color: var(--paper);
 }
 
-.ask__contact {
-  font-size: 15px;
-  color: var(--slate-on-deep);
-  white-space: nowrap;
-}
-
-/* ================================================================ */
-/* Print                                                            */
-/* ================================================================ */
-
-@media print {
-  .title__sub,
-  .title__honesty,
-  .ask__other {
-    color: var(--deep);
-  }
-
-  .title__identity,
-  .live__unb,
-  .budget thead th,
-  .budget__funded,
-  .ask__footnote,
-  .ask__contact,
-  .video__caption {
-    color: var(--slate);
-  }
-
-  .title__hint {
-    display: none;
-  }
-
-  .timer__figure,
-  .timer__caption,
-  .live__num,
-  .budget__ask th,
-  .budget .budget__ask .budget__amount {
-    color: var(--pool);
-  }
-
-  /* The timer prints as "Live demo". */
-  .timer__figure {
-    display: none;
-  }
-
-  .timer__print {
-    display: block;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 104px;
-    line-height: 1.6154;
-    color: var(--pool);
-  }
-
-  /* The video prints as its poster plus the address. */
-  .video__frame {
-    background: var(--bottles-ground);
-  }
-
-  .video__play,
-  .video__hint,
-  .video__iframe {
-    display: none;
-  }
-
-  .video__print-url {
-    display: block;
-    margin-top: 8px;
-    text-align: center;
-    font-size: 20px;
-    color: var(--deep);
-  }
-}
-
-/* Logo fallback on the title slide: the name in the display font. */
-.title__logo.logo-text {
-  font-size: 34px;
-  line-height: 1.1;
-}
-
-/* ================================================================ */
-/* Motion: cloudy to clear                                          */
-/* Each slide arrives in one sequence. Headlines resolve from a soft */
-/* blur into focus, like water clearing; then the supporting lines   */
-/* follow a beat apart. Nothing moves once a slide has settled,      */
-/* except the timer digits. Timing tokens live in tokens.css.        */
-/* ================================================================ */
-
-.slide [data-reveal] {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity var(--reveal-ms) var(--ease-out),
-    transform var(--reveal-ms) var(--ease-out),
-    filter var(--clear-ms) var(--ease-out);
-}
-
-.slide [data-reveal="clear"] {
-  filter: blur(16px);
-  transform: translateY(20px) scale(0.985);
-  transform-origin: left center;
-}
-
-.slide [data-reveal="row"] {
-  transform: translateY(14px);
-}
-
-.slide.is-entered [data-reveal] {
-  opacity: 1;
-  transform: none;
-  filter: none;
-  transition-delay: calc(var(--reveal-delay) + var(--i, 0) * var(--beat));
-}
-
-.slide.is-entered [data-reveal="clear"] {
-  transition-duration: var(--clear-ms);
-}
-
-/* Slide 1: the bottles settle from a slow push-in. */
-.title__photo {
-  overflow: hidden;
-}
-
-.title__photo img {
-  opacity: 0;
-  transform: scale(1.12);
-  transition:
-    opacity 1200ms ease,
-    transform 2800ms var(--ease-out);
-}
-
-.slide.is-entered .title__photo img {
-  opacity: 1;
-  transform: none;
-}
-
-/* Slide 2: the silt band pours in from the top. */
-.problem__band {
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 1800ms var(--ease-out);
-}
-
-.slide.is-entered .problem__band {
-  transform: none;
-}
-
-/* Photographs and the video rise into place, slightly scaled. */
-.answer__photo,
-.live__img,
-.video__frame {
-  opacity: 0;
-  transform: translateY(24px) scale(0.96);
-  transition:
-    opacity 1100ms ease,
-    transform 1600ms var(--ease-out);
-}
-
-.slide.is-entered .answer__photo,
-.slide.is-entered .live__img,
-.slide.is-entered .video__frame {
-  opacity: 1;
-  transform: none;
-  transition-delay: calc(var(--reveal-delay) + 2 * var(--beat));
-}
-
-/* A gentle lift under the pointer on photographs that open full size. */
-.answer__photo img,
-.live__img img {
-  transition: transform 700ms var(--ease-out);
-}
-
-.answer__photo:hover img,
-.live__img:hover img {
-  transform: scale(1.03);
-}
-
-/* Slide 3: each price bar draws itself along the $0 to $70 scale. */
-.prices__bar {
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 1400ms var(--ease-out);
-}
-
-.slide.is-entered .prices__bar {
-  transform: none;
-  transition-delay: calc(var(--reveal-delay) + (var(--i, 0) + 1.5) * var(--beat));
-}
-
-/* Slide 5: a changing digit drops into place, out of a slight blur. */
 .timer__digit,
 .timer__colon {
   display: inline-block;
@@ -1020,53 +471,415 @@
   }
 }
 
+.live__beakers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
+  margin-top: 36px;
+}
+
+.live__beakers li,
+.checklist li {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.live__beakers li {
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--slate-on-deep);
+}
+
+.live__beakers strong {
+  color: var(--paper);
+}
+
+.live__beakers .sq,
+.checklist .sq {
+  transform: translateY(-1px);
+}
+
+.live__steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px;
+  margin-top: 30px;
+  padding-top: 26px;
+  border-top: 1px solid var(--rule);
+}
+
+.live__steps li {
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.live__num {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--pool-on-deep);
+}
+
+.live__photo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.live__img {
+  width: 300px;
+  height: 450px;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.live__img img {
+  object-fit: cover;
+  transition: transform 700ms var(--ease-out);
+}
+
+.live__img:hover img {
+  transform: scale(1.04);
+}
+
+.live__unb {
+  margin-top: auto;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
 /* ================================================================ */
-/* Polish: softer media corners, balanced vertical space            */
+/* 7. Team                                                          */
 /* ================================================================ */
 
-.answer__photo,
-.live__img,
-.video__frame {
-  border-radius: var(--radius-media);
+.team .cards {
+  margin-top: 48px;
+  max-width: 1200px;
 }
 
-/* Content groups sit in the optical middle between headline and rail. */
-.problem__blocks {
-  margin-top: auto;
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 44px 48px;
 }
 
-.problem__foot {
-  margin-top: auto;
+.person__face {
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--deep-lifted);
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--paper);
 }
 
-.answer__cols {
-  margin-top: auto;
+.person__face img {
+  display: block;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.person__name {
+  margin-top: 22px;
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.person__role {
+  margin-top: 4px;
+  font-size: 18px;
+  color: var(--pool-on-deep);
+  font-weight: 500;
+}
+
+.person__bio {
+  margin-top: 16px;
+  font-size: 19px;
+  text-align: center;
+}
+
+.team__shared {
+  margin-top: 44px;
+  font-size: 24px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+/* ================================================================ */
+/* 8. Progress and next steps                                       */
+/* ================================================================ */
+
+.progress-slide .cards {
+  margin-top: 44px;
+  align-items: start;
+}
+
+.progress-slide .card {
+  padding: 36px 40px;
+}
+
+.checklist {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.checklist li {
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+/* ================================================================ */
+/* 9. The ask                                                       */
+/* ================================================================ */
+
+.ask .t-headline {
+  font-size: 64px;
+}
+
+.ask__line {
+  display: block;
+}
+
+.ask__card {
+  margin-top: 34px;
+  max-width: 1240px;
+  padding: 26px 44px 22px;
+}
+
+.budget {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--slate-on-deep);
+}
+
+.budget__col-line {
+  width: 170px;
+}
+
+.budget__col-amount {
+  width: 130px;
+}
+
+.budget__col-funded {
+  width: 330px;
+}
+
+.budget th,
+.budget td {
+  padding: 8px 18px 8px 0;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: 400;
+}
+
+.budget thead th {
+  padding-top: 0;
+  font-size: 15px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--rule);
+}
+
+.budget tbody th {
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.budget tbody tr {
+  border-bottom: 1px solid var(--rule);
+}
+
+.budget .budget__amount {
+  padding-right: 28px;
+  text-align: right;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: var(--paper);
+}
+
+.budget thead .budget__amount {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--slate-on-deep);
+}
+
+/* $60 [assumption]: the tag sits under the figure so amounts stay aligned. */
+.budget .budget__amount .claim {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.budget__funded {
+  font-size: 16px;
+}
+
+.budget__total th,
+.budget__total td {
+  padding-top: 14px;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.budget__ask th {
+  padding-top: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--pool-on-deep);
+  vertical-align: middle;
+}
+
+.budget .budget__ask .budget__amount {
+  padding-top: 6px;
+  font-size: 60px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--pool-on-deep);
+}
+
+.ask__footnote {
+  margin-top: 10px;
+}
+
+/* ================================================================ */
+/* 10. What the run does, and the close                             */
+/* ================================================================ */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 56px;
+  width: 100%;
+  max-width: 1280px;
+  margin-top: 30px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.answer__foot {
+.stat__figure {
+  font-size: 160px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--pool-on-deep);
+}
+
+.stat__text {
+  margin-top: 14px;
+  max-width: 340px;
+  font-size: 21px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.close__asks {
   margin-top: auto;
+  max-width: 1120px;
+  font-size: 44px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
-.team__people {
-  margin-top: auto;
+.close__contact {
+  margin-top: 26px;
+  margin-bottom: 40px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--pool-on-deep);
 }
 
-.progress-slide {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+/* ================================================================ */
+/* Motion: cloudy to clear                                          */
+/* As a section arrives, its headline resolves from a soft blur into */
+/* focus, like water clearing; then the rest follows a beat apart.   */
+/* Once a section has settled nothing moves except the timer digits.*/
+/* ================================================================ */
+
+.slide [data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity var(--reveal-ms) var(--ease-out),
+    transform var(--reveal-ms) var(--ease-out),
+    filter var(--clear-ms) var(--ease-out);
 }
 
-.progress-slide__cols {
-  margin-top: auto;
-  margin-bottom: auto;
+.slide [data-reveal="clear"] {
+  filter: blur(18px);
+  transform: translateY(24px) scale(0.98);
 }
 
-/* Spec-sheet rules above the two problem blocks. */
-.problem__block {
-  padding-top: 20px;
-  border-top: 1px solid var(--rule);
+.slide [data-reveal="row"] {
+  transform: translateY(14px);
+}
+
+.slide.is-entered [data-reveal] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition-delay: calc(var(--reveal-delay) + var(--i, 0) * var(--beat));
+}
+
+.slide.is-entered [data-reveal="clear"] {
+  transition-duration: var(--clear-ms);
+}
+
+/* Price bars draw themselves along the scale. */
+.prices__bar {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1400ms var(--ease-out);
+}
+
+.slide.is-entered .prices__bar {
+  transform: none;
+  transition-delay: calc(var(--reveal-delay) + (var(--i, 0) + 2) * var(--beat));
+}
+
+/* Photographs and the video pop up into place as their section arrives,
+   rising and scaling from slightly small, the way Apple reveals a product. */
+.slide .pop {
+  opacity: 0;
+  transform: translateY(70px) scale(0.88);
+  transition:
+    opacity 1000ms ease,
+    transform 1700ms var(--ease-out);
+}
+
+.slide.is-entered .pop {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--reveal-delay) + 2.5 * var(--beat));
 }
 
 /* ================================================================ */
@@ -1075,16 +888,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .slide [data-reveal],
-  .title__photo img,
-  .problem__band,
-  .answer__photo,
-  .live__img,
-  .video__frame,
+  .slide .pop,
   .prices__bar {
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
     transition: none !important;
+    animation: none !important;
   }
 
   .timer__digit {
@@ -1094,15 +904,96 @@
 
 @media print {
   .slide [data-reveal],
-  .title__photo img,
-  .problem__band,
-  .answer__photo,
-  .live__img,
-  .video__frame,
+  .slide .pop,
   .prices__bar {
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
     transition: none !important;
+    animation: none !important;
+  }
+
+  .hero__honesty,
+  .claim-card {
+    background: #ffffff;
+    color: var(--deep);
+    backdrop-filter: none;
+  }
+
+  .hero__sub,
+  .problem__focus,
+  .team__shared,
+  .close__asks,
+  .budget tbody th,
+  .budget .budget__amount,
+  .budget__total th,
+  .budget__total td,
+  .live__beakers strong,
+  .prices__value,
+  .timer__caption {
+    color: var(--deep);
+  }
+
+  .hero__identity,
+  .problem__who,
+  .answer__one,
+  .card__body,
+  .checklist li,
+  .live__beakers li,
+  .live__steps li,
+  .live__unb,
+  .stat__text,
+  .budget,
+  .budget thead .budget__amount,
+  .prices__row,
+  .price__qualifier,
+  .video__caption {
+    color: var(--slate);
+  }
+
+  .price__figure,
+  .stat__figure,
+  .timer__figure,
+  .live__num,
+  .person__role,
+  .close__contact,
+  .budget__ask th,
+  .budget .budget__ask .budget__amount,
+  .prices__row--ours .prices__label,
+  .prices__row--ours .prices__value,
+  .timer__print {
+    color: var(--pool);
+  }
+
+  .hero__hint {
+    display: none;
+  }
+
+  /* The timer prints as "Live demo". */
+  .timer__figure {
+    display: none;
+  }
+
+  .timer__print {
+    display: block;
+    font-size: 104px;
+    line-height: 1.6923;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+
+  /* The video prints as its poster plus the address. */
+  .video__play,
+  .video__hint,
+  .video__iframe {
+    display: none;
+  }
+
+  .video__print-url {
+    display: block;
+    margin-top: 8px;
+    text-align: center;
+    font-size: 20px;
+    color: var(--deep);
   }
 }

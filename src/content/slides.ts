@@ -1,11 +1,16 @@
 import { ASK_MODE, ask, budgetRows, dollars, runTotal } from "./budget";
-import { priceRows } from "./pricing";
+import { priceHeading, priceRows } from "./pricing";
 import type { ClaimId } from "./claims";
 import { claims } from "./claims";
 
 // All slide copy (brief Section 5), set verbatim. No strings live in JSX.
 // A `{ text, claim }` node is an [assumption]: the Claim component wraps the
 // statement and adds the tag. The literal word in brackets is never printed.
+//
+// Layout: one vertical page of ten full-screen sections, in the manner of an
+// Apple product page. The brief's slides 3 and 8 are each split in two so no
+// screen carries too much. Lines taken off a screen were cut, never reworded,
+// and every one of them is still spoken in the presenter notes.
 
 export type Ground = "deep" | "clear";
 
@@ -18,6 +23,8 @@ export type Note = Rich;
 interface SlideBase {
   n: number;
   title: string;
+  /** The small line above a section headline. */
+  eyebrow?: string;
   ground: Ground;
   notes: readonly Note[];
 }
@@ -30,7 +37,7 @@ export const titleSlide = {
   n: 1,
   title: "Title",
   ground: "deep",
-  headline: "Clear pools, made in New Brunswick.",
+  headline: ["Clear pools,", "made in New Brunswick."],
   sub: "Atlantic Clarifier and Atlantic Anti-Algae, sold together as the Atlantic Pool Pack.",
   identity: "Mazdak Atlantic AgriAqua Inc., Fredericton. Summer Institute Funding Committee, 6 November 2026.",
   honesty:
@@ -51,7 +58,8 @@ export const titleSlide = {
 export const problemSlide = {
   n: 2,
   title: "Problem",
-  ground: "clear",
+  eyebrow: "Problem",
+  ground: "deep",
   headline: "A cloudy pool is a closed pool.",
   lead: "Pool stores sell 20 or more chemicals. Apart from the disinfectant, most pools only need three things: a clarifier, an anti-algae, and a pH adjuster when needed.",
   blocks: [
@@ -64,8 +72,9 @@ export const problemSlide = {
       body: "The usual anti-algae is copper sulfate. It releases a lot of free copper, which can burn plant leaves and can be harmful to swimmers at a high dose.",
     },
   ],
-  focus:
-    "We do not make disinfectants. Those need very large, expensive plants. We focus on the clarifier and the anti-algae: harder chemistry, smaller volume, much lower capital cost.",
+  // The approved focus line, from its second sentence. The first ("We do not
+  // make disinfectants...") is spoken in the notes below.
+  focus: "We focus on the clarifier and the anti-algae: harder chemistry, smaller volume, much lower capital cost.",
   whoBuys: [
     "First customers: ",
     {
@@ -86,7 +95,8 @@ export const problemSlide = {
 export const answerSlide = {
   n: 3,
   title: "Our answer",
-  ground: "clear",
+  eyebrow: "Our answer",
+  ground: "deep",
   headline: "Two bottles that do the work of a shelf.",
   products: [
     {
@@ -111,7 +121,23 @@ export const answerSlide = {
   bottlesAlt:
     "Atlantic Clarifier with a blue cap and Atlantic Anti-Algae with a green cap, two white one-litre bottles with labels in English and French.",
   notes: [
-    "\"Here are our two products. The clarifier makes cloudy water clear, and it launches first. The anti-algae uses chelated copper. If the copper is held too tightly, nothing works. If it is too loose, you get too much free copper. We tuned it to a medium stability. On price: buying a clarifier and an algaecide today costs about 45 to 66 dollars. Our pack will be 39.99, and our clarifier alone 16.99.\"",
+    "\"Here are our two products. The clarifier makes cloudy water clear, and it launches first. The anti-algae uses chelated copper. If the copper is held too tightly, nothing works. If it is too loose, you get too much free copper. We tuned it to a medium stability.\"",
+  ],
+} as const satisfies SlideBase & Record<string, unknown>;
+
+/* ------------------------------------------------------------------ */
+/* 4. Price (the brief's slide 3, right column)                         */
+/* ------------------------------------------------------------------ */
+
+export const priceSlide = {
+  n: 4,
+  title: "Price",
+  eyebrow: priceHeading,
+  ground: "deep",
+  /** The hero figure is this row of pricing.ts. */
+  heroRow: "atlantic-pack",
+  notes: [
+    "\"On price: buying a clarifier and an algaecide today costs about 45 to 66 dollars. Our pack will be 39.99, and our clarifier alone 16.99.\"",
     [
       "If asked about cost: ",
       {
@@ -124,14 +150,15 @@ export const answerSlide = {
 } as const satisfies SlideBase & Record<string, unknown>;
 
 /* ------------------------------------------------------------------ */
-/* 4. Ali's video                                                      */
+/* 5. Ali's video                                                      */
 /* ------------------------------------------------------------------ */
 
 const YOUTUBE_ID = "tuRgEGqjRyk";
 
 export const videoSlide = {
-  n: 4,
+  n: 5,
   title: "Ali's video",
+  eyebrow: "Ali's video",
   ground: "deep",
   headline: "Dr. Ali Kalateh explains both products.",
   video: {
@@ -152,12 +179,13 @@ export const videoSlide = {
 } as const satisfies SlideBase & Record<string, unknown>;
 
 /* ------------------------------------------------------------------ */
-/* 5. Live test                                                        */
+/* 6. Live test                                                        */
 /* ------------------------------------------------------------------ */
 
 export const liveSlide = {
-  n: 5,
+  n: 6,
   title: "Live test",
+  eyebrow: "Live test",
   ground: "deep",
   headline: "Now look at the beakers.",
   timerCaption: "since the clarifier went into beaker B",
@@ -187,13 +215,14 @@ export const liveSlide = {
 } as const satisfies SlideBase & Record<string, unknown>;
 
 /* ------------------------------------------------------------------ */
-/* 6. Team                                                             */
+/* 7. Team                                                             */
 /* ------------------------------------------------------------------ */
 
 export const teamSlide = {
-  n: 6,
+  n: 7,
   title: "Team",
-  ground: "clear",
+  eyebrow: "Team",
+  ground: "deep",
   headline: "Chemistry and customers.",
   people: [
     {
@@ -218,13 +247,14 @@ export const teamSlide = {
 } as const satisfies SlideBase & Record<string, unknown>;
 
 /* ------------------------------------------------------------------ */
-/* 7. Progress and next steps                                          */
+/* 8. Progress and next steps                                          */
 /* ------------------------------------------------------------------ */
 
 export const progressSlide = {
-  n: 7,
+  n: 8,
   title: "Progress and next steps",
-  ground: "clear",
+  eyebrow: "Progress and next steps",
+  ground: "deep",
   headline: "Done, and next.",
   done: {
     heading: "Done",
@@ -255,12 +285,13 @@ export const progressSlide = {
 } as const satisfies SlideBase & Record<string, unknown>;
 
 /* ------------------------------------------------------------------ */
-/* 8. The ask                                                          */
+/* 9. The ask (the brief's slide 8: headline and budget)               */
 /* ------------------------------------------------------------------ */
 
 export const askSlide = {
-  n: 8,
+  n: 9,
   title: "The ask",
+  eyebrow: "The ask",
   ground: "deep",
   // Built from budget.ts so the headline can never disagree with the table.
   // Two sentences, set on two lines: the cost, then the ask.
@@ -278,20 +309,35 @@ export const askSlide = {
     "Prices before HST. We are GST/HST registered and recover it. ",
     { text: "Freight for the drum not included.", claim: "freight" },
   ],
-  runDoes: [
-    "7 sample bottles for local buyers: six pool stores and the City of Fredericton",
-    "10 bottles for tests and live demos",
-    "43 bottles ready to sell as soon as our licences are in place",
+  notes: [
+    // BRIEF-QUESTION: these notes speak the core ask ($500). In full mode the
+    // founder should say "all 800 dollars" instead; the brief gives no script.
+    "\"Our first production run costs 800 dollars. Today we ask for 500, and it goes to the most important part: one drum of our main raw material. We cover the bottles, labels and demo kits ourselves or through the November 19 prototyping fund.\"",
+    "If asked \"what is the raw material?\": \"That is part of our formula, so we keep it private. I am happy to show the receipt to the committee.\"",
   ],
-  runDoesLabel: "What the run does",
+} as const satisfies SlideBase & Record<string, unknown>;
+
+/* ------------------------------------------------------------------ */
+/* 10. What the run does, and the close (the brief's slide 8)          */
+/* ------------------------------------------------------------------ */
+
+export const closeSlide = {
+  n: 10,
+  title: "What the run does",
+  eyebrow: "What the run does",
+  ground: "deep",
+  // Each approved line, with its leading number set large. Read together,
+  // figure and text are the brief's words exactly.
+  runDoes: [
+    { figure: 7, text: "sample bottles for local buyers: six pool stores and the City of Fredericton" },
+    { figure: 10, text: "bottles for tests and live demos" },
+    { figure: 43, text: "bottles ready to sell as soon as our licences are in place" },
+  ],
   otherAsks:
     "One introduction: anyone in Fredericton who buys pool chemicals. And your honest feedback on the pack and the price.",
   contact: "agriaqua.ca",
   notes: [
-    // BRIEF-QUESTION: these notes speak the core ask ($500). In full mode the
-    // founder should say "all 800 dollars" instead; the brief gives no script.
-    "\"Our first production run costs 800 dollars. Today we ask for 500, and it goes to the most important part: one drum of our main raw material. We cover the bottles, labels and demo kits ourselves or through the November 19 prototyping fund. That gives us 60 bottles: samples for seven local buyers, bottles for testing, and our first bottles to sell. We would also love one introduction and your honest feedback. Thank you.\"",
-    "If asked \"what is the raw material?\": \"That is part of our formula, so we keep it private. I am happy to show the receipt to the committee.\"",
+    "\"That gives us 60 bottles: samples for seven local buyers, bottles for testing, and our first bottles to sell. We would also love one introduction and your honest feedback. Thank you.\"",
     "If asked about scale: \"The next size up from our supplier is cheaper per litre, so cost goes down as we grow.\"",
   ],
 } as const satisfies SlideBase & Record<string, unknown>;
@@ -300,11 +346,13 @@ export const slides = [
   titleSlide,
   problemSlide,
   answerSlide,
+  priceSlide,
   videoSlide,
   liveSlide,
   teamSlide,
   progressSlide,
   askSlide,
+  closeSlide,
 ] as const;
 
 export type Slide = (typeof slides)[number];
@@ -325,16 +373,16 @@ export const ui = {
   sourcesHeading: "Source register",
   sourcesHint: "Press S or Escape to close.",
   close: "Close",
-  prev: "Previous slide",
-  next: "Next slide",
+  prev: "Previous section",
+  next: "Next section",
   timerFooter: "Clarifier in:",
   timerLabel: "Time since the clarifier went into beaker B",
   slideOf: (n: number, total: number) => `${n} of ${total}`,
-  goTo: (n: number, title: string) => `Go to slide ${n}, ${title}`,
+  goTo: (n: number, title: string) => `Go to section ${n}, ${title}`,
   openImage: (caption: string) => `Open image full size: ${caption}`,
   auditCount: (onSlide: number, inDeck: number) =>
     `${onSlide} unproven ${onSlide === 1 ? "claim" : "claims"} on this slide, ${inDeck} in the deck.`,
-  announce: (n: number, total: number, title: string) => `Slide ${n} of ${total}, ${title}`,
+  announce: (n: number, total: number, title: string) => `Section ${n} of ${total}, ${title}`,
 };
 
 /* ------------------------------------------------------------------ */
@@ -353,10 +401,10 @@ export function collectClaims(value: unknown, into: Set<ClaimId> = new Set()): S
   return into;
 }
 
-/** Content rendered on a slide from another file (price strip, budget table). */
-const extraContent: Record<number, unknown> = { 3: priceRows, 8: budgetRows };
+/** Content rendered on a section from another file (price strip, budget table). */
+const extraContent: Record<number, unknown> = { 4: priceRows, 9: budgetRows };
 
-/** What the room sees on each slide; the presenter notes are not counted. */
+/** What the room sees on each section; the presenter notes are not counted. */
 export const claimsPerSlide: number[] = slides.map((s) => {
   const { notes: _notes, ...onScreen } = s;
   void _notes;

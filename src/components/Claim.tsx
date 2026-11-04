@@ -22,7 +22,7 @@ interface Props {
  * opens a 320px card saying how the claim gets proven. Audit mode (A) fills it.
  */
 export function Claim({ id, children, after }: Props) {
-  const { stageEl, scale, active } = useDeck();
+  const { scale, active } = useDeck();
   const cardId = useId();
   const tagRef = useRef<HTMLSpanElement>(null);
   const [open, setOpen] = useState(false);
@@ -36,8 +36,8 @@ export function Claim({ id, children, after }: Props) {
 
   useLayoutEffect(() => {
     if (!open) return;
-    const stage = stageEl();
     const tag = tagRef.current;
+    const stage = tag?.closest<HTMLElement>(".canvas, .hud__stage");
     if (!stage || !tag) return;
     const s = stage.getBoundingClientRect();
     const r = tag.getBoundingClientRect();
@@ -48,7 +48,7 @@ export function Claim({ id, children, after }: Props) {
     const below = bottom + 10;
     const above = below + 110 > STAGE_H - FOOTER;
     setPos({ x, y: above ? top - 10 : below, above });
-  }, [open, scale, stageEl]);
+  }, [open, scale]);
 
   useEffect(() => {
     if (!open) return;
@@ -59,7 +59,7 @@ export function Claim({ id, children, after }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const stage = open ? stageEl() : null;
+  const stage = open ? tagRef.current?.closest<HTMLElement>(".canvas, .hud__stage") ?? null : null;
   const card =
     stage && pos
       ? createPortal(

@@ -127,7 +127,7 @@ for (const file of copyFiles) {
 }
 
 // Item 11: only the client's approved images may ship.
-const ALLOWED_ASSETS = new Set(["logo.png", "pool-pack-bottles.png", "jar-test.jpg", "mohadeseh-zamani.jpg", "ali-kalateh.jpg", "pool-video.mp4"]);
+const ALLOWED_ASSETS = new Set(["logo.png", "pool-pack-bottles.png", "pool-pack-bottles-cutout.webp", "jar-test.jpg", "mohadeseh-zamani.jpg", "ali-kalateh.jpg", "pool-video.mp4"]);
 for (const f of files.filter((f) => f.startsWith("assets/") || f.startsWith("public/"))) {
   const name = f.split("/").pop();
   if (BINARY.test(name) && !ALLOWED_ASSETS.has(name.toLowerCase()))
