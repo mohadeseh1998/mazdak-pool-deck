@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run check && tsc -b && vite build",
+    "dev:customer": "node scripts/dev-page.mjs customer",
+    "dev:financials": "node scripts/dev-page.mjs financials",
+    "build": "npm run check && tsc -b && node scripts/build-pages.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "check": "node scripts/check-content.mjs",

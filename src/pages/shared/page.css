@@ -1,0 +1,153 @@
+/* Shared by /customer/ and /financials/, on top of the root deck's tokens.css,
+   app.css and slides.css. Same tokens, same colour meanings: pool blue is us
+   and the one call to action, algae green the anti-algae only, silt the
+   problem, caution yellow unproven. */
+
+/* Tables of figures: large tabular numbers, right aligned. */
+.c-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.c-table th,
+.c-table td {
+  padding: 14px 0;
+  text-align: left;
+  font-weight: 400;
+  vertical-align: baseline;
+}
+
+.c-table .num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.c-table thead th {
+  padding-top: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--slate-on-deep);
+  border-bottom: 1px solid var(--rule);
+}
+
+.c-table tbody tr + tr {
+  border-top: 1px solid var(--rule);
+}
+
+/* A product image that rises slightly into place as its section arrives. */
+.slide .rise {
+  opacity: 0;
+  transform: translateY(48px);
+  transition:
+    opacity 1100ms ease,
+    transform 2000ms var(--ease-out);
+}
+
+.slide.is-entered .rise {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--reveal-delay) + 3 * var(--beat));
+}
+
+/* A small link card: one quiet line with a round pool-blue play mark. */
+.link-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 22px 12px 12px;
+  border: 1px solid var(--card-line);
+  border-radius: var(--radius-pill);
+  background: var(--card);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--paper);
+  cursor: pointer;
+  transition:
+    background-color 300ms ease,
+    transform 400ms var(--ease-out);
+}
+
+.link-card:hover {
+  background: var(--deep-lifted);
+  transform: scale(1.02);
+}
+
+.link-card__play {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding-left: 3px;
+  border-radius: 50%;
+  background: var(--pool);
+}
+
+.link-card__play path {
+  fill: var(--paper);
+}
+
+/* While the video is open the page behind it holds still: no wheel, no
+   arrow-key scrolling. */
+html:has(dialog.video-dialog[open]) {
+  overflow: hidden;
+}
+
+/* The video, in the lightbox. Sized to the window, never scaled. */
+.video-dialog__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+
+.video-dialog .video__frame {
+  width: min(1000px, calc(94vw - 32px), calc((94vh - 150px) * 16 / 9));
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+.video-dialog .video__caption {
+  margin-top: 10px;
+}
+
+.video-dialog__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 4px;
+  font-size: 15px;
+  color: var(--slate-on-deep);
+}
+
+/* A caution rule: the left edge in yellow marks what is not proven. */
+.caution-rule {
+  padding-left: 18px;
+  border-left: 3px solid var(--caution);
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide .rise {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .link-card {
+    transition: none;
+  }
+}
+
+@media print {
+  .slide .rise {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .link-card {
+    display: none;
+  }
+}

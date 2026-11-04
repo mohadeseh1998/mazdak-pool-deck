@@ -1,0 +1,601 @@
+/* /financials/: calmer and cleaner than the Gate 1 financial slide. Fewer
+   rows, more space, large tabular figures. Revenue is pool blue, costs a
+   quieter outline, negative cash silt, the worst case caution yellow. */
+
+.f-sale,
+.f-seasons {
+  padding-top: 104px;
+}
+
+/* Negative money: a minus sign and silt, never red. */
+.is-negative {
+  color: var(--silt) !important;
+}
+
+/* 1. What one sale earns ------------------------------------------- */
+
+.f-honesty {
+  margin-top: 18px;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.f-sale__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 40px;
+  width: 100%;
+  margin-top: 28px;
+  text-align: left;
+  align-items: start;
+}
+
+.f-unit {
+  padding: 26px 36px 20px;
+}
+
+.f-unit__table th,
+.f-unit__table td {
+  padding: 11px 0;
+}
+
+.f-unit__table thead th {
+  padding-bottom: 12px;
+  font-size: 16px;
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.f-unit__table thead th.num {
+  padding-left: 20px;
+  width: 1%;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.f-unit__tag {
+  text-align: left;
+}
+
+.f-unit__table tbody th {
+  font-size: 18px;
+  line-height: 1.35;
+  color: var(--slate-on-deep);
+}
+
+.f-unit__table td {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--paper);
+}
+
+.f-unit__keep th {
+  font-weight: 700 !important;
+  color: var(--paper) !important;
+  font-size: 20px !important;
+}
+
+.f-unit__keep th,
+.f-unit__keep td {
+  padding-top: 18px !important;
+}
+
+.f-unit__figure {
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--pool-on-deep);
+}
+
+.f-unit__pct {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--pool-on-deep);
+}
+
+.f-fixed__heading {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.f-fixed__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.f-cost {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 96px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid var(--card-line);
+}
+
+.f-cost__amount {
+  font-size: 26px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.f-cost__amount .claim__tag {
+  font-size: 12px;
+  vertical-align: 0.4em;
+}
+
+.f-cost__label {
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--slate-on-deep);
+}
+
+.f-fixed__totals {
+  display: grid;
+  gap: 2px;
+  margin-top: 14px;
+}
+
+.f-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 10px 2px;
+  border-top: 1px solid var(--rule);
+  font-variant-numeric: tabular-nums;
+}
+
+.f-total__label {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.f-total__amount {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.f-total--once .f-total__label {
+  font-weight: 400;
+  color: var(--slate-on-deep);
+}
+
+.f-total--once .f-total__amount {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.f-warnings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
+  width: 100%;
+  margin-top: 26px;
+}
+
+.f-warning {
+  font-size: 18px;
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.f-foot {
+  margin-top: 18px;
+  max-width: 1300px;
+  font-size: 14px;
+}
+
+/* 2. Three seasons ------------------------------------------------- */
+
+.f-seasons__grid {
+  display: grid;
+  grid-template-columns: 640px minmax(0, 1fr);
+  gap: 56px;
+  width: 100%;
+  margin-top: 30px;
+  text-align: left;
+}
+
+.f-seasons__left {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The pill: two options and a thumb that slides under the chosen one. */
+.f-toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.f-toggle {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: rgb(42 58 69 / 0.78);
+}
+
+.f-toggle__thumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  transition:
+    transform 600ms var(--ease-out),
+    background-color 400ms ease;
+}
+
+.f-toggle.is-worst .f-toggle__thumb {
+  transform: translateX(100%);
+  background: var(--caution);
+}
+
+.f-toggle__opt {
+  position: relative;
+  z-index: 1;
+  min-width: 112px;
+  height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--slate-on-deep);
+  cursor: pointer;
+  transition: color 400ms ease;
+}
+
+.f-toggle__opt[aria-checked="true"] {
+  color: var(--deep);
+}
+
+.f-toggle__opt--worst[aria-checked="false"] {
+  color: var(--caution);
+}
+
+.f-toggle__key {
+  font-size: 13px;
+  color: var(--slate-on-deep);
+}
+
+/* The hero: the cash we need. Paper in Base, caution yellow in Worst. */
+.f-hero {
+  margin-top: 22px;
+}
+
+.f-hero__lead,
+.f-hero__tail {
+  font-size: 21px;
+  line-height: 1.35;
+  font-weight: 500;
+  color: var(--slate-on-deep);
+}
+
+.f-hero__figure {
+  margin: 2px 0 4px;
+  font-size: 96px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper);
+  transition: color 500ms ease;
+}
+
+.f-hero__about {
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.is-worst .f-hero__figure {
+  color: var(--caution);
+}
+
+.f-chart-wrap {
+  margin-top: 18px;
+}
+
+.f-chart {
+  display: block;
+  width: 640px;
+  height: auto;
+  overflow: visible;
+  font-family: var(--font);
+}
+
+.f-chart__tick line {
+  stroke: var(--rule);
+  stroke-width: 1;
+  stroke-dasharray: 2 5;
+}
+
+.f-chart__tick.is-zero line {
+  stroke: rgb(248 250 251 / 0.4);
+  stroke-dasharray: none;
+}
+
+.f-chart__tick text {
+  fill: var(--slate-on-deep);
+  font-size: 13px;
+  text-anchor: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.f-chart__rev {
+  fill: var(--pool-on-deep);
+}
+
+.f-chart__cost {
+  fill: rgb(248 250 251 / 0.04);
+  stroke: var(--slate-on-deep);
+  stroke-width: 1.5;
+}
+
+.f-chart__season {
+  fill: var(--slate-on-deep);
+  font-size: 14px;
+  text-anchor: middle;
+}
+
+.f-chart__cash {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.f-chart__dot {
+  fill: var(--paper);
+  stroke: var(--deep);
+  stroke-width: 3;
+}
+
+.f-chart__dot.is-negative {
+  fill: var(--silt);
+}
+
+.f-legend {
+  display: flex;
+  gap: 26px;
+  margin-top: 10px;
+  padding-left: 64px;
+  font-size: 14px;
+  color: var(--slate-on-deep);
+}
+
+.f-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.f-legend__rev,
+.f-legend__cost {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.f-legend__rev {
+  background: var(--pool-on-deep);
+}
+
+.f-legend__cost {
+  border: 1.5px solid var(--slate-on-deep);
+}
+
+.f-legend__cash {
+  width: 22px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--silt) 50%, var(--paper) 50%);
+}
+
+.f-table-card {
+  padding: 20px 34px 12px;
+}
+
+.f-table th,
+.f-table td {
+  padding: 6px 0;
+}
+
+.f-table thead th {
+  font-size: 16px;
+  font-weight: 600;
+  transition: color 400ms ease;
+}
+
+.is-worst .f-table thead th {
+  color: var(--caution);
+}
+
+.f-table tbody th {
+  font-size: 17px;
+  color: var(--slate-on-deep);
+}
+
+.f-table td {
+  width: 22%;
+  padding-left: 16px;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+}
+
+.f-table tbody tr + tr {
+  border-top: 0;
+}
+
+.f-table tr.has-rule {
+  border-top: 1px solid var(--rule) !important;
+}
+
+.f-table tr.is-strong th {
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.f-table tr.is-strong td {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.f-list {
+  margin-top: 18px;
+}
+
+.f-list__heading {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--slate-on-deep);
+  transition: color 400ms ease;
+}
+
+.is-worst .f-list__heading {
+  color: var(--caution);
+}
+
+.f-list__items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 28px;
+  margin-top: 8px;
+  animation: fade-in 600ms ease;
+}
+
+.f-list__items li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--slate-on-deep);
+}
+
+.f-list__items .sq {
+  transform: translateY(-1px);
+}
+
+.is-worst .f-list__items .sq {
+  border: 0;
+  background: var(--caution);
+}
+
+.f-closing {
+  margin-top: auto;
+  margin-bottom: 4px;
+  max-width: 1408px;
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* 3. Your two questions -------------------------------------------- */
+
+.f-questions__cards {
+  margin-top: 52px;
+  max-width: 1360px;
+  align-items: stretch;
+}
+
+.f-questions .card {
+  padding: 40px 44px;
+}
+
+.f-steps,
+.f-holding {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.f-steps li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: baseline;
+  font-size: 20px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.f-steps__num {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--pool-on-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+.f-holding li {
+  font-size: 20px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.f-holding strong {
+  color: var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .f-toggle__thumb,
+  .f-toggle__opt,
+  .f-hero__figure,
+  .f-table thead th,
+  .f-list__heading {
+    transition: none;
+  }
+
+  .f-list__items {
+    animation: none;
+  }
+}
+
+@media print {
+  .f-unit__table td,
+  .f-unit__keep th,
+  .f-total,
+  .f-warning,
+  .f-closing,
+  .f-hero__figure,
+  .f-table td,
+  .f-table tr.is-strong th,
+  .f-holding strong {
+    color: var(--deep) !important;
+  }
+
+  .f-unit__figure,
+  .f-unit__pct,
+  .f-steps__num {
+    color: var(--pool);
+  }
+
+  .f-chart__rev,
+  .f-legend__rev {
+    fill: var(--pool);
+    background: var(--pool);
+  }
+}

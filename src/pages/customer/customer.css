@@ -1,0 +1,525 @@
+/* /customer/: the pitch for a pool store. Less text than the funding deck,
+   bigger type, one idea per section. */
+
+/* On the live test the timer is the hero, so the top bar's pill steps aside. */
+html[data-section="4"] .topbar .timer-footer {
+  display: none;
+}
+
+/* 1. Opening -------------------------------------------------------- */
+
+.c-hero {
+  padding-top: 92px;
+}
+
+.c-hero__title {
+  margin-top: 30px;
+  font-size: 84px;
+}
+
+.c-hero__sub {
+  margin-top: 22px;
+  color: var(--slate-on-deep);
+}
+
+.c-hero__product {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  width: 430px;
+  height: 430px;
+  transform: translateX(-50%);
+}
+
+.c-hero__product::before {
+  content: "";
+  position: absolute;
+  left: -320px;
+  right: -320px;
+  bottom: -60px;
+  height: 300px;
+  background: radial-gradient(closest-side, rgb(95 168 224 / 0.22), transparent);
+  pointer-events: none;
+}
+
+.c-hero__product .zoom {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.c-hero__product img {
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 30px 40px rgb(0 0 0 / 0.45));
+}
+
+.c-hero__product:not(.is-floating) .zoom {
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+/* 2. Problem -------------------------------------------------------- */
+
+.c-lines {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 56px;
+  width: 100%;
+  max-width: 1340px;
+  margin-top: 96px;
+  text-align: left;
+}
+
+.c-lines li {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  column-gap: 18px;
+  align-items: baseline;
+}
+
+.c-lines .sq {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  transform: translateY(-3px);
+}
+
+.c-lines p {
+  font-size: 24px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.c-lines strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+}
+
+.c-small {
+  margin-top: auto;
+  margin-bottom: 16px;
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+/* 3. Our answer ----------------------------------------------------- */
+
+.c-answer__cards {
+  margin-top: 52px;
+  max-width: 1300px;
+}
+
+.c-product {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 36px;
+  align-items: center;
+  padding: 40px 44px;
+}
+
+.c-product--solo {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.c-product .card__body {
+  font-size: 21px;
+}
+
+/* One bottle from the pack photo: its half of the cut-out. */
+.c-product__bottle {
+  position: relative;
+  width: 132px;
+  height: 320px;
+  overflow: hidden;
+}
+
+.c-product__bottle img {
+  position: absolute;
+  top: 0;
+  height: 320px;
+  width: auto;
+}
+
+.c-product__bottle--left img {
+  left: -4px;
+}
+
+.c-product__bottle--right img {
+  right: -4px;
+}
+
+.c-answer__together {
+  margin-top: 44px;
+  font-size: 26px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.c-answer .link-card {
+  margin-top: 26px;
+}
+
+/* 4. See it work ---------------------------------------------------- */
+
+.c-live .live__grid {
+  margin-top: 44px;
+}
+
+.c-live .live__beakers li {
+  font-size: 22px;
+}
+
+.c-live .live__steps li {
+  font-size: 21px;
+}
+
+/* 5. Who we are ----------------------------------------------------- */
+
+.c-team__local {
+  max-width: 1000px;
+  font-size: 28px;
+  text-wrap: balance;
+}
+
+/* 6. Why it is different: the shelf -------------------------------- */
+
+.c-different__shelf {
+  width: 100%;
+  max-width: 1280px;
+  margin-top: 56px;
+}
+
+.shelf {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.shelf rect {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.shelf__line {
+  stroke: var(--rule);
+  stroke-width: 2;
+}
+
+.shelf__other {
+  stroke: var(--slate-on-deep);
+  opacity: 0.32;
+  transition:
+    opacity 900ms ease,
+    transform 1200ms var(--ease-out);
+}
+
+.slide.is-entered .shelf__other {
+  opacity: 0;
+  transform: translateY(10px);
+  transition-delay: calc(1300ms + var(--k) * 85ms);
+}
+
+.shelf__ours {
+  stroke: var(--paper);
+  opacity: 0.5;
+  transition: opacity 900ms ease;
+}
+
+.shelf__ours rect {
+  stroke-width: 2;
+}
+
+.shelf__ours .shelf__cap {
+  transition: fill 900ms ease;
+}
+
+.slide.is-entered .shelf__ours {
+  opacity: 1;
+  transition-delay: 2900ms;
+}
+
+.slide.is-entered .shelf__ours--pool .shelf__cap {
+  fill: var(--pool-on-deep);
+  stroke: var(--pool-on-deep);
+  transition-delay: 3100ms;
+}
+
+.slide.is-entered .shelf__ours--algae .shelf__cap {
+  fill: var(--algae-on-deep);
+  stroke: var(--algae-on-deep);
+  transition-delay: 3250ms;
+}
+
+.c-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 56px;
+  width: 100%;
+  max-width: 1280px;
+  margin-top: 64px;
+  text-align: left;
+}
+
+.c-columns__word {
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+
+.c-columns__line {
+  margin-top: 16px;
+  font-size: 21px;
+  line-height: 1.5;
+  color: var(--slate-on-deep);
+}
+
+/* 7. Price ---------------------------------------------------------- */
+
+.c-price__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--gutter);
+  width: 100%;
+  max-width: 1380px;
+  margin-top: 72px;
+  align-items: stretch;
+}
+
+.c-price .card {
+  padding: 34px 40px 30px;
+}
+
+.c-price__heading {
+  margin-bottom: 14px;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/* The root deck's price strip, set in a half-width card: label and value on
+   one line, the bar under them. */
+.c-price .prices__row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "label value"
+    "track track";
+  row-gap: 12px;
+  column-gap: 16px;
+  padding: 16px 0;
+  min-height: 0;
+}
+
+.c-price .prices__label {
+  grid-area: label;
+}
+
+.c-price .prices__value {
+  grid-area: value;
+  font-size: 22px;
+}
+
+.c-price .prices__track {
+  grid-area: track;
+}
+
+.c-table th[scope="row"] {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.c-table td {
+  padding-left: 20px;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--paper);
+}
+
+.c-table__keep {
+  color: var(--pool-on-deep) !important;
+}
+
+.c-table__pct {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.c-price__proposal {
+  margin-top: 22px;
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.c-price__foot {
+  margin-top: auto;
+  max-width: 1120px;
+}
+
+/* 8. How we sell ---------------------------------------------------- */
+
+.c-rows {
+  width: 100%;
+  max-width: 1120px;
+  margin-top: 64px;
+  text-align: left;
+}
+
+.c-rows li {
+  display: grid;
+  grid-template-columns: 14px 190px minmax(0, 1fr);
+  gap: 28px;
+  align-items: baseline;
+  padding: 28px 0;
+}
+
+.c-rows li + li {
+  border-top: 1px solid var(--rule);
+}
+
+.c-rows .sq {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  transform: translateY(-2px);
+}
+
+.c-rows__lead {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.c-rows__text {
+  font-size: 26px;
+  line-height: 1.4;
+  color: var(--slate-on-deep);
+}
+
+/* 9. Work with us --------------------------------------------------- */
+
+.c-work__offer {
+  margin-top: 40px;
+  max-width: 1180px;
+  font-size: 40px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.c-work__offer .claim__tag {
+  font-size: 16px;
+}
+
+.c-work__help {
+  margin-top: 64px;
+}
+
+.c-work__heading {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--slate-on-deep);
+}
+
+.c-work__questions {
+  display: flex;
+  gap: 48px;
+  margin-top: 18px;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--paper);
+}
+
+.c-work__contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.c-work__founder {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--slate-on-deep);
+}
+
+/* Reduced motion: the shelf shows its end state at once. */
+@media (prefers-reduced-motion: reduce) {
+  .shelf__other {
+    opacity: 0 !important;
+    transition: none !important;
+  }
+
+  .shelf__ours,
+  .shelf__ours .shelf__cap {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  .shelf__ours--pool .shelf__cap {
+    fill: var(--pool-on-deep);
+  }
+
+  .shelf__ours--algae .shelf__cap {
+    fill: var(--algae-on-deep);
+  }
+}
+
+@media print {
+  .shelf__other {
+    opacity: 0 !important;
+  }
+
+  .shelf__ours {
+    opacity: 1 !important;
+    stroke: var(--deep);
+  }
+
+  .shelf__ours--pool .shelf__cap {
+    fill: var(--pool);
+  }
+
+  .shelf__ours--algae .shelf__cap {
+    fill: var(--algae);
+  }
+
+  .c-lines strong,
+  .c-columns__word,
+  .c-rows__lead,
+  .c-table th[scope="row"],
+  .c-table td,
+  .c-work__offer,
+  .c-work__questions {
+    color: var(--deep);
+  }
+
+  .c-lines p,
+  .c-columns__line,
+  .c-rows__text,
+  .c-small,
+  .c-price__proposal,
+  .c-work__founder {
+    color: var(--slate);
+  }
+
+  .c-table__keep {
+    color: var(--pool) !important;
+  }
+}

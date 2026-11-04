@@ -8,3 +8,6 @@ dist
 banned-words.local.txt
 *build-brief*.md
 *-brief.md
+mazdak-customer-pitch-brief.md
+mazdak-pool-financials-brief.md
+*prompt*.md
