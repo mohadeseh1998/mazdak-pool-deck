@@ -1,4 +1,6 @@
 // Source register (brief Section 13). Shown with key S, never printed on slides.
+// Deck version 2: the shelf prices only. The old budget's supplier, bottle,
+// label and unit-cost entries went with that budget.
 export interface Source {
   text: string;
   url?: string;
@@ -30,20 +32,6 @@ export const sources = {
   "psc-algaefree": {
     text: "Pool Supplies Canada, AlgaeFree Pool Drops 1 L (copper 60 g/L), $36.99 (regular $43.99)",
     url: "https://www.poolsuppliescanada.ca/algaefree-pool-drops-liquid-algaecide-1-l.html",
-  },
-  "raw-drum": {
-    text: "Canadian supplier's current price for one 205 L drum, $540, November 2026. Supplier name and material kept private.",
-  },
-  "uline-bottle": {
-    text: "Uline, natural HDPE cylinder bottle 32 oz with cap, about US$1.03 each in cases of 12",
-    url: "https://www.uline.com/Product/Detail/S-26362/Bottles/Natural-Cylinder-Bottles-32-oz-Standard-Cap",
-  },
-  labels: {
-    text: "Niagara Stands Out, waterproof label roll, 100 labels, $89.99 (regular $107.99)",
-    url: "https://niagarastandsout.ca/products/waterproof-label-rolls-100ct-v2",
-  },
-  "unit-cost": {
-    text: "Founders' estimate, $6 per bottle, 3 November 2026",
   },
 } satisfies Record<string, Source>;
 

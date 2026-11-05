@@ -18,7 +18,7 @@ export function PriceStrip({ exclude }: { exclude?: string }) {
         {rows.map((row, i) => (
           <li
             key={row.id}
-            className={`prices__row${row.ours ? " prices__row--ours" : ""}`}
+            className={`prices__row${row.ours ? " prices__row--ours" : ""}${row.tone === "algae" ? " prices__row--algae" : ""}`}
             data-sources={row.sources.join(" ")}
             {...reveal(3 + i * 0.5)}
           >

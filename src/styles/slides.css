@@ -188,7 +188,75 @@
 }
 
 /* ================================================================ */
-/* 4. Price                                                         */
+/* 5. Iron removal: "One more thing"                                */
+/* Words on the left, the jar test large on the right. Pool blue     */
+/* only; algae green is kept for the anti-algae.                     */
+/* ================================================================ */
+
+.iron {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 500px;
+  gap: 96px;
+  align-items: center;
+  padding-top: 96px;
+  padding-bottom: 56px;
+  text-align: left;
+}
+
+.iron--solo {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.iron__eyebrow {
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--pool-on-deep);
+}
+
+.iron__headline {
+  margin-top: 16px;
+  max-width: 760px;
+}
+
+.iron__body {
+  margin-top: 30px;
+  max-width: 720px;
+  font-size: 26px;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  color: var(--slate-on-deep);
+}
+
+.iron__photo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.iron__img {
+  width: 500px;
+  height: 630px;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--card-line), 0 30px 80px rgb(30 111 176 / 0.18);
+}
+
+.iron__img img {
+  object-fit: cover;
+  transition: transform 700ms var(--ease-out);
+}
+
+.iron__img:hover img {
+  transform: scale(1.04);
+}
+
+/* ================================================================ */
+/* 6. Price                                                         */
 /* ================================================================ */
 
 .price__label {
@@ -204,8 +272,8 @@
 }
 
 .price__figure {
-  margin-top: 6px;
-  font-size: 168px;
+  margin-top: 4px;
+  font-size: 140px;
   line-height: 1;
   font-weight: 700;
   letter-spacing: -0.045em;
@@ -224,10 +292,27 @@
   vertical-align: 1.4em;
 }
 
+/* One calm line under the big price. */
+.price__line {
+  margin-top: 10px;
+  font-size: 30px;
+  line-height: 1.25;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+}
+
 .price__card {
   max-width: 1120px;
-  margin-top: 40px;
-  padding: 18px 44px;
+  margin-top: 30px;
+  padding: 12px 44px;
+}
+
+.price__flexible {
+  margin-top: 18px;
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--paper);
 }
 
 .prices__row {
@@ -235,7 +320,7 @@
   grid-template-columns: 340px minmax(0, 1fr) 240px;
   align-items: center;
   gap: 32px;
-  min-height: 66px;
+  min-height: 56px;
   font-size: 20px;
   color: var(--slate-on-deep);
 }
@@ -279,13 +364,23 @@
   background: var(--pool-on-deep);
 }
 
+/* The anti-algae row in algae green, the only place it appears here. */
+.prices__row--algae .prices__label,
+.prices__row--algae .prices__value {
+  color: var(--algae-on-deep);
+}
+
+.prices__row--algae .prices__bar {
+  background: var(--algae-on-deep);
+}
+
 .price__foot {
-  margin-top: auto;
+  margin-top: 8px;
   max-width: 1120px;
 }
 
 /* ================================================================ */
-/* 5. Ali's video                                                   */
+/* 4. Ali's video                                                   */
 /* ================================================================ */
 
 .vid__wrap {
@@ -406,7 +501,7 @@
 }
 
 /* ================================================================ */
-/* 6. Live test, the signature section                              */
+/* 9. Live test, the close                                          */
 /* ================================================================ */
 
 .live__grid {
@@ -478,8 +573,7 @@
   margin-top: 36px;
 }
 
-.live__beakers li,
-.checklist li {
+.live__beakers li {
   display: flex;
   align-items: baseline;
   gap: 14px;
@@ -495,8 +589,7 @@
   color: var(--paper);
 }
 
-.live__beakers .sq,
-.checklist .sq {
+.live__beakers .sq {
   transform: translateY(-1px);
 }
 
@@ -546,11 +639,39 @@
   transform: scale(1.04);
 }
 
-.live__unb {
-  margin-top: auto;
+/* In the timer's place: one statement, large and pool blue, on two lines. */
+.live__statement {
+  font-size: 76px;
+  line-height: 1.04;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--pool-on-deep);
+}
+
+.live__statement span {
+  display: block;
+}
+
+.live__made {
+  margin-top: 24px;
   font-size: 16px;
   line-height: 1.45;
   color: var(--slate-on-deep);
+}
+
+/* The last section closes the deck: calm, centred. */
+.live__thanks {
+  margin-top: auto;
+  font-size: 26px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--paper);
+}
+
+.live__contact {
+  margin-left: 6px;
+  color: var(--pool-on-deep);
 }
 
 /* ================================================================ */
@@ -558,7 +679,7 @@
 /* ================================================================ */
 
 .team .cards {
-  margin-top: 48px;
+  margin-top: 72px;
   max-width: 1200px;
 }
 
@@ -622,32 +743,7 @@
 }
 
 /* ================================================================ */
-/* 8. Progress and next steps                                       */
-/* ================================================================ */
-
-.progress-slide .cards {
-  margin-top: 44px;
-  align-items: start;
-}
-
-.progress-slide .card {
-  padding: 36px 40px;
-}
-
-.checklist {
-  display: grid;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.checklist li {
-  font-size: 18px;
-  line-height: 1.45;
-  color: var(--slate-on-deep);
-}
-
-/* ================================================================ */
-/* 9. The ask                                                       */
+/* 8. The ask                                                       */
 /* ================================================================ */
 
 .ask .t-headline {
@@ -659,9 +755,21 @@
 }
 
 .ask__card {
-  margin-top: 34px;
+  margin-top: 30px;
   max-width: 1240px;
-  padding: 26px 44px 22px;
+  padding: 24px 44px 18px;
+}
+
+/* What the prototype does: one calm line under the table. */
+.ask__does {
+  margin-top: 24px;
+  max-width: 1080px;
+  font-size: 21px;
+  line-height: 1.45;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+  text-wrap: balance;
 }
 
 .budget {
@@ -681,7 +789,7 @@
 }
 
 .budget__col-funded {
-  width: 330px;
+  width: 190px;
 }
 
 .budget th,
@@ -764,58 +872,20 @@
   margin-top: 10px;
 }
 
-/* ================================================================ */
-/* 10. What the run does, and the close                             */
-/* ================================================================ */
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 56px;
-  width: 100%;
-  max-width: 1280px;
-  margin-top: 30px;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.stat__figure {
-  font-size: 160px;
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  font-variant-numeric: tabular-nums;
-  color: var(--pool-on-deep);
-}
-
-.stat__text {
-  margin-top: 14px;
-  max-width: 340px;
-  font-size: 21px;
-  line-height: 1.45;
-  color: var(--slate-on-deep);
-}
-
-.close__asks {
-  margin-top: auto;
-  max-width: 1120px;
-  font-size: 44px;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
-
-.close__contact {
-  margin-top: 26px;
-  margin-bottom: 40px;
+/* Today's ask now sits inside the table body, between what it buys and what
+   the founders cover. */
+.budget .budget__ask th {
+  padding-top: 12px;
+  padding-bottom: 12px;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--pool-on-deep);
+  vertical-align: middle;
+}
+
+.budget .budget__ask .budget__amount {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 /* ================================================================ */

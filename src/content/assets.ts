@@ -19,6 +19,10 @@ const byName = new Map<string, string>(
 
 const pick = (name: string): string | undefined => byName.get(name.toLowerCase());
 
+/** The photo on the Iron removal section. Swap it here: drop the new file into
+ *  assets/ and change this one name. */
+export const IRON_PHOTO = "iron-removal.jpg";
+
 export const assets = {
   logo: pick("logo.png"),
   bottles: pick("pool-pack-bottles.png"),
@@ -27,6 +31,7 @@ export const assets = {
   jarTest: pick("jar-test.jpg"),
   mohadeseh: pick("mohadeseh-zamani.jpg"),
   ali: pick("ali-kalateh.jpg"),
+  ironRemoval: pick(IRON_PHOTO),
   video: pick("pool-video.mp4"),
 };
 

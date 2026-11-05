@@ -22,22 +22,32 @@ export function useVerticalDeck(count: number, reducedMotion: boolean): [number,
     sections()[parse(window.location.hash, count)]?.scrollIntoView({ behavior: "auto", block: "start" });
   }, [count]);
 
-  // The section at least 55 percent in view becomes current.
+  // The current section is the one filling most of the screen: at least 55
+  // percent of itself, or, for a section taller than the screen (a phone
+  // layout), at least half of the screen.
   useEffect(() => {
     const els = sections();
+    const visible = new Map<Element, number>();
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting && e.intersectionRatio >= 0.55) {
-            const i = els.indexOf(e.target as HTMLElement);
-            if (i >= 0) {
-              setActive(i);
-              if (pending.current === i) pending.current = null;
-            }
+        for (const e of entries) visible.set(e.target, e.isIntersecting ? e.intersectionRect.height : 0);
+        let best = -1;
+        let bestPx = 0;
+        els.forEach((el, i) => {
+          const px = visible.get(el) ?? 0;
+          if (px > bestPx) {
+            best = i;
+            bestPx = px;
           }
-        }
+        });
+        if (best < 0) return;
+        const el = els[best];
+        const filled = bestPx / Math.max(1, el.getBoundingClientRect().height) >= 0.55 || bestPx >= window.innerHeight * 0.5;
+        if (!filled) return;
+        setActive(best);
+        if (pending.current === best) pending.current = null;
       },
-      { threshold: [0.55] },
+      { threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.55, 0.6, 0.7, 0.8, 0.9, 1] },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();

@@ -7,7 +7,10 @@
 //   - a word from banned-words.local.txt (gitignored, never committed) appears,
 //   - a Section 11 item appears (country names, endorsements, testimonials,
 //     market size, sale claims, store names on a slide, unknown images),
-//   - the budget does not add up: run total 800, ask 500 core or 800 full,
+//   - the root deck's ask does not add up: $300 + $150 + $150 + $400 = $1,000
+//     today, plus $1,000 of licences = $2,000 (deck version 2),
+//   - a root deck price differs from version 2 ($25.00, $30.00, $49.99, and
+//     the three shelf rows unchanged), or a line version 2 removed comes back,
 //   - the pool line model (src/content/poolModel.ts), recomputed here on its
 //     own, differs from the financials brief's Section 4, or any figure or
 //     approved line on /financials/ or the /customer/ price table differs
@@ -141,7 +144,7 @@ for (const file of copyFiles) {
 }
 
 // Item 11: only the client's approved images may ship.
-const ALLOWED_ASSETS = new Set(["logo.png", "pool-pack-bottles.png", "pool-pack-bottles-cutout.webp", "jar-test.jpg", "mohadeseh-zamani.jpg", "ali-kalateh.jpg", "pool-video.mp4"]);
+const ALLOWED_ASSETS = new Set(["logo.png", "pool-pack-bottles.png", "pool-pack-bottles-cutout.webp", "jar-test.jpg", "iron-removal.jpg", "mohadeseh-zamani.jpg", "ali-kalateh.jpg", "pool-video.mp4"]);
 for (const f of files.filter((f) => f.startsWith("assets/") || f.startsWith("public/"))) {
   const name = f.split("/").pop();
   if (BINARY.test(name) && !ALLOWED_ASSETS.has(name.toLowerCase()))
@@ -159,14 +162,30 @@ async function loadTs(path) {
 }
 
 const budget = await loadTs("src/content/budget.ts");
-const total = budget.budgetRows.reduce((sum, row) => sum + row.amount, 0);
-if (total !== 800) problems.push(`src/content/budget.ts: rows add up to $${total}, not $800`);
-if (budget.runTotal !== total) problems.push("src/content/budget.ts: runTotal is not computed from the rows");
-if (budget.askFor("core") !== 500) problems.push(`src/content/budget.ts: core ask is $${budget.askFor("core")}, not $500`);
-if (budget.askFor("full") !== 800) problems.push(`src/content/budget.ts: full ask is $${budget.askFor("full")}, not $800`);
-if (!["core", "full"].includes(budget.ASK_MODE)) problems.push(`src/content/budget.ts: ASK_MODE is "${budget.ASK_MODE}"`);
-if (budget.ask !== budget.askFor(budget.ASK_MODE)) problems.push("src/content/budget.ts: ask does not follow ASK_MODE");
-notes.push(`budget: run $${total}, ask $${budget.ask} (${budget.ASK_MODE} mode)`);
+const BUDGET = [
+  ["raw", 300, "Today's ask"],
+  ["bottles", 150, "Today's ask"],
+  ["labels", 150, "Today's ask"],
+  ["lab", 400, "Today's ask"],
+  ["licences", 1000, "Founders"],
+];
+const rowsById = new Map(budget.budgetRows.map((r) => [r.id, r]));
+if (budget.budgetRows.length !== BUDGET.length) problems.push(`src/content/budget.ts: ${budget.budgetRows.length} rows, not ${BUDGET.length}`);
+for (const [id, amount, funder] of BUDGET) {
+  const r = rowsById.get(id);
+  if (!r) problems.push(`src/content/budget.ts: row "${id}" is missing`);
+  else {
+    if (r.amount !== amount) problems.push(`src/content/budget.ts: ${r.line} is $${r.amount}, not $${amount}`);
+    if (r.fundedBy !== funder) problems.push(`src/content/budget.ts: ${r.line} is funded by "${r.fundedBy}", not "${funder}"`);
+    if (r.claim) problems.push(`src/content/budget.ts: ${r.line} carries an assumption tag; version 2 has none on the ask`);
+  }
+}
+const askSum = budget.budgetRows.filter((r) => r.fundedBy === "Today's ask").reduce((t, r) => t + r.amount, 0);
+const allSum = budget.budgetRows.reduce((t, r) => t + r.amount, 0);
+if (askSum !== 1000 || budget.ask !== askSum) problems.push(`src/content/budget.ts: today's ask is $${budget.ask} (rows $${askSum}), not $1,000`);
+if (allSum !== 2000 || budget.prototypeTotal !== allSum) problems.push(`src/content/budget.ts: the prototype is $${budget.prototypeTotal} (rows $${allSum}), not $2,000`);
+if (budget.dollars(1000) !== "$1,000" || budget.dollars(2000) !== "$2,000") problems.push("src/content/budget.ts: dollars() does not print $1,000 and $2,000");
+notes.push(`budget: ask $${budget.ask}, prototype $${budget.prototypeTotal}`);
 
 /* 6. Prices (Sections 7.3 and 9): every shelf row traced to a source. ---- */
 const pricing = await loadTs("src/content/pricing.ts");
@@ -176,6 +195,54 @@ for (const row of pricing.priceRows) {
   for (const key of row.sources) if (!sourceKeys.has(key)) problems.push(`src/content/pricing.ts: unknown source "${key}"`);
   if (row.max > pricing.PRICE_SCALE_MAX) problems.push(`src/content/pricing.ts: "${row.label}" is off the $0 to $70 scale`);
 }
+// Deck version 2: the exact rows, in order.
+const PRICES = [
+  ["clarifiers", "$17.99 to $21.99", false],
+  ["algaecides", "$26.99 to $43.99", false],
+  ["both", "about $45 to $66", false],
+  ["atlantic-clarifier", "$25.00", true, 25, "pool", "price-clarifier"],
+  ["atlantic-anti-algae", "$30.00", true, 30, "algae", "price-anti-algae"],
+  ["atlantic-pack", "$49.99", true, 49.99, "pool", "price-pack"],
+];
+PRICES.forEach(([id, display, ours, value, tone, claim], i) => {
+  const r = pricing.priceRows[i];
+  if (!r || r.id !== id) return problems.push(`src/content/pricing.ts: row ${i + 1} should be "${id}"`);
+  if (r.display !== display) problems.push(`src/content/pricing.ts: ${r.label} shows "${r.display}", not "${display}"`);
+  if (ours && (r.min !== value || r.max !== value)) problems.push(`src/content/pricing.ts: ${r.label} bar is not at ${display}`);
+  if (ours && r.tone !== tone) problems.push(`src/content/pricing.ts: ${r.label} should be ${tone}`);
+  if (ours && r.claim !== claim) problems.push(`src/content/pricing.ts: ${r.label} must keep its assumption tag`);
+});
+
+/* 6b. The root deck, version 2: what it removed stays removed. ------------- */
+// The deck's own files only. /customer/ and /financials/ keep their briefs.
+const ROOT_DECK = files.filter(
+  (f) =>
+    /^src\/(content\/(slides|claims|pricing|budget|sources|assets)\.ts|slides\/[^/]+\.tsx|App\.tsx|components\/BudgetTable\.tsx)$/.test(f) ||
+    f === "index.html",
+);
+const REMOVED = ["1 min 15 s", "about 5 minutes", "UNB does not test", "50/50", "GST", "bank account", "production run", "$800", "$39.99", "$16.99", "205 L", "7 / 10 / 43", "tuRgEGqjRyk"];
+// One competitor's shelf price in the source register is genuinely $39.99
+// (an algaecide); it backs the algaecide range and is not our old pack price.
+const SHELF_EXCEPTION = "Summer Smiles Alg Out Ultra 60% 1 L, $39.99";
+for (const file of ROOT_DECK) {
+  read(file)
+    .split("\n")
+    .forEach((line, i) => {
+      for (const gone of REMOVED) {
+        if (!line.includes(gone)) continue;
+        if (gone === "$39.99" && file === "src/content/sources.ts" && line.includes(SHELF_EXCEPTION)) continue;
+        problems.push(`${file}:${i + 1}: "${gone}" was removed in deck version 2`);
+      }
+    });
+}
+// The team section names none of these.
+const slidesText = read("src/content/slides.ts");
+const team = slidesText.slice(slidesText.indexOf("export const teamSlide"), slidesText.indexOf("export const askSlide"));
+for (const word of ["GST", "HST", "bank account", "runs the company in Fredericton"])
+  if (team.toLowerCase().includes(word.toLowerCase())) problems.push(`src/content/slides.ts: the team section says "${word}"`);
+if (!slidesText.includes('const YOUTUBE_ID = "rKsXcTqSfsI"')) problems.push("src/content/slides.ts: the video is not rKsXcTqSfsI");
+const sectionCount = (slidesText.match(/^\s+n: \d+,$/gm) || []).length;
+if (sectionCount !== 9) problems.push(`src/content/slides.ts: ${sectionCount} sections, not 9`);
 
 /* 7. The pool line model (financials brief, Sections 3 and 4). ----------- */
 // Recomputed here from the inputs alone, with this script's own arithmetic,

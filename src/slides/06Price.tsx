@@ -1,4 +1,4 @@
-import { priceFootnote, priceRows } from "../content/pricing";
+import { priceFlexible, priceFootnote, priceRows } from "../content/pricing";
 import { priceSlide as c } from "../content/slides";
 import { Claim } from "../components/Claim";
 import { PriceStrip } from "../components/PriceStrip";
@@ -6,8 +6,8 @@ import { reveal } from "../components/reveal";
 import { SlideFrame } from "../components/SlideFrame";
 
 /**
- * One number, set very large, the way Apple lands a price; the comparison
- * that earns it sits underneath in a single card.
+ * One number, set very large, the way Apple lands a price, with one calm line
+ * under it; the comparison that earns it sits underneath in a single card.
  */
 export function PriceSlide({ index }: { index: number }) {
   const hero = priceRows.find((r) => r.id === c.heroRow)!;
@@ -19,10 +19,16 @@ export function PriceSlide({ index }: { index: number }) {
       <p className="price__figure" {...reveal(1.6, "clear")}>
         {hero.claim ? <Claim id={hero.claim}>{hero.display}</Claim> : hero.display}
       </p>
-      <div className="card card--wide price__card" {...reveal(2.6)}>
+      <p className="price__line" {...reveal(2.4)}>
+        {c.heroLine}
+      </p>
+      <div className="card card--wide price__card" {...reveal(3)}>
         <PriceStrip exclude={hero.id} />
       </div>
-      <p className="t-caption price__foot" {...reveal(6)}>
+      <p className="price__flexible" {...reveal(6)}>
+        {priceFlexible}
+      </p>
+      <p className="t-caption price__foot" {...reveal(6.6)}>
         {priceFootnote}
       </p>
     </SlideFrame>

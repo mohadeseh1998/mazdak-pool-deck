@@ -1,15 +1,23 @@
-import { ask, budgetRows, dollars, fundedBy, runTotal } from "../content/budget";
+import { ask, askRows, dollars, founderRows, prototypeTotal, type BudgetRow } from "../content/budget";
 import { askSlide } from "../content/slides";
-import { Claim } from "./Claim";
 import { CountUp } from "./CountUp";
 import { reveal } from "./reveal";
 
 /**
- * Slide 8 (brief Section 7.4). Rows come from budget.ts; the run total is
- * computed from them, never typed. Amounts right-aligned in tabular figures.
+ * The ask (deck version 2). The rows today's ask pays for, then today's ask set
+ * large in pool blue, then what the founders cover, then the whole prototype.
+ * Both totals are computed from the rows in budget.ts, never typed.
  */
 export function BudgetTable() {
   const t = askSlide.table;
+  const row = (r: BudgetRow, beat: number) => (
+    <tr key={r.id} data-source={r.source} {...reveal(beat, "row")}>
+      <th scope="row">{r.line}</th>
+      <td className="budget__buys">{r.buys}</td>
+      <td className="budget__amount">{dollars(r.amount)}</td>
+      <td className="budget__funded">{r.fundedBy}</td>
+    </tr>
+  );
   return (
     <table className="budget">
       <caption className="visually-hidden">{t.caption}</caption>
@@ -30,33 +38,25 @@ export function BudgetTable() {
         </tr>
       </thead>
       <tbody>
-        {budgetRows.map((row, i) => (
-          <tr key={row.id} data-source={row.source} {...reveal(2.5 + i * 0.5, "row")}>
-            <th scope="row">{row.line}</th>
-            <td>{row.buys}</td>
-            <td className="budget__amount">
-              {row.claim ? <Claim id={row.claim}>{dollars(row.amount)}</Claim> : dollars(row.amount)}
-            </td>
-            <td className="budget__funded">{fundedBy(row)}</td>
-          </tr>
-        ))}
-      </tbody>
-      <tfoot>
-        <tr className="budget__total" {...reveal(5, "row")}>
-          <th scope="row" colSpan={2}>
-            {t.totalLabel}
-          </th>
-          <td className="budget__amount">{dollars(runTotal)}</td>
-          <td />
-        </tr>
-        <tr className="budget__ask" {...reveal(5.6, "row")}>
+        {askRows.map((r, i) => row(r, 2.5 + i * 0.5))}
+        <tr className="budget__ask" {...reveal(4.6, "row")}>
           <th scope="row" colSpan={2}>
             {t.askLabel}
           </th>
           <td className="budget__amount">
             <CountUp value={ask} format={dollars} />
           </td>
-          <td />
+          <td className="budget__empty" />
+        </tr>
+        {founderRows.map((r, i) => row(r, 5.2 + i * 0.5))}
+      </tbody>
+      <tfoot>
+        <tr className="budget__total" {...reveal(5.8, "row")}>
+          <th scope="row" colSpan={2}>
+            {t.totalLabel}
+          </th>
+          <td className="budget__amount">{dollars(prototypeTotal)}</td>
+          <td className="budget__empty" />
         </tr>
       </tfoot>
     </table>

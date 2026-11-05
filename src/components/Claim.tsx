@@ -41,12 +41,18 @@ export function Claim({ id, children, after }: Props) {
     if (!stage || !tag) return;
     const s = stage.getBoundingClientRect();
     const r = tag.getBoundingClientRect();
-    const left = (r.left - s.left) / scale;
-    const top = (r.top - s.top) / scale;
-    const bottom = (r.bottom - s.top) / scale;
-    const x = Math.max(EDGE, Math.min(STAGE_W - EDGE - CARD_W, left - 12));
+    // The canvas's real scale: its drawn width over its layout width. On a
+    // scaled 1600 by 900 canvas this equals the deck scale; on a phone, where
+    // the canvas is laid out unscaled, it is 1.
+    const k = stage.offsetWidth ? s.width / stage.offsetWidth : scale;
+    const w = stage.offsetWidth || STAGE_W;
+    const h = stage.offsetHeight || STAGE_H;
+    const left = (r.left - s.left) / k;
+    const top = (r.top - s.top) / k;
+    const bottom = (r.bottom - s.top) / k;
+    const x = Math.max(EDGE, Math.min(w - EDGE - Math.min(CARD_W, w - 2 * EDGE), left - 12));
     const below = bottom + 10;
-    const above = below + 110 > STAGE_H - FOOTER;
+    const above = below + 110 > h - FOOTER;
     setPos({ x, y: above ? top - 10 : below, above });
   }, [open, scale]);
 
@@ -67,9 +73,11 @@ export function Claim({ id, children, after }: Props) {
             id={cardId}
             role="tooltip"
             className={`claim-card${pos.above ? " claim-card--above" : ""}`}
-            style={{ left: pos.x, top: pos.y, width: CARD_W }}
+            style={{ left: pos.x, top: pos.y, width: CARD_W, maxWidth: "calc(100% - 48px)" }}
           >
-            <span className="claim-card__lead">{ui.proofLead}</span> {claims[id].proof}
+            {/* A claim may carry its own complete line, with no lead. */}
+            {!(claims[id] as { ownLead?: boolean }).ownLead && <span className="claim-card__lead">{ui.proofLead} </span>}
+            {claims[id].proof}
           </div>,
           stage,
         )

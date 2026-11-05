@@ -1,30 +1,10 @@
-import { useEffect, useState } from "react";
 import { assets } from "../content/assets";
 import { titleSlide as c } from "../content/slides";
-import { useDeck } from "../components/DeckContext";
 import { ZoomImage } from "../components/Lightbox";
 import { Logo } from "../components/Logo";
 import { reveal } from "../components/reveal";
 import { Plain } from "../components/RichText";
 import { SlideFrame } from "../components/SlideFrame";
-
-const HINT_MS = 6000;
-
-/** The demo hint shows for six seconds after load, then only in presenter mode (N). */
-function DemoHint() {
-  const { notes } = useDeck();
-  const [fresh, setFresh] = useState(true);
-  useEffect(() => {
-    const t = window.setTimeout(() => setFresh(false), HINT_MS);
-    return () => window.clearTimeout(t);
-  }, []);
-  if (!fresh && !notes) return null;
-  return (
-    <p className="hero__hint" role="status">
-      {c.demoHint.before} <kbd className="key">{c.demoHint.key}</kbd> {c.demoHint.after}
-    </p>
-  );
-}
 
 /**
  * The hero, composed like the top of an Apple product page: name, a very large
@@ -60,7 +40,6 @@ export function TitleSlide({ index }: { index: number }) {
       <p className="hero__honesty" {...reveal(6)}>
         <Plain text={c.honesty} />
       </p>
-      <DemoHint />
     </SlideFrame>
   );
 }

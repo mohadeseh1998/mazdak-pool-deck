@@ -1,22 +1,19 @@
 import type { ClaimId } from "./claims";
 import type { SourceKey } from "./sources";
 
-// Slide 8 budget (brief Sections 5 and 7.4), the single source for every figure
-// in the ask. scripts/check-content.mjs fails the build unless the run total
-// computed from these rows is exactly 800, and the ask is exactly 500 in core
-// mode and 800 in full mode.
+// The ask (deck version 2), the single source for every figure on it.
+// scripts/check-content.mjs fails the build unless the rows funded by today's
+// ask add up to exactly $1,000 and all rows to exactly $2,000.
 
-/** Switch the ask here. "full" asks for the whole $800 run. */
-export const ASK_MODE = "core" as "core" | "full";
-
-export const CORE_ASK = 500;
+export const ASK_FUNDER = "Today's ask";
+export const FOUNDERS = "Founders";
 
 export interface BudgetRow {
   id: string;
   line: string;
   buys: string;
   amount: number;
-  /** Who pays in core mode. Full mode reads "Today's ask" on every row. */
+  /** "Today's ask" or "Founders". */
   fundedBy: string;
   claim?: ClaimId;
   source?: SourceKey;
@@ -25,50 +22,52 @@ export interface BudgetRow {
 export const budgetRows: readonly BudgetRow[] = [
   {
     id: "raw",
-    line: "Raw material",
-    buys: "One 205 L drum of our main raw material, at our Canadian supplier's current price",
-    amount: 540,
-    fundedBy: "Today's ask ($500) plus founders ($40)",
-    source: "raw-drum",
+    line: "Raw materials",
+    buys: "About 10 kg for each product, 20 kg in total, shipping included",
+    amount: 300,
+    fundedBy: ASK_FUNDER,
   },
   {
     id: "bottles",
     line: "Bottles",
-    buys: "60 one-litre HDPE bottles with caps",
-    amount: 100,
-    fundedBy: "Nov 19 prototyping fund or founders",
-    source: "uline-bottle",
+    buys: "20 bottles, shipping included",
+    amount: 150,
+    fundedBy: ASK_FUNDER,
   },
   {
     id: "labels",
     line: "Labels",
-    buys: "100 waterproof bilingual labels",
-    amount: 100,
-    fundedBy: "Nov 19 prototyping fund or founders",
-    source: "labels",
+    buys: "20 bilingual labels, shipping included",
+    amount: 150,
+    fundedBy: ASK_FUNDER,
   },
   {
-    id: "demo-kits",
-    line: "Demo kits",
-    buys: "Clear jars, droppers, gloves and goggles for store demos",
-    amount: 60,
-    fundedBy: "Nov 19 prototyping fund or founders",
-    claim: "demo-kits",
+    id: "lab",
+    line: "Lab analyses",
+    buys: "The analyses our licences need",
+    amount: 400,
+    fundedBy: ASK_FUNDER,
+  },
+  {
+    id: "licences",
+    line: "Licences",
+    buys: "Licensing work and fees",
+    amount: 1000,
+    fundedBy: FOUNDERS,
   },
 ];
 
-/** The first production run, always computed from the rows. */
-export const runTotal: number = budgetRows.reduce((sum, row) => sum + row.amount, 0);
+const sum = (rows: readonly BudgetRow[]) => rows.reduce((total, row) => total + row.amount, 0);
 
-export function askFor(mode: "core" | "full"): number {
-  return mode === "core" ? CORE_ASK : runTotal;
-}
+/** The rows today's ask pays for, and those the founders cover. */
+export const askRows = budgetRows.filter((r) => r.fundedBy === ASK_FUNDER);
+export const founderRows = budgetRows.filter((r) => r.fundedBy !== ASK_FUNDER);
 
-export const ask: number = askFor(ASK_MODE);
+/** Today's ask, always computed from its rows. */
+export const ask: number = sum(askRows);
 
-export const fundedByFull = "Today's ask";
+/** The first prototype, always computed from every row. */
+export const prototypeTotal: number = sum(budgetRows);
 
-export const fundedBy = (row: BudgetRow): string => (ASK_MODE === "full" ? fundedByFull : row.fundedBy);
-
-/** Whole dollars, as the slide shows them: $800, $540. */
-export const dollars = (n: number): string => `$${n}`;
+/** Whole dollars with a thousands comma, as the slide shows them: $1,000. */
+export const dollars = (n: number): string => `$${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;

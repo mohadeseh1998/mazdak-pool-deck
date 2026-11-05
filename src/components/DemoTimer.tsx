@@ -31,6 +31,10 @@ function useElapsed(start: number | null): number | null {
   return Math.max(0, Math.floor((now - start) / 1000));
 }
 
+/** The timer's words. A deck without a live timer (the root deck since its
+ *  version 2) leaves them out of its liveSlide; the timer then never shows. */
+const copy = liveSlide as { timerNotStarted?: string; timerPrint?: string; timerCaption?: string };
+
 /**
  * The signature interaction (brief Section 7.1). T starts it, T again restarts
  * it, Shift+T stops and hides it. State lives in memory only. Nothing moves but
@@ -52,7 +56,7 @@ export function DemoTimer({ variant }: { variant: "hero" | "footer" }) {
   return (
     <div className="timer" role="timer" aria-label={ui.timerLabel}>
       {elapsed === null ? (
-        <p className="timer__figure timer__figure--words">{liveSlide.timerNotStarted}</p>
+        <p className="timer__figure timer__figure--words">{copy.timerNotStarted}</p>
       ) : (
         <p className="timer__figure">
           {/* Each digit is keyed by its value, so only a digit that changes
@@ -66,8 +70,8 @@ export function DemoTimer({ variant }: { variant: "hero" | "footer" }) {
             ))}
         </p>
       )}
-      <p className="timer__print">{liveSlide.timerPrint}</p>
-      <p className="timer__caption">{liveSlide.timerCaption}</p>
+      <p className="timer__print">{copy.timerPrint}</p>
+      <p className="timer__caption">{copy.timerCaption}</p>
     </div>
   );
 }

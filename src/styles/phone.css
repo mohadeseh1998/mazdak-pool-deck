@@ -1,0 +1,471 @@
+/* Phone layout for the root deck only (html.root-deck, set in main.tsx).
+   On a laptop or projector every section is a 1600 by 900 canvas scaled to
+   fit. A phone held upright is too narrow for that: the text would shrink to a
+   few pixels. Here each section instead reflows into one readable column at
+   phone sizes. Same words, same order, same colours and motion. */
+
+@media (max-width: 760px) and (orientation: portrait), (max-width: 560px) {
+  /* Sections grow with their content and scroll freely, snapping gently. */
+  html.root-deck {
+    scroll-snap-type: y proximity;
+  }
+
+  .root-deck .slide {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+    scroll-snap-stop: normal;
+  }
+
+  .root-deck .canvas {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    height: auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 84px 20px 56px;
+    transform: none !important;
+  }
+
+  .root-deck .eyebrow {
+    position: static;
+    margin-bottom: 12px;
+    font-size: 17px;
+  }
+
+  .root-deck .frame,
+  .root-deck .hero,
+  .root-deck .iron {
+    position: static;
+    inset: auto;
+    padding: 0;
+  }
+
+  /* The top bar at phone size; the pager, notes and sources are for the
+     presenter's keyboard, so they stay off a phone. */
+  .root-deck .topbar {
+    height: 52px !important;
+  }
+
+  .root-deck .topbar__inner {
+    left: 0;
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    transform: none !important;
+    font-size: 14px;
+  }
+
+  .root-deck .topbar__logo img {
+    width: 104px;
+    height: auto;
+  }
+
+  .root-deck .topbar__title {
+    font-size: 15px;
+  }
+
+  .root-deck .hud {
+    display: none;
+  }
+
+  /* Type */
+  .root-deck .t-hero {
+    margin-top: 22px;
+    font-size: 44px;
+    letter-spacing: -0.035em;
+  }
+
+  .root-deck .t-headline {
+    font-size: 36px;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    max-width: 100%;
+  }
+
+  .root-deck .t-headline--sm,
+  .root-deck .ask .t-headline {
+    font-size: 30px;
+  }
+
+  .root-deck .t-lead {
+    margin-top: 16px;
+    font-size: 18px;
+  }
+
+  .root-deck .t-caption {
+    font-size: 14px;
+  }
+
+  /* Cards stack. */
+  .root-deck .cards--2 {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .root-deck .card {
+    padding: 26px 22px;
+    border-radius: 22px;
+  }
+
+  .root-deck .card--silt::before,
+  .root-deck .card--pool::before,
+  .root-deck .card--algae::before {
+    left: 22px;
+    right: 22px;
+  }
+
+  .root-deck .card__title {
+    font-size: 22px;
+  }
+
+  .root-deck .card__body {
+    font-size: 16px;
+  }
+
+  /* 1. Hero: the product sits in the flow, the honesty line under it. */
+  .root-deck .hero__logo img {
+    width: 180px;
+    height: auto;
+  }
+
+  .root-deck .hero__sub {
+    font-size: 19px;
+  }
+
+  .root-deck .hero__identity {
+    font-size: 14px;
+  }
+
+  .root-deck .hero__product {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: 240px;
+    height: 240px;
+    margin: 26px auto 0;
+    transform: none;
+  }
+
+  .root-deck .hero__product::before {
+    left: -80px;
+    right: -80px;
+  }
+
+  .root-deck .hero__honesty {
+    position: static;
+    width: auto;
+    max-width: none;
+    margin: 22px 0 0;
+    padding: 14px 18px;
+    border-radius: 18px;
+    font-size: 15px;
+    text-align: left;
+  }
+
+  /* 2. Problem */
+  .root-deck .problem .cards {
+    margin-top: 26px;
+  }
+
+  .root-deck .problem__focus {
+    margin-top: 28px;
+    font-size: 19px;
+  }
+
+  .root-deck .problem__who {
+    font-size: 14px;
+  }
+
+  /* 3. Our answer: product first, then the two cards. */
+  .root-deck .answer__stage {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 22px;
+  }
+
+  .root-deck .answer__product {
+    order: -1;
+    height: 260px;
+  }
+
+  .root-deck .answer__one {
+    margin-top: 22px;
+    font-size: 15px;
+  }
+
+  /* 4. Video: full width, 16:9. */
+  .root-deck .vid__wrap {
+    width: 100%;
+    margin-top: 22px;
+  }
+
+  .root-deck .video__frame {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+  }
+
+  .root-deck .video__play {
+    width: 72px;
+    height: 72px;
+  }
+
+  .root-deck .video__unavailable {
+    width: calc(100% - 32px);
+    padding: 16px;
+    font-size: 16px;
+  }
+
+  /* 5. Iron removal: words, then the photo. */
+  .root-deck .iron {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .root-deck .iron__eyebrow {
+    font-size: 17px;
+  }
+
+  .root-deck .iron__headline {
+    margin-top: 10px;
+  }
+
+  .root-deck .iron__body {
+    margin-top: 16px;
+    font-size: 18px;
+  }
+
+  .root-deck .iron__photo {
+    width: 100%;
+  }
+
+  .root-deck .iron__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 608 / 766;
+    border-radius: 22px;
+  }
+
+  /* 6. Price: the figure, then each row as label and price over its bar. */
+  .root-deck .price__label {
+    font-size: 19px;
+  }
+
+  .root-deck .price__figure {
+    font-size: 76px;
+  }
+
+  .root-deck .price__figure .claim__tag {
+    font-size: 13px;
+    vertical-align: 1.8em;
+  }
+
+  .root-deck .price__line {
+    font-size: 20px;
+  }
+
+  .root-deck .price__card {
+    margin-top: 22px;
+    padding: 6px 18px;
+  }
+
+  .root-deck .prices__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "label value"
+      "track track";
+    gap: 8px 12px;
+    min-height: 0;
+    padding: 12px 0;
+    font-size: 15px;
+    text-align: left;
+  }
+
+  .root-deck .prices__label {
+    grid-area: label;
+  }
+
+  .root-deck .prices__value {
+    grid-area: value;
+  }
+
+  .root-deck .prices__track {
+    grid-area: track;
+    height: 6px;
+  }
+
+  .root-deck .prices__bar {
+    height: 6px;
+  }
+
+  .root-deck .price__flexible {
+    font-size: 15px;
+  }
+
+  /* 7. Team */
+  .root-deck .team .cards {
+    margin-top: 26px;
+  }
+
+  .root-deck .person {
+    padding: 28px 22px;
+  }
+
+  .root-deck .person__face,
+  .root-deck .person__face img {
+    width: 112px;
+    height: 112px;
+  }
+
+  .root-deck .person__name {
+    margin-top: 16px;
+    font-size: 23px;
+  }
+
+  .root-deck .person__role {
+    font-size: 16px;
+  }
+
+  .root-deck .person__bio {
+    font-size: 15px;
+  }
+
+  /* 8. The ask: each budget line becomes a small block. */
+  .root-deck .ask__card {
+    margin-top: 22px;
+    padding: 10px 18px;
+  }
+
+  .root-deck .budget thead,
+  .root-deck .budget colgroup,
+  .root-deck .budget__empty {
+    display: none;
+  }
+
+  .root-deck .budget,
+  .root-deck .budget tbody,
+  .root-deck .budget tfoot {
+    display: block;
+  }
+
+  .root-deck .budget tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 12px;
+    padding: 12px 0;
+    text-align: left;
+  }
+
+  .root-deck .budget tr + tr,
+  .root-deck .budget tfoot tr {
+    border-top: 1px solid var(--rule);
+  }
+
+  .root-deck .budget tbody tr {
+    border-bottom: 0;
+  }
+
+  .root-deck .budget th,
+  .root-deck .budget td {
+    padding: 0;
+  }
+
+  .root-deck .budget th {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 16px;
+  }
+
+  .root-deck .budget .budget__amount {
+    grid-column: 2;
+    grid-row: 1;
+    padding: 0;
+    font-size: 18px;
+  }
+
+  .root-deck .budget__buys,
+  .root-deck .budget__funded {
+    grid-column: 1 / -1;
+    margin-top: 4px;
+    font-size: 14px;
+  }
+
+  .root-deck .budget .budget__ask th {
+    font-size: 19px;
+    align-self: center;
+  }
+
+  .root-deck .budget .budget__ask .budget__amount {
+    padding: 0;
+    font-size: 40px;
+  }
+
+  .root-deck .ask__does {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+
+  .root-deck .ask__footnote {
+    font-size: 13px;
+  }
+
+  /* 9. Live test: one column, the photo last. */
+  .root-deck .live__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+    margin-top: 22px;
+  }
+
+  .root-deck .live__statement {
+    font-size: 40px;
+    letter-spacing: -0.035em;
+  }
+
+  .root-deck .live__statement span {
+    text-wrap: balance;
+  }
+
+  .root-deck .live__beakers,
+  .root-deck .live__steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .root-deck .live__beakers {
+    margin-top: 22px;
+  }
+
+  .root-deck .live__beakers li,
+  .root-deck .live__steps li {
+    font-size: 16px;
+  }
+
+  .root-deck .live__num {
+    font-size: 26px;
+  }
+
+  .root-deck .live__img {
+    width: 100%;
+    height: 380px;
+    border-radius: 22px;
+  }
+
+  .root-deck .live__thanks {
+    margin-top: 34px;
+    font-size: 21px;
+  }
+
+  /* On a phone the section just left is still half in view, so it stays at
+     full strength rather than dimming. */
+  .root-deck .slide:not(.is-active) .frame,
+  .root-deck .slide:not(.is-active) .eyebrow {
+    opacity: 1;
+  }
+}

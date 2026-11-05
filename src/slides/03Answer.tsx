@@ -2,7 +2,7 @@ import { assets } from "../content/assets";
 import { answerSlide as c } from "../content/slides";
 import { ZoomImage } from "../components/Lightbox";
 import { reveal } from "../components/reveal";
-import { RichText } from "../components/RichText";
+import { Plain } from "../components/RichText";
 import { SlideFrame } from "../components/SlideFrame";
 
 /** Product on a pedestal between its two descriptions, each in its cap colour. */
@@ -13,7 +13,7 @@ export function AnswerSlide({ index }: { index: number }) {
     <div className={`card card--${p.tone}`} {...reveal(beat)}>
       <h3 className={`card__title tone-${p.tone}`}>{p.heading}</h3>
       <p className="card__body">
-        <RichText value={p.body} />
+        <Plain text={p.body} />
       </p>
     </div>
   );

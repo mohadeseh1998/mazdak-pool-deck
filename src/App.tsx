@@ -12,13 +12,12 @@ import { useVerticalDeck } from "./hooks/useVerticalDeck";
 import { TitleSlide } from "./slides/01Title";
 import { ProblemSlide } from "./slides/02Problem";
 import { AnswerSlide } from "./slides/03Answer";
-import { PriceSlide } from "./slides/04Price";
-import { VideoSlide } from "./slides/05Video";
-import { LiveTestSlide } from "./slides/06LiveTest";
+import { VideoSlide } from "./slides/04Video";
+import { IronSlide } from "./slides/05Iron";
+import { PriceSlide } from "./slides/06Price";
 import { TeamSlide } from "./slides/07Team";
-import { ProgressSlide } from "./slides/08Progress";
-import { AskSlide } from "./slides/09Ask";
-import { CloseSlide } from "./slides/10Close";
+import { AskSlide } from "./slides/08Ask";
+import { LiveSlide } from "./slides/09Live";
 
 const CONTROLS_MS = 2500;
 
@@ -31,9 +30,8 @@ const WHEEL_LOCK_MS = 700;
 const PAGE_KEYS = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End"]);
 
 /**
- * One vertical page of ten full-screen sections. Same keys as the Gate 1 deck:
- * arrows, Space, Page Up and Down, Home, End; A audit, N notes, S sources,
- * T demo timer. Notes, sources and the pager sit in a fixed layer on top.
+ * One vertical page of nine full-screen sections. Same keys as the Gate 1 deck:
+ * arrows, Space, Page Up and Down, Home, End; A audit, N notes, S sources. Notes, sources and the pager sit in a fixed layer on top.
  */
 export function App() {
   const scale = useStageScale();
@@ -43,7 +41,9 @@ export function App() {
   const [audit, setAudit] = useState(false);
   const [notes, setNotes] = useState(false);
   const [sourcesOpen, setSourcesOpen] = useState(false);
-  const [timerStart, setTimerStart] = useState<number | null>(null);
+  // Deck version 2 shows no demo timer, so it never starts. The shared top bar
+  // still reads this, for the pages that do have a timer.
+  const timerStart = null;
   const [lightbox, setLightbox] = useState<LightboxImage | null>(null);
   const [controls, setControls] = useState(false);
   const trigger = useRef<HTMLElement | null>(null);
@@ -88,13 +88,6 @@ export function App() {
         return;
       }
       const onControl = !!target?.closest?.("button, a, [tabindex]");
-
-      // T starts the demo timer, T again restarts it, Shift+T stops and hides it.
-      if (e.code === "KeyT") {
-        e.preventDefault();
-        setTimerStart(e.shiftKey ? null : Date.now());
-        return;
-      }
 
       switch (e.key) {
         case "ArrowRight":
@@ -191,13 +184,12 @@ export function App() {
         <TitleSlide index={0} />
         <ProblemSlide index={1} />
         <AnswerSlide index={2} />
-        <PriceSlide index={3} />
-        <VideoSlide index={4} />
-        <LiveTestSlide index={5} />
+        <VideoSlide index={3} />
+        <IronSlide index={4} />
+        <PriceSlide index={5} />
         <TeamSlide index={6} />
-        <ProgressSlide index={7} />
-        <AskSlide index={8} />
-        <CloseSlide index={9} />
+        <AskSlide index={7} />
+        <LiveSlide index={8} />
       </main>
 
       {/* A fixed layer, scaled like the sections, for what floats above them. */}

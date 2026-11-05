@@ -29,9 +29,6 @@ export function TeamSlide({ index }: { index: number }) {
           );
         })}
       </div>
-      <p className="team__shared" {...reveal(5.5)}>
-        {c.shared}
-      </p>
     </SlideFrame>
   );
 }

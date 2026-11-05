@@ -1,7 +1,6 @@
 import { askSlide as c } from "../content/slides";
 import { BudgetTable } from "../components/BudgetTable";
 import { reveal } from "../components/reveal";
-import { RichText } from "../components/RichText";
 import { SlideFrame } from "../components/SlideFrame";
 
 export function AskSlide({ index }: { index: number }) {
@@ -16,10 +15,13 @@ export function AskSlide({ index }: { index: number }) {
       </h2>
       <div className="card card--wide ask__card" {...reveal(3.5)}>
         <BudgetTable />
-        <p className="t-caption ask__footnote" {...reveal(8.5)}>
-          <RichText value={c.footnote} />
-        </p>
       </div>
+      <p className="ask__does" {...reveal(6.6)}>
+        {c.does}
+      </p>
+      <p className="t-caption ask__footnote" {...reveal(7.2)}>
+        {c.footnote}
+      </p>
     </SlideFrame>
   );
 }
