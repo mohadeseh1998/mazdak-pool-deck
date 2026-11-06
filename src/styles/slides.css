@@ -1000,8 +1000,34 @@
   .budget__total td,
   .live__beakers strong,
   .prices__value,
-  .timer__caption {
+  .timer__caption,
+  .price__line,
+  .price__flexible,
+  .ask__does,
+  .live__thanks {
     color: var(--deep);
+  }
+
+  /* Deck version 2 lines that are pool blue or quiet on screen. */
+  .budget .budget__ask th,
+  .iron__eyebrow,
+  .live__statement,
+  .live__contact {
+    color: var(--pool);
+  }
+
+  .iron__body,
+  .live__made {
+    color: var(--slate);
+  }
+
+  .prices__row--algae .prices__label,
+  .prices__row--algae .prices__value {
+    color: var(--algae);
+  }
+
+  .prices__row--algae .prices__bar {
+    background: var(--algae);
   }
 
   .hero__identity,
