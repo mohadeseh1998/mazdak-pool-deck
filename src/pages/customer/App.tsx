@@ -28,7 +28,7 @@ export function App() {
 
   return (
     <VideoContext.Provider value={openVideo}>
-      <PageShell slides={slides} ui={ui} timer modalOpen={videoOpen}>
+      <PageShell slides={slides} ui={ui} modalOpen={videoOpen}>
         <OpeningSection index={0} />
         <ProblemSection index={1} />
         <AnswerSection index={2} />

@@ -1,30 +1,28 @@
 import { useId } from "react";
 import { money, RESULTS, type SeasonResult } from "../../../content/poolModel";
 import { reveal, RichText, SlideFrame, Square } from "../../shared/kit";
-import { hero, seasonsSlide as c, TABLE_ROWS } from "../content/slides";
-import { useScenario, useTweened } from "../scenario";
-import { ScenarioToggle } from "./Toggle";
+import { seasonsSlide as c, TABLE_ROWS } from "../content/slides";
+import { useTweened } from "../tween";
 
 type Fields = Omit<SeasonResult, "year">;
 const FIELDS = TABLE_ROWS.map((r) => r.key);
+const total = (s: Fields) => s.cogs + s.startupAndRunning + s.pmra;
 
 /* ------------------------------------------------------------------ */
-/* Chart                                                               */
+/* Chart: revenue, total costs and cumulative cash, from the model     */
 /* ------------------------------------------------------------------ */
 
 const W = 640;
-const H = 244;
+const H = 268;
 const PAD = { left: 64, right: 8, top: 10, bottom: 40 };
 const STEP = 20000;
 
-// One scale for both cases, so switching shows the real difference in size.
-const all = [...RESULTS.base, ...RESULTS.worst];
-const Y_MAX = Math.ceil(Math.max(...all.map((r) => Math.max(r.revenue, r.cogs + r.fixedAndPmra))) / STEP) * STEP;
-const Y_MIN = Math.floor(Math.min(0, ...all.map((r) => r.cumulative)) / STEP) * STEP;
-const TICKS = [-50000, 0, 50000, 100000].filter((t) => t >= Y_MIN && t <= Y_MAX);
+const Y_MAX = Math.ceil(Math.max(...RESULTS.map((r) => Math.max(r.revenue, total(r), r.cumulative))) / STEP) * STEP;
+const Y_MIN = Math.floor(Math.min(0, ...RESULTS.map((r) => r.cumulative)) / STEP) * STEP;
+const TICKS = [-50000, 0, 50000, 100000, 150000].filter((t) => t >= Y_MIN && t <= Y_MAX);
 
 const y = (v: number) => PAD.top + ((Y_MAX - v) / (Y_MAX - Y_MIN)) * (H - PAD.top - PAD.bottom);
-const groupW = (W - PAD.left - PAD.right) / 3;
+const groupW = (W - PAD.left - PAD.right) / RESULTS.length;
 const cx = (i: number) => PAD.left + groupW * (i + 0.5);
 const BAR = 46;
 const BAR_GAP = 10;
@@ -34,6 +32,7 @@ const tick = (v: number) => (v === 0 ? "$0" : `${money(v / 1000)}k`);
 function Chart({ seasons }: { seasons: Fields[] }) {
   const gradient = useId();
   const zero = y(0);
+  const split = (zero - PAD.top) / (H - PAD.top - PAD.bottom);
   const points = seasons.map((s, i) => [cx(i), y(s.cumulative)] as const);
   const line = points.map(([px, py], i) => `${i ? "L" : "M"}${px.toFixed(1)},${py.toFixed(1)}`).join(" ");
   return (
@@ -41,8 +40,8 @@ function Chart({ seasons }: { seasons: Fields[] }) {
       <defs>
         {/* The cash line is paper above zero and silt below it. */}
         <linearGradient id={gradient} gradientUnits="userSpaceOnUse" x1="0" y1={PAD.top} x2="0" y2={H - PAD.bottom}>
-          <stop offset={(zero - PAD.top) / (H - PAD.top - PAD.bottom)} stopColor="var(--paper)" />
-          <stop offset={(zero - PAD.top) / (H - PAD.top - PAD.bottom)} stopColor="var(--silt)" />
+          <stop offset={split} stopColor="var(--paper)" />
+          <stop offset={split} stopColor="var(--silt)" />
         </linearGradient>
       </defs>
       {TICKS.map((t) => (
@@ -54,7 +53,7 @@ function Chart({ seasons }: { seasons: Fields[] }) {
         </g>
       ))}
       {seasons.map((s, i) => {
-        const costs = s.cogs + s.fixedAndPmra;
+        const costs = total(s);
         const left = cx(i) - BAR - BAR_GAP / 2;
         return (
           <g key={i}>
@@ -85,33 +84,23 @@ function Chart({ seasons }: { seasons: Fields[] }) {
 /* Section                                                             */
 /* ------------------------------------------------------------------ */
 
-/**
- * The seasons, Base and Worst. Everything on screen is the model's output; the
- * pill (or W) switches the case and every figure travels to its new value.
- */
+/** The three seasons: one big number, the chart, the table, the assumptions. */
 export function SeasonsSection({ index }: { index: number }) {
-  const { scenario } = useScenario();
   return (
-    <SlideFrame slide={c} index={index} className={`f-seasons is-${scenario}`}>
+    <SlideFrame slide={c} index={index} className="f-seasons">
       <SeasonsBody />
     </SlideFrame>
   );
 }
 
-/** Inside the frame, so the tween knows when the section arrives. */
+/** Inside the frame, so the count-up knows when the section arrives. */
 function SeasonsBody() {
-  const { scenario } = useScenario();
-  const results = RESULTS[scenario];
-  const h = hero[scenario];
-
-  // One tween for every figure: 3 seasons by 8 fields, then the hero.
-  const target = [...results.flatMap((r) => FIELDS.map((f) => r[f])), h.figure];
+  const target = [...RESULTS.flatMap((r) => FIELDS.map((f) => r[f])), c.hero.figure];
   const shown = useTweened(target);
-  const seasons: Fields[] = results.map((_, i) =>
-    Object.fromEntries(FIELDS.map((f, j) => [f, shown[i * FIELDS.length + j]])) as unknown as Fields,
+  const seasons: Fields[] = RESULTS.map(
+    (_, i) => Object.fromEntries(FIELDS.map((f, j) => [f, shown[i * FIELDS.length + j]])) as unknown as Fields,
   );
   const heroShown = shown[shown.length - 1];
-  const list = c.lists[scenario];
 
   return (
     <>
@@ -121,24 +110,15 @@ function SeasonsBody() {
 
       <div className="f-seasons__grid">
         <div className="f-seasons__left">
-          <div {...reveal(2)}>
-            <ScenarioToggle />
+          <div className="f-hero" {...reveal(2.2, "clear")}>
+            <p className="f-hero__figure">
+              <span aria-hidden="true">{money(heroShown)}</span>
+              <span className="visually-hidden">{money(c.hero.figure)}</span>
+            </p>
+            <p className="f-hero__lead">{c.hero.label}</p>
+            <p className="f-hero__tail">{c.hero.tail}</p>
           </div>
-          <div className="f-hero" {...reveal(2.6, "clear")}>
-            <p className="f-hero__lead" aria-hidden="true">
-              {h.lead}
-            </p>
-            <p className="f-hero__figure" aria-hidden="true">
-              <span className="f-hero__about">{c.about}</span> {money(heroShown)}
-            </p>
-            <p className="f-hero__tail" aria-hidden="true">
-              {h.tail}
-            </p>
-            <p className="visually-hidden" aria-live="polite">
-              {h.sentence}
-            </p>
-          </div>
-          <div className="f-chart-wrap" {...reveal(3.6)}>
+          <div className="f-chart-wrap" {...reveal(3.4)}>
             <Chart seasons={seasons} />
             <ul className="f-legend">
               <li>
@@ -162,9 +142,7 @@ function SeasonsBody() {
             <table className="c-table f-table">
               <thead>
                 <tr>
-                  <th scope="col">
-                    <span className="visually-hidden">{c.toggle.options.find((o) => o.id === scenario)!.label}</span>
-                  </th>
+                  <th scope="col" />
                   {c.years.map((yr) => (
                     <th key={yr} scope="col" className="num">
                       {yr}
@@ -190,22 +168,14 @@ function SeasonsBody() {
             </table>
           </div>
 
-          <div className="f-list" {...reveal(4.4)}>
-            <h3 className="f-list__heading">{list.heading}</h3>
-            <ul key={scenario} className="f-list__items">
-              {list.items.map((item) => (
-                <li key={item}>
-                  {/* Caution squares for the worst case: it is the unproven case. */}
-                  <Square tone="outline" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <p className="f-assumptions" {...reveal(4.2)}>
+            <Square tone="outline" />
+            <span>{c.assumptions}</span>
+          </p>
         </div>
       </div>
 
-      <p className="f-closing" {...reveal(5.4)}>
+      <p className="f-closing" {...reveal(5.2)}>
         <RichText value={c.closing} />
       </p>
     </>

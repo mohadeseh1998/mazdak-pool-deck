@@ -1,8 +1,17 @@
 import { assets } from "../../../content/assets";
-import { DemoTimer, reveal, SlideFrame, Square, ZoomImage } from "../../shared/kit";
+import { reveal, SlideFrame, Square, ZoomImage } from "../../shared/kit";
 import { liveSlide as c } from "../content/slides";
 
-/** The root deck's live test, with cups: the timer is the hero. */
+/** Splits before the last sentence, keeping every word and space. */
+const splitLast = (text: string): string[] => {
+  const at = text.lastIndexOf(". ", text.length - 2);
+  return at < 0 ? [text] : [text.slice(0, at + 1), text.slice(at + 2)];
+};
+
+/**
+ * The cups on the counter, and one statement in the root deck's large style
+ * (its live test, version 2): "Same water. Same soil." then "One bottle."
+ */
 export function LiveSection({ index }: { index: number }) {
   const photo = assets.jarTest;
   return (
@@ -12,9 +21,11 @@ export function LiveSection({ index }: { index: number }) {
       </h2>
       <div className="live__grid">
         <div className="live__main">
-          <div {...reveal(2.2, "clear")}>
-            <DemoTimer variant="hero" />
-          </div>
+          <p className="live__statement c-live__statement" {...reveal(2.2, "clear")}>
+            {splitLast(c.statement).map((line) => (
+              <span key={line}>{line}</span>
+            ))}
+          </p>
           <ul className="live__beakers">
             {c.cups.map((b, i) => (
               <li key={b.name} {...reveal(4 + i * 0.6)}>

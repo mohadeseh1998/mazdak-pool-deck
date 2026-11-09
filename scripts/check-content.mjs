@@ -12,9 +12,9 @@
 //   - a root deck price differs from version 2 ($25.00, $30.00, $49.99, and
 //     the three shelf rows unchanged), or a line version 2 removed comes back,
 //   - the pool line model (src/content/poolModel.ts), recomputed here on its
-//     own, differs from the financials brief's Section 4, or any figure or
-//     approved line on /financials/ or the /customer/ price table differs
-//     from the briefs,
+//     own, differs from the version 2 season table, or any figure or line on
+//     /financials/ or /customer/ differs from the version 2 changes, or either
+//     page says something version 2 removed,
 //   - a claim on a new page is missing from that page's claims.ts.
 //
 // This script is public, so it holds no sensitive words of its own. Those live
@@ -125,7 +125,7 @@ const stores = [/Amazon Pools/i, /Beaverdam/i, /Capital Pool/i, /Mario's Pool/i,
 // The financials brief's approved copy for the mentor names her introduction.
 // That one line may name the store; nothing else on any page may.
 const STORE_LINES = [
-  ["src/pages/financials/content/slides.ts", "Your introduction to Gabriela at Amazon Pools and Spas: 30 minutes"],
+  ["src/pages/financials/content/slides.ts", "starting with your introduction to Gabriela at Amazon Pools and Spas, and compare"],
 ];
 
 for (const file of copyFiles) {
@@ -244,10 +244,10 @@ if (!slidesText.includes('const YOUTUBE_ID = "rKsXcTqSfsI"')) problems.push("src
 const sectionCount = (slidesText.match(/^\s+n: \d+,$/gm) || []).length;
 if (sectionCount !== 9) problems.push(`src/content/slides.ts: ${sectionCount} sections, not 9`);
 
-/* 7. The pool line model (financials brief, Sections 3 and 4). ----------- */
+/* 7. The pool line model (version 2 changes, Part B). -------------------- */
 // Recomputed here from the inputs alone, with this script's own arithmetic,
-// then compared with the brief's totals, with what poolModel.ts computes, and
-// with every figure the two new pages put on screen.
+// then compared with the version 2 season table, with what poolModel.ts
+// computes, and with every figure /financials/ puts on screen.
 const esbuild = require("esbuild");
 async function loadModule(path) {
   const out = await esbuild.build({ entryPoints: [path], bundle: true, write: false, format: "esm", platform: "node", logLevel: "silent" });
@@ -259,221 +259,305 @@ const model = await loadModule(MODEL);
 const fin = await loadModule("src/pages/financials/content/slides.ts");
 const cust = await loadModule("src/pages/customer/content/slides.ts");
 const custPricing = await loadModule("src/pages/customer/content/pricing.ts");
-
-// Section 4, as the brief states it.
-const BRIEF = {
-  base: {
-    revenue: [6120, 44640, 138600],
-    fixedAndPmra: [16573, 12245, 21786],
-    net: [-14053, 3595, 26814],
-    cumulative: [-14053, -10458, 16356],
-  },
-  worst: {
-    revenue: [1700, 2550, 30800],
-    fixedAndPmra: [12000, 25787, 20102],
-    net: [-11740, -25397, -18102],
-    cumulative: [-11740, -37137, -55239],
-  },
-};
-
-// The Section 2 tables, word for word (the page sets a true minus sign).
-const BRIEF_TABLES = {
-  base: [
-    ["Stores", "3", "6", "15"],
-    ["Clarifier bottles", "600", "1,200", "3,000"],
-    ["Pool Packs", "0", "1,800", "6,000"],
-    ["Revenue", "$6,120", "$44,640", "$138,600"],
-    ["Cost of goods", "$3,600", "$28,800", "$90,000"],
-    ["Fixed costs and PMRA", "$16,573", "$12,245", "$21,786"],
-    ["Net", "-$14,053", "$3,595", "$26,814"],
-    ["Cumulative cash", "-$14,053", "-$10,458", "$16,356"],
-  ],
-  worst: [
-    ["Stores", "2", "3", "8"],
-    ["Clarifier bottles", "200", "300", "800"],
-    ["Pool Packs", "0", "0", "1,600"],
-    ["Revenue", "$1,700", "$2,550", "$30,800"],
-    ["Cost of goods", "$1,440", "$2,160", "$28,800"],
-    ["Fixed costs and PMRA", "$12,000", "$25,787", "$20,102"],
-    ["Net", "-$11,740", "-$25,397", "-$18,102"],
-    ["Cumulative cash", "-$11,740", "-$37,137", "-$55,239"],
-  ],
-};
+const custSources = await loadModule("src/pages/customer/content/sources.ts");
+const custClaims = (await loadModule("src/pages/customer/content/claims.ts")).claims;
+const finSources = await loadModule("src/pages/financials/content/sources.ts");
+const finClaims = (await loadModule("src/pages/financials/content/claims.ts")).claims;
 
 const MINUS_SIGN = String.fromCharCode(0x2212);
 const plain = (s) => String(s).split(MINUS_SIGN).join("-");
 const expect = (where, got, want) => {
-  if (plain(got) !== plain(want)) problems.push(`${where}: shows "${plain(got)}", the brief says "${want}"`);
+  if (plain(got) !== plain(want)) problems.push(`${where}: shows "${plain(got)}", the version 2 file says "${want}"`);
 };
 
-// This script's own arithmetic, in whole cents.
+// The inputs, exactly as the version 2 file sets them.
+const P = model.PACKAGE;
+if (P.retail !== 49.99 || P.storeShare !== 0.25 || P.wholesale !== 37.49 || P.costPerPackage !== 8)
+  problems.push(`${MODEL}: PACKAGE is ${JSON.stringify(P)}, not 49.99 / 0.25 / 37.49 / 8.00`);
+if (model.STARTUP_CASH !== 60000) problems.push(`${MODEL}: STARTUP_CASH is ${model.STARTUP_CASH}, not 60000`);
+const SEASONS_WANT = [
+  [2027, 500, 500, 0],
+  [2028, 2000, 2000, 12000],
+  [2029, 4000, 4000, 20000],
+];
+SEASONS_WANT.forEach(([year, packages, litresEach, runningCosts], i) => {
+  const s = model.SEASONS[i];
+  if (!s || s.year !== year || s.packages !== packages || s.litresEach !== litresEach || s.runningCosts !== runningCosts)
+    problems.push(`${MODEL}: season ${i + 1} is ${JSON.stringify(s)}, not ${year}, ${packages} packages, ${litresEach} L, $${runningCosts}`);
+});
+if (model.SEASONS.length !== 3) problems.push(`${MODEL}: ${model.SEASONS.length} seasons, not 3`);
+if (model.PMRA_ANNUAL.rate !== 0.04 || model.PMRA_ANNUAL.max !== 4509.9) problems.push(`${MODEL}: PMRA annual charge is not 4 percent, up to $4,509.90`);
+
+// The root deck is the source of truth for prices: the package is its pack.
+const rootPack = pricing.priceRows.find((r) => r.id === "atlantic-pack");
+if (!rootPack || rootPack.max !== P.retail) problems.push(`${MODEL}: package retail $${P.retail} differs from the root deck's pack price`);
+
+// Unit math: 49.99 x 0.75 = 37.49; 37.49 - 8.00 = 29.49. At 40%: 29.99 - 8.00 = 21.99.
 const c100 = (d) => Math.round(d * 100);
-function recompute(s) {
+const at = (share) => Math.floor(c100(P.retail) * (1 - share)) / 100;
+if (at(P.storeShare) !== P.wholesale) problems.push(`${MODEL}: 49.99 x 0.75 is ${at(P.storeShare)}, not the wholesale ${P.wholesale}`);
+if ((c100(P.wholesale) - c100(P.costPerPackage)) / 100 !== 29.49) problems.push(`${MODEL}: we keep is not $29.49`);
+if (at(0.4) !== 29.99 || (c100(at(0.4)) - c100(P.costPerPackage)) / 100 !== 21.99) problems.push(`${MODEL}: at 40 percent we do not keep $21.99`);
+if (model.UNIT.pack.weKeep !== 29.49 || model.UNIT.pack.weKeepPct !== 79) problems.push(`${MODEL}: UNIT.pack keeps ${model.UNIT.pack.weKeep} (${model.UNIT.pack.weKeepPct}%)`);
+if (model.UNIT.packAtTest.weKeep !== 21.99) problems.push(`${MODEL}: UNIT.packAtTest keeps ${model.UNIT.packAtTest.weKeep}, not 21.99`);
+
+// This script's own arithmetic, in whole cents.
+function recompute() {
   let prev = 0;
   let cum = 0;
-  return s.seasons.map((x) => {
-    const clar = x.stores * x.clarPerStore;
-    const packs = x.stores * x.packPerStore;
-    const revenue = (clar * c100(s.clarWholesale) + packs * c100(s.packWholesale)) / 100;
-    const cogs = (clar * c100(s.clarCost) + packs * c100(s.packCost)) / 100;
-    const fee = x.year === s.pmraYear ? s.pmraFee : 0;
-    const annual = x.year <= s.pmraYear ? 0 : Math.max(100, Math.min(3600, Math.round(0.04 * prev)));
-    const fixedAndPmra = x.fixed + fee + annual;
-    const net = (c100(revenue) - c100(cogs) - c100(fixedAndPmra)) / 100;
+  return model.SEASONS.map((s, i) => {
+    const revenue = (s.packages * c100(P.wholesale)) / 100;
+    const cogs = (s.packages * c100(P.costPerPackage)) / 100;
+    const startupAndRunning = (i === 0 ? model.STARTUP_CASH : 0) + s.runningCosts;
+    const pmra = Math.min(4509.9, Math.round(0.04 * prev));
+    const net = (c100(revenue) - c100(cogs) - c100(startupAndRunning) - c100(pmra)) / 100;
     cum = (c100(cum) + c100(net)) / 100;
     prev = revenue;
-    return { revenue, fixedAndPmra, net, cumulative: cum };
+    return { revenue, cogs, startupAndRunning, pmra, net, cumulative: cum };
   });
 }
 
-for (const id of ["base", "worst"]) {
-  const mine = recompute(model.SCENARIOS[id]);
-  for (const key of Object.keys(BRIEF[id])) {
-    BRIEF[id][key].forEach((want, i) => {
-      const year = 2027 + i;
-      if (mine[i][key] !== want) problems.push(`${MODEL}: ${id} ${key} ${year} recomputes to ${mine[i][key]}, Section 4 says ${want}`);
-      if (model.RESULTS[id][i][key] !== want)
-        problems.push(`${MODEL}: ${id} ${key} ${year} is ${model.RESULTS[id][i][key]} on screen, Section 4 says ${want}`);
-    });
-  }
-  // Every cell of the table on screen, as the brief prints it.
-  const table = fin.seasonTable(id);
-  BRIEF_TABLES[id].forEach(([label, ...cells], r) => {
-    expect(`financials ${id} table row ${r + 1} label`, table[r]?.label, label);
-    cells.forEach((cell, j) => expect(`financials ${id} table, ${label}, ${2027 + j}`, table[r]?.cells[j], cell));
+// The version 2 season table, as the file states it.
+const WANT = {
+  revenue: [18745, 74980, 149960],
+  cogs: [4000, 16000, 32000],
+  startupAndRunning: [60000, 12000, 20000],
+  pmra: [0, 750, 2999],
+  net: [-45255, 46230, 94961],
+  cumulative: [-45255, 975, 95936],
+};
+const mine = recompute();
+for (const key of Object.keys(WANT)) {
+  WANT[key].forEach((want, i) => {
+    const year = 2027 + i;
+    if (mine[i][key] !== want) problems.push(`${MODEL}: ${key} ${year} recomputes to ${mine[i][key]}, the file says ${want}`);
+    if (model.RESULTS[i][key] !== want) problems.push(`${MODEL}: ${key} ${year} is ${model.RESULTS[i][key]} on screen, the file says ${want}`);
   });
 }
+if (model.PAYBACK_YEAR !== 2028) problems.push(`${MODEL}: profitable and paid back in ${model.PAYBACK_YEAR}, the file says 2028`);
 
-// The price check: at $39.99 (pack wholesale $24.00), pack margin $12.00 (50 percent).
-const check = model.UNIT.packAtCheck;
-if (check.weKeep !== 12 || check.weKeepPct !== 50 || model.PRICE_CHECK.packWholesale !== 24)
-  problems.push(`${MODEL}: price check is $${check.weKeep} (${check.weKeepPct}%), Section 4 says $12.00 (50 percent)`);
-
-// Fixed costs add up to the 2027 input; the PMRA range adds up from its fees.
-const fixedSum = model.FIXED_COSTS_2027.reduce((s, f) => s + f.amount, 0);
-if (fixedSum !== model.SCENARIOS.base.seasons[0].fixed)
-  problems.push(`${MODEL}: fixed cost items add up to $${fixedSum}, not the 2027 input $${model.SCENARIOS.base.seasons[0].fixed}`);
-if (model.PMRA_FEE_RANGE.low !== model.SCENARIOS.base.pmraFee || model.PMRA_FEE_RANGE.high !== model.SCENARIOS.worst.pmraFee)
-  problems.push(`${MODEL}: PMRA fee range does not match the base and worst pmraFee inputs`);
-
-// Every other figure on /financials/, word for word.
-const s1 = fin.saleSlide;
-const unitWant = [
-  ["Suggested retail", "$16.99", "$29.99"],
-  ["Store keeps 40%", "$6.79", "$11.99"],
-  ["We sell to the store at", "$10.20", "$18.00"],
-  ["Our cost to make (bottle, label and contents)", "$6.00", "$12.00"],
+// Every cell of the season table on screen, word for word (a true minus sign).
+const TABLE_WANT = [
+  ["Packages", "500", "2,000", "4,000"],
+  ["Litres of each product", "500", "2,000", "4,000"],
+  ["Revenue", "$18,745", "$74,980", "$149,960"],
+  ["Cost of goods", "$4,000", "$16,000", "$32,000"],
+  ["Start-up and running costs", "$60,000", "$12,000", "$20,000"],
+  ["PMRA annual charge", "$0", "$750", "$2,999"],
+  ["Net", "-$45,255", "$46,230", "$94,961"],
+  ["Cumulative cash", "-$45,255", "$975", "$95,936"],
 ];
-unitWant.forEach(([label, a, b], r) => {
-  expect(`financials unit table row ${r + 1}`, s1.unit.rows[r]?.label, label);
-  expect(`financials unit table, ${label}, clarifier`, s1.unit.rows[r]?.values[0], a);
-  expect(`financials unit table, ${label}, pack`, s1.unit.rows[r]?.values[1], b);
+const table = fin.seasonTable();
+if (table.length !== TABLE_WANT.length) problems.push(`financials: the season table has ${table.length} rows, not ${TABLE_WANT.length}`);
+TABLE_WANT.forEach(([label, ...cells], r) => {
+  expect(`financials table row ${r + 1} label`, table[r]?.label, label);
+  cells.forEach((cell, j) => expect(`financials table, ${label}, ${2027 + j}`, table[r]?.cells[j], cell));
 });
-const keep = s1.unit.keep.cents.map((cents, j) => `$${(cents / 100).toFixed(2)} ${s1.unit.keep.pct[j]}`);
-expect("financials, we keep (clarifier)", keep[0], "$4.20 (41%)");
-expect("financials, we keep (pack)", keep[1], "$6.00 (33%)");
+
+// Slide 1, word for word.
+const s1 = fin.saleSlide;
+expect("financials slide 1 title", s1.headline, "What one package earns.");
+expect(
+  "financials honesty line",
+  s1.honesty,
+  "Every number here is a planning assumption. No store has quoted our price and we have not run a full production batch yet.",
+);
+expect("financials unit column", s1.unit.column, "Atlantic Pool Pack");
 [
-  ["Product liability insurance", "$1,500"],
-  ["Production space and utilities", "$3,000"],
-  ["Label compliance and safety data sheets", "$1,500"],
-  ["Samples, demos and marketing", "$2,000"],
-  ["Local delivery", "$1,000"],
-  ["Admin and software", "$1,000"],
-].forEach(([label, amount], i) => {
-  expect(`financials fixed cost ${i + 1}`, s1.fixed.items[i]?.label, label);
-  expect(`financials fixed cost, ${label}`, s1.fixed.items[i]?.amount.text, amount);
+  ["Suggested retail", "$49.99"],
+  ["Store keeps 25% (negotiable)", "$12.50"],
+  ["We sell to the store at", "$37.49"],
+  ["Our cost to make (2 bottles, labels, contents)", "$8.00"],
+].forEach(([label, value], r) => {
+  expect(`financials unit row ${r + 1}`, s1.unit.rows[r]?.label, label);
+  expect(`financials unit, ${label}`, s1.unit.rows[r]?.value, value);
 });
-expect("financials fixed total", `${s1.fixed.total.label} ${s1.fixed.total.amount}`, "Total, 2027 $10,000");
-expect("financials PMRA one-time", s1.fixed.oneTime.amount, "$6,573 to $11,787");
+if (s1.unit.rows.length !== 4) problems.push("financials: the unit table has more rows than the file");
+expect("financials, we keep", `${s1.unit.keep.label} $${(s1.unit.keep.cents / 100).toFixed(2)} ${s1.unit.keep.pct}`, "We keep, per package $29.49 (79%)");
+expect("financials, negotiable", s1.negotiable, "The store share is negotiable. Even at 40 percent, we still keep $21.99 per package.");
+expect("financials start-up figure", model.money(s1.startup.figure), "$60,000");
+expect("financials start-up label", s1.startup.label, "Start-up cash, one-time, 2027");
+expect(
+  "financials start-up text",
+  s1.startup.covers[0].text,
+  "Covers set-up, licences, PMRA registration and the first season's running costs. Founders' estimate.",
+);
+expect("financials running costs", s1.startup.running[0].text, "Running costs after that: $12,000 in 2028, $20,000 in 2029.");
+if (!s1.startup.covers[0].claim || !s1.startup.running[0].claim) problems.push("financials: the start-up lines must each keep an assumption tag");
 expect(
   "financials footnote",
   s1.footnote,
-  "Founders are unpaid in this plan. PMRA fees from the Pest Control Products Fees and Charges Regulations: product chemistry $2,713, acute toxicity $2,954, value $906, plus $5,214 exposure data if PMRA asks for it. Annual PMRA charge after registration: 4 percent of the previous year's revenue, minimum $100, maximum $3,600.",
+  "Founders are unpaid in this plan. PMRA annual charge after registration: 4 percent of the previous year's revenue, up to $4,509.90.",
 );
-expect(
-  "financials warning 1",
-  s1.warnings[0],
-  "At $29.99, the pack earns us $6. If a store wants 50 percent and our cost rises 20 percent, that drops to 60 cents. The price, or the cost, has to move.",
-);
-expect(
-  "financials warning 2",
-  s1.warnings[1],
-  "Price check: at $39.99 retail, the pack would earn us $12 per sale, twice as much, and still be cheaper than buying a clarifier and an algaecide today ($45 to $66).",
-);
-expect(
-  "financials hero (base)",
-  fin.hero.base.sentence,
-  "Cash we need before we turn positive: about $14,000. Positive in the 2029 season.",
-);
-expect(
-  "financials hero (base), as set",
-  `${fin.hero.base.lead} about ${model.money(fin.hero.base.figure)}. ${fin.hero.base.tail}`,
-  fin.hero.base.sentence,
-);
-expect("financials hero (worst)", fin.hero.worst.sentence, "Cash we need: about $55,000, and still not positive after three seasons.");
-expect(
-  "financials hero (worst), as set",
-  `${fin.hero.worst.lead} about ${model.money(fin.hero.worst.figure)}, ${fin.hero.worst.tail}`,
-  fin.hero.worst.sentence,
-);
-expect(
-  "financials closing line",
-  fin.seasonsSlide.closing[0].text,
-  "We plan for the worst case: about $55,000 over three seasons, from founder capital and the non-dilutive grants we are applying for.",
-);
-const lists = fin.seasonsSlide.lists;
-[
-  "200 clarifier bottles per store per season",
-  "From 2028, 300 packs per store, then 400 in 2029",
-  "Stores grow from Fredericton (2027) to other New Brunswick cities (2028) and Atlantic Canada (2029)",
-  "PMRA registration in time for the 2028 season",
-].forEach((t, i) => expect(`financials base assumption ${i + 1}`, lists.base.items[i], t));
-[
-  "Stores keep 50 percent",
-  "Our cost rises 20 percent",
-  "Half the bottles per store",
-  "PMRA asks for exposure data and takes a year longer, so the pack starts in 2029",
-].forEach((t, i) => expect(`financials worst-case change ${i + 1}`, lists.worst.items[i], t));
-const held = fin.questionsSlide.holding.items;
-expect(
-  "financials, PMRA for the anti-algae",
-  held[1].text,
-  "$6,573 to $11,787 in application fees, and the time it takes. If the fee is more than 10 percent of expected revenue, PMRA lets us pay 10 percent up front.",
-);
-expect("financials, thin margin", held[3].lead, "Thin margin at $29.99.");
-expect("financials, cash for the worst case", held[4].text, "About $55,000 over three seasons.");
-notes.push("pool model: Section 4 totals reproduced, every figure on /financials/ matches");
 
-/* 8. The customer price table (customer brief, Section 3, section 7). ---- */
-const atlanticWant = [
-  ["Atlantic Clarifier, 1 L", "$16.99", "$10.20", "$6.79 (40%)"],
-  ["Atlantic Pool Pack, 2 x 1 L", "$29.99", "$18.00", "$11.99 (40%)"],
+// Slide 2, word for word.
+const s2 = fin.seasonsSlide;
+expect("financials slide 2 title", s2.headline, "Three pool seasons.");
+expect("financials big stat", model.money(s2.hero.figure), "$60,000");
+expect("financials big stat label", s2.hero.label, "Cash we need up front.");
+expect("financials big stat line", s2.hero.tail, "Profitable and paid back in the 2028 season.");
+expect("financials assumptions", s2.assumptions, "2027: 500 litres of each product. 2028: about 2 tonnes of each. 2029: about 4 tonnes of each.");
+expect(
+  "financials bottom line",
+  s2.closing[0].text,
+  "These numbers are conservative. With the right conditions, we will produce more, and faster, and every customer conversation makes our numbers sharper.",
+);
+if (!s2.closing[0].claim) problems.push("financials: the bottom line must keep its assumption tag");
+
+// Slide 3, word for word.
+const s3 = fin.questionsSlide;
+expect("financials question 1", s3.first.heading, "How will we get our first customer?");
+[
+  "We talk to local pool stores, starting with your introduction to Gabriela at Amazon Pools and Spas, and compare our product with what is on their shelf.",
+  "We send them photos of our jar test, so they can see the result.",
+  "From our experience, stores usually accept a small first order.",
+  "For feedback, we give them 20 litres of samples.",
+].forEach((t, i) => expect(`financials first customer step ${i + 1}`, s3.first.steps[i]?.text, t));
+if (s3.first.steps.length !== 4) problems.push(`financials: ${s3.first.steps.length} first-customer steps, not 4`);
+expect("financials step 4 small text", s3.first.steps[3]?.small, "Both products once the anti-algae is registered. Clarifier only before that.");
+expect("financials question 2", s3.holding.heading, "What is holding us back?");
+const held = s3.holding.items.map((x) => `${x.lead} ${x.text}`);
+expect("financials holding 1", held[0], "Capital: the $60,000 start-up cost.");
+expect("financials holding 2", held[1], "Our co-founder's visa: Dr. Ali Kalateh's visa.");
+if (held.length !== 2) problems.push(`financials: ${held.length} items hold us back, not 2`);
+notes.push("pool model: version 2 season table reproduced, every figure on /financials/ matches");
+
+/* 8. The customer page (version 2 changes, Part A). ---------------------- */
+expect("customer title", cust.openingSlide.headline.join(" "), "Clear pools, made in New Brunswick.");
+expect("customer subtitle", cust.openingSlide.sub, "Atlantic Clarifier and Atlantic Anti-Algae, sold together as the Atlantic Pool Pack.");
+expect("customer problem card 2", cust.problemSlide.lines[1].lead, "Algae in the water:");
+const flat = (rich) => (typeof rich === "string" ? rich : rich.map((n) => (typeof n === "string" ? n : n.b ?? flat(n.text))).join(""));
+expect(
+  "customer clarifier card",
+  flat(cust.answerSlide.products[0].body),
+  "A clarifier made pool-ready through a complementary reaction. Available first, for the 2027 season.",
+);
+expect("customer anti-algae card", flat(cust.answerSlide.products[1].body), "A chelated anti-algae, made for pools. Available after PMRA registration.");
+expect("customer video link", cust.answerSlide.videoLink, "Watch the video");
+expect("customer video", cust.video.watchUrl, "https://youtu.be/rKsXcTqSfsI");
+expect("customer statement", cust.liveSlide.statement, "Same water. Same soil. One bottle.");
+["The fine particles settle to the bottom.", "They are removed with a pool vacuum, or caught by the filter.", "The water turns clear."].forEach((t, i) =>
+  expect(`customer step ${i + 1}`, cust.liveSlide.steps[i], t),
+);
+expect("customer team title", cust.teamSlide.headline, "A local team you can call.");
+const people = cust.teamSlide.people.map((p) => `${p.name}, ${p.role}: ${p.bio}`);
+expect(
+  "customer team, first",
+  people[0],
+  "Mohadeseh Zamani, Co-founder and CEO: Leads the company: strategy, partnerships, regulatory approvals, funding and customers. Graduate studies in Electrical Engineering at UNB.",
+);
+expect(
+  "customer team, second",
+  people[1],
+  "Dr. Ali Kalateh, Co-founder and CTO: Inorganic chemist with years of hands-on experience developing and producing pool-care and water-treatment products. Leads science, formulation and production.",
+);
+expect("customer team line", cust.teamSlide.local, "Local, so when a customer has a question, you call us and we come in.");
+expect("customer gentler", flat(cust.differentSlide.columns[1].line), "A gentler choice than copper salts or aluminum sulfate.");
+expect("customer local", flat(cust.differentSlide.columns[2].line), "Made in New Brunswick. Short restock times, bilingual labels.");
+for (const i of [1, 2]) if (!JSON.stringify(cust.differentSlide.columns[i].line).includes('"claim"')) problems.push(`customer: column ${i + 1} lost its assumption tag`);
+expect("customer price headline", cust.priceSlide.headline, "A fair price for high quality.");
+expect("customer price line", cust.priceSlide.flexible, "Our prices are flexible while we learn from stores and pool owners.");
+const RETAIL_WANT = [
+  ["Atlantic Clarifier, 1 L", "$25.00"],
+  ["Atlantic Anti-Algae, 1 L", "$30.00"],
+  ["Atlantic Pool Pack, 2 x 1 L", "$49.99"],
 ];
-atlanticWant.forEach(([product, retail, cost, keepText], i) => {
-  const row = custPricing.atlanticRows[i];
-  expect(`customer price row ${i + 1}`, row?.product, product);
-  expect(`customer price, ${product}, suggested retail`, row?.retail, retail);
-  expect(`customer price, ${product}, your cost`, row?.cost, cost);
-  expect(`customer price, ${product}, you keep`, `${row?.keep} ${row?.keepPct}`, keepText);
+if (custPricing.atlanticRows.length !== RETAIL_WANT.length) problems.push("customer: the retail table has rows other than the file's three");
+RETAIL_WANT.forEach(([product, retail], i) => {
+  expect(`customer retail row ${i + 1}`, custPricing.atlanticRows[i]?.product, product);
+  expect(`customer retail, ${product}`, custPricing.atlanticRows[i]?.retail, retail);
 });
-const shelfWant = [
+expect("customer retail columns", custPricing.atlanticColumns.join(" | "), "Product | Suggested retail");
+const SHELF_WANT = [
   ["Pool clarifiers", "$17.99 to $21.99"],
   ["Pool algaecides", "$26.99 to $43.99"],
   ["Buying both", "about $45 to $66"],
 ];
-shelfWant.forEach(([label, display], i) => {
+if (custPricing.priceRows.length !== SHELF_WANT.length) problems.push("customer shelf: rows other than the brief's three");
+SHELF_WANT.forEach(([label, display], i) => {
   expect(`customer shelf row ${i + 1}`, custPricing.priceRows[i]?.label, label);
   expect(`customer shelf, ${label}`, custPricing.priceRows[i]?.display, display);
 });
-if (custPricing.priceRows.length !== shelfWant.length) problems.push("customer shelf: rows other than the brief's three");
-notes.push("customer price table matches the brief");
+expect("customer how we sell", cust.sellSlide.rows.map((r) => r.lead).join(" "), "Sizes: Ordering: Delivery:");
+expect("customer work headline", cust.workSlide.headline, "Start with us this spring.");
+expect("customer offer", flat(cust.workSlide.offer), "We begin with 500 litres this spring. If you are not satisfied, we take it back.");
+if ((JSON.stringify(cust.workSlide.offer).match(/"claim"/g) || []).length !== 1) problems.push("customer: the offer must keep exactly one assumption tag");
+expect("customer feedback heading", cust.workSlide.helpHeading, "Your customers' feedback on quality");
+["How clear is the water after one dose?", "How fast does it work for your customers?", "What would make it even better?"].forEach((q, i) =>
+  expect(`customer feedback question ${i + 1}`, cust.workSlide.questions[i], q),
+);
+expect("customer footer", cust.workSlide.founder, "Mohadeseh Zamani, Co-founder and CEO");
+
+// What the customer page may not say: everything a viewer can see or hear on
+// it, the presenter notes, hover cards and source register included. The
+// source register cites one competitor product whose own name has "40%" in
+// it (a copper strength, not a store margin); that citation is the exception.
+const PRODUCT_NAME_40 = "Summer Smiles Alg Out 40% 1 L";
+const customerText = [
+  JSON.stringify(cust.slides),
+  JSON.stringify(cust.video),
+  JSON.stringify(custClaims),
+  JSON.stringify(custPricing.atlanticRows),
+  JSON.stringify(custPricing.priceRows.map((r) => [r.label, r.display])),
+  custPricing.priceFootnote,
+  custPricing.atlanticHeading,
+  JSON.stringify(custSources.sources).split(PRODUCT_NAME_40).join(""),
+  ...["01Opening", "02Problem", "03Answer", "04Live", "05Team", "06Different", "07Price", "08Sell", "09Work"].map((f) => read(`src/pages/customer/sections/${f}.tsx`)),
+].join("\n");
+const CUSTOMER_BANNED = [
+  [/green water/i, '"Green water"'],
+  [/clump/i, '"clump"'],
+  [/no cross-border/i, '"no cross-border"'],
+  [/demo kit/i, '"demo kit"'],
+  [/\bCMO\b/, '"CMO"'],
+  [/40\s?%|40 percent/i, '"40%" (store margin)'],
+  [/\$16\.99/, '"$16.99"'],
+  [/\$29\.99/, '"$29.99"'],
+  [/\$10\.20/, '"$10.20"'],
+  [/\$18\.00/, '"$18.00"'],
+  [/\$6\.79/, '"$6.79"'],
+  [/\$11\.99/, '"$11.99"'],
+  [/store margin|your cost|you keep/i, "store margin or wholesale"],
+  [/\bsafe\b/i, '"safe"'],
+  [/non-toxic/i, '"non-toxic"'],
+  [/not harmful/i, '"not harmful"'],
+  [/harmless/i, '"harmless"'],
+  [/tuRgEGqjRyk|1 min 15 s|75-second/i, "the old video"],
+  [/timerNotStarted|DemoTimer|a few minutes/, "the demo timer"],
+];
+for (const [re, label] of CUSTOMER_BANNED) if (re.test(customerText)) problems.push(`customer: says ${label}, which version 2 removed`);
+if (/<PageShell[^>]*\btimer\b/.test(read("src/pages/customer/App.tsx"))) problems.push("customer: the T timer is still on");
+
+// Our own prices on the customer page: $25.00, $30.00 and $49.99 only. The
+// shelf figures and the root deck's spoken price note ($25, $30) aside.
+const SHELF_FIGURES = ["$17.99", "$21.99", "$26.99", "$43.99", "$45", "$66", "$19.99", "$36.99", "$39.99", "$18", "$22", "$27", "$44", "$25", "$30"];
+const allowedPrices = new Set(["$25.00", "$30.00", "$49.99", ...SHELF_FIGURES]);
+for (const m of customerText.matchAll(/\$\d{1,3}(?:,\d{3})*(?:\.\d\d)?/g)) if (!allowedPrices.has(m[0])) problems.push(`customer: shows the price ${m[0]}`);
+notes.push("customer page matches version 2");
+
+// What the financials page may not say.
+const finText = [
+  JSON.stringify(fin.slides),
+  JSON.stringify(finClaims),
+  JSON.stringify(finSources.sources),
+  ...["01Sale", "02Seasons", "03Questions"].map((f) => read(`src/pages/financials/sections/${f}.tsx`)),
+  read("src/pages/financials/App.tsx"),
+].join("\n");
+const FIN_BANNED = [
+  [/\$16\.00|\$21\.49|\$13\.99|-\$49,255|-\$19,025/, "a number the file rules out"],
+  [new RegExp(`(${MINUS_SIGN}|-)\\$(49,255|19,025)`), "a number the file rules out"],
+  [/\bworst\b|\bBase\b|KeyW|toggle|radiogroup/i, "the Base / Worst view"],
+  [/\$29\.99|\$39\.99|\$6\.00|60 cents|\$2,713|\$2,954|\$906|\$5,214|\$6,573|\$11,787|\$3,600|\$10,000|\$55,000/, "a removed figure"],
+  [/Clarifier bottles|Pool Packs|per sale/, "the old units (say package)"],
+  [/No customer conversation yet|Thin margin|Licences\./, "a removed line"],
+];
+for (const [re, label] of FIN_BANNED) if (re.test(finText)) problems.push(`financials: says ${label}`);
+if (!/package/.test(fin.saleSlide.headline) || !TABLE_WANT[0][0].startsWith("Packages")) problems.push("financials: does not say package");
 
 /* 9. Claims on the new pages point at their own registry. ---------------- */
-const custClaims = (await loadModule("src/pages/customer/content/claims.ts")).claims;
-const finClaims = (await loadModule("src/pages/financials/content/claims.ts")).claims;
-const BRIEF_CUSTOMER_CLAIMS = ["market-stores", "season-2027", "pmra", "gentler", "local", "wholesale", "sizes", "case-12", "delivery", "support", "take-back"];
-for (const id of BRIEF_CUSTOMER_CLAIMS) if (!(id in custClaims)) problems.push(`customer claims: "${id}" from the brief's Section 4 is missing`);
-for (const id of Object.keys(custClaims)) if (!BRIEF_CUSTOMER_CLAIMS.includes(id)) problems.push(`customer claims: "${id}" is not in the brief`);
+const CUSTOMER_CLAIMS = ["market-stores", "season-2027", "pmra", "gentler", "local", "prices", "sizes", "case-12", "delivery", "take-back"];
+for (const id of CUSTOMER_CLAIMS) if (!(id in custClaims)) problems.push(`customer claims: "${id}" is missing`);
+for (const id of Object.keys(custClaims)) if (!CUSTOMER_CLAIMS.includes(id)) problems.push(`customer claims: "${id}" is not on the page in version 2`);
 function usedClaims(value, into = new Set()) {
   if (Array.isArray(value)) value.forEach((v) => usedClaims(v, into));
   else if (value && typeof value === "object") {

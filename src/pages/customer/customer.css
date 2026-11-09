@@ -1,11 +1,6 @@
 /* /customer/: the pitch for a pool store. Less text than the funding deck,
    bigger type, one idea per section. */
 
-/* On the live test the timer is the hero, so the top bar's pill steps aside. */
-html[data-section="4"] .topbar .timer-footer {
-  display: none;
-}
-
 /* 1. Opening -------------------------------------------------------- */
 
 .c-hero {
@@ -347,13 +342,33 @@ html[data-section="4"] .topbar .timer-footer {
   color: var(--paper);
 }
 
-.c-table__keep {
-  color: var(--pool-on-deep) !important;
+/* Our prices, set large. Colour comes from the product: pool or algae. */
+.c-table--retail th[scope="row"] {
+  font-size: 24px;
 }
 
-.c-table__pct {
-  font-size: 18px;
-  font-weight: 500;
+.c-table--retail td.c-table__retail {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.c-table--retail td.tone-pool {
+  color: var(--pool-on-deep);
+}
+
+.c-table--retail td.tone-algae {
+  color: var(--algae-on-deep);
+}
+
+.c-price__heading .claim__tag {
+  font-size: 13px;
+}
+
+/* The statement in the root deck's large style, a little smaller here so the
+   cups and the photo keep their room. */
+.c-live__statement {
+  font-size: 72px;
 }
 
 .c-price__proposal {
@@ -519,7 +534,11 @@ html[data-section="4"] .topbar .timer-footer {
     color: var(--slate);
   }
 
-  .c-table__keep {
-    color: var(--pool) !important;
+  .c-table--retail td.tone-pool {
+    color: var(--pool);
+  }
+
+  .c-table--retail td.tone-algae {
+    color: var(--algae);
   }
 }

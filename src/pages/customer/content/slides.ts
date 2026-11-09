@@ -4,13 +4,17 @@ import type { VideoInfo } from "../../shared/kit";
 import { claims, type ClaimId } from "./claims";
 import { atlanticRows, priceRows } from "./pricing";
 
-// All copy for /customer/ (customer brief, Section 3), set word for word. No
-// strings live in JSX. A `{ text, claim }` node is an [assumption]: the Claim
-// component wraps the statement and adds the tag.
+// All copy for /customer/ (customer brief, Section 3, with the version 2
+// changes), set word for word. No strings live in JSX. A `{ text, claim }` node
+// is an [assumption]: the Claim component wraps the statement and adds the tag.
 //
 // Nine sections, five minutes, in the order the mentor asked for: market and
 // problem, our answer, the proof, the team, why it is different, price, how we
 // sell, and how we work together.
+//
+// Presenter notes: where version 2 changed a section's words or numbers, its
+// notes follow the new screen copy (and, for price and team, the root deck's
+// own approved notes), so nothing spoken contradicts the screen.
 
 type C = { text: Rich; claim: ClaimId };
 const claim = (text: Rich, id: ClaimId): C => ({ text, claim: id });
@@ -21,13 +25,12 @@ export const openingSlide = {
   n: 1,
   title: "Opening",
   ground: "deep",
-  headline: ["Clear water,", "from a bottle made in Fredericton."],
-  sub: "Atlantic Clarifier. A pool product from Mazdak Atlantic AgriAqua.",
-  demoHint: { before: "Press", key: "T", after: "when the clarifier goes in the cup." },
+  headline: ["Clear pools,", "made in New Brunswick."],
+  sub: "Atlantic Clarifier and Atlantic Anti-Algae, sold together as the Atlantic Pool Pack.",
   bottlesAlt:
     "The Atlantic Pool Pack: two white one-litre bottles with bilingual labels, Atlantic Clarifier with a blue cap and Atlantic Anti-Algae with a green cap.",
   notes: [
-    "\"Thank you for your time. Before I start, I'm adding a few drops of our clarifier to this cup of muddy water. This other one gets nothing. We'll look at them in two minutes.\" (Add drops, press T.)",
+    "\"Thank you for your time. Before I start, I'm adding a few drops of our clarifier to this cup of muddy water. This other one gets nothing. We'll look at them in two minutes.\" (Add drops.)",
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -42,7 +45,7 @@ export const problemSlide = {
   lines: [
     { lead: "Cloudy water:", text: "particles too small for a home filter to catch." },
     {
-      lead: "Green water:",
+      lead: "Algae in the water:",
       text: "the usual copper algaecide releases a lot of free copper, which can burn plant leaves and can be harmful to swimmers at a high dose.",
     },
     {
@@ -61,7 +64,8 @@ export const problemSlide = {
 
 /* 3. Our answer (40 s) --------------------------------------------- */
 
-const YOUTUBE_ID = "tuRgEGqjRyk";
+/** The root deck's video (version 2). */
+const YOUTUBE_ID = "rKsXcTqSfsI";
 
 export const answerSlide = {
   n: 3,
@@ -75,7 +79,7 @@ export const answerSlide = {
       tone: "pool",
       heading: "Atlantic Clarifier.",
       body: [
-        "Clumps the fine particles so the filter can catch them. Cloudy water turns clear. ",
+        "A clarifier made pool-ready through a complementary reaction. ",
         claim("Available first, for the 2027 season.", "season-2027"),
       ],
     },
@@ -83,27 +87,24 @@ export const answerSlide = {
       id: "anti-algae",
       tone: "algae",
       heading: "Atlantic Anti-Algae.",
-      body: [
-        "Chelated copper tuned to a medium stability: enough copper to stop algae, without the flood of free copper. ",
-        claim("Available after PMRA registration.", "pmra"),
-      ],
+      body: ["A chelated anti-algae, made for pools. ", claim("Available after PMRA registration.", "pmra")],
     },
   ],
   together: "Together: the Atlantic Pool Pack. English and French labels.",
-  videoLink: "Watch the 75-second video",
+  videoLink: "Watch the video",
   notes: [
     "\"Our first product is the clarifier. It makes cloudy water clear. The second is a gentler copper anti-algae, which we will sell once it is registered with PMRA. Together they are the Atlantic Pool Pack.\"",
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
-/** The same video as the root deck. Opened from section 3 in a lightbox; never autoplays. */
+/** The root deck's video and its wording. Opened from section 3 in a lightbox; never autoplays. */
 export const video: VideoInfo = {
   youtubeId: YOUTUBE_ID,
   watchUrl: `https://youtu.be/${YOUTUBE_ID}`,
   embedUrl: `https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?rel=0&modestbranding=1&playsinline=1`,
   posterUrl: `https://i.ytimg.com/vi/${YOUTUBE_ID}/hqdefault.jpg`,
   title: "Atlantic Clarifier and Anti-Algae",
-  caption: "Atlantic Clarifier and Anti-Algae. 1 min 15 s.",
+  caption: "Atlantic Clarifier and Anti-Algae.",
   playLabel: "Play the video: Atlantic Clarifier and Anti-Algae",
   escapeHint: "Press Escape to close the video.",
   iframeHint: "Click outside the video, then press Escape to close it.",
@@ -120,24 +121,22 @@ export const liveSlide = {
   eyebrow: "See it work",
   ground: "deep",
   headline: "Now look at the cups.",
-  timerCaption: "since the clarifier went in",
-  timerNotStarted: "a few minutes",
-  timerPrint: "Live demo",
+  statement: "Same water. Same soil. One bottle.",
   cups: [
     { tone: "silt", name: "Cup A:", text: "water and soil, nothing added." },
     { tone: "pool", name: "Cup B:", text: "same, plus a few drops of Atlantic Clarifier." },
   ],
   steps: [
-    "Fine particles clump together.",
-    "The clumps sink.",
-    "The water clears; in a pool, the filter catches the clumps.",
+    "The fine particles settle to the bottom.",
+    "They are removed with a pool vacuum, or caught by the filter.",
+    "The water turns clear.",
   ],
   photo: {
     alt: "A jar test. Left: a tall cylinder of clear water with soil settled at the bottom. Right: a beaker of cloudy brown water, beside a small vial with a dropper.",
     caption: "An earlier jar test with our clarifier.",
   },
   notes: [
-    "\"Same water, same soil. This one got nothing. This one got a few drops. The particles clump, sink, and the water clears. In a pool, the filter does the rest. Your staff can show this on the counter in two minutes.\"",
+    "\"Same water, same soil. This one got nothing. This one got a few drops. The fine particles settle to the bottom and the water turns clear. In a pool, they are removed with a pool vacuum, or caught by the filter. Your staff can show this on the counter in two minutes.\"",
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -148,26 +147,26 @@ export const teamSlide = {
   title: "Who we are",
   eyebrow: "Who we are",
   ground: "deep",
-  headline: "Chemists who answer the phone.",
+  headline: "A local team you can call.",
   people: [
-    {
-      id: "ali",
-      name: "Dr. Ali Kalateh",
-      role: "Co-founder and CEO",
-      initials: "AK",
-      bio: "Inorganic chemist with years of hands-on experience developing and producing pool-care and water-treatment products.",
-    },
     {
       id: "mohadeseh",
       name: "Mohadeseh Zamani",
-      role: "Co-founder and CMO",
+      role: "Co-founder and CEO",
       initials: "MZ",
-      bio: "Graduate student in Electrical Engineering at UNB. Runs the company in Fredericton: production, supply, customers and licensing.",
+      bio: "Leads the company: strategy, partnerships, regulatory approvals, funding and customers. Graduate studies in Electrical Engineering at UNB.",
+    },
+    {
+      id: "ali",
+      name: "Dr. Ali Kalateh",
+      role: "Co-founder and CTO",
+      initials: "AK",
+      bio: "Inorganic chemist with years of hands-on experience developing and producing pool-care and water-treatment products. Leads science, formulation and production.",
     },
   ],
   local: "Local, so when a customer has a question, you call us and we come in.",
   notes: [
-    "\"Ali is our chemist, with years of experience making pool and water-treatment products. I run the company here in Fredericton. Because we're local, if a customer has a problem, you call me and I come to the store.\"",
+    "\"I lead the company: strategy, partnerships, approvals, funding and customers. Ali is our CTO. He leads the science and production. Because we're local, if a customer has a problem, you call me and I come to the store.\"",
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -184,15 +183,15 @@ export const differentSlide = {
     { word: "Simple.", line: "Two products cover what most pools need after the disinfectant." as Rich },
     {
       word: "Gentler.",
-      line: [claim("Our copper is held at a medium stability, so less free copper goes into the water.", "gentler")] as Rich,
+      line: [claim("A gentler choice than copper salts or aluminum sulfate.", "gentler")] as Rich,
     },
     {
       word: "Local.",
-      line: ["Made in New Brunswick. ", claim("Short restock times, no cross-border shipping, bilingual labels.", "local")] as Rich,
+      line: ["Made in New Brunswick. ", claim("Short restock times, bilingual labels.", "local")] as Rich,
     },
   ],
   notes: [
-    "\"Three things make it different. It's simple, two products instead of a shelf. It's gentler, less free copper. And it's local, made in New Brunswick, so restocking is fast.\"",
+    "\"Three things make it different. It's simple, two products instead of a shelf. It's gentler than copper salts or aluminum sulfate. And it's local, made in New Brunswick, so restocking is fast.\"",
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -203,10 +202,13 @@ export const priceSlide = {
   title: "Price: your customer and you",
   eyebrow: "Price: your customer and you",
   ground: "deep",
-  headline: "A better price for your customer. A fair margin for you.",
-  proposal: [claim("Wholesale prices are our proposal. We want your view.", "wholesale")],
+  headline: "A fair price for high quality.",
+  // The suggested retail prices are unproven: one tag, on the table's heading.
+  pricesTag: { claim: "prices" as ClaimId },
+  flexible: "Our prices are flexible while we learn from stores and pool owners.",
   notes: [
-    "\"Today, buying a clarifier and an algaecide costs your customer about 45 to 66 dollars. Our pack would sell for 29.99. You would buy it for 18 dollars and keep 12, about 40 percent. The clarifier alone sells for 16.99, and you keep 6.79. Are these numbers right for your store?\"",
+    // The root deck's own price note (version 2).
+    "\"A clarifier today costs about $18 to $22 and an algaecide $27 to $44. Ours are $25 and $30, and the pack is $49.99. A fair price for high quality, and flexible while we learn.\"",
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -222,10 +224,9 @@ export const sellSlide = {
     { lead: "Sizes:", text: ["1 L now. ", claim("4 L and 20 L next, for bigger pools and commercial pools.", "sizes")] as Rich },
     { lead: "Ordering:", text: [claim("by the case of 12 bottles.", "case-12")] as Rich },
     { lead: "Delivery:", text: [claim("we deliver ourselves in the Fredericton area.", "delivery")] as Rich },
-    { lead: "Support:", text: [claim("a counter demo kit and a short staff training at no cost.", "support")] as Rich },
   ],
   notes: [
-    "\"We start with one-litre bottles, then 4 and 20 litres. You order by the case, we deliver ourselves in Fredericton, and we give you a counter demo kit and train your staff.\"",
+    "\"We start with one-litre bottles, then 4 and 20 litres. You order by the case, and we deliver ourselves in Fredericton.\"",
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -236,21 +237,18 @@ export const workSlide = {
   title: "Work with us",
   eyebrow: "Work with us",
   ground: "deep",
-  headline: "Try one case this spring.",
-  offer: [
-    "One case of Atlantic Clarifier on your shelf for the 2027 season. ",
-    claim("If it does not sell, we take it back.", "take-back"),
-  ] as Rich,
-  helpHeading: "Help us get it right",
+  headline: "Start with us this spring.",
+  offer: ["We begin with 500 litres this spring. ", claim("If you are not satisfied, we take it back.", "take-back")] as Rich,
+  helpHeading: "Your customers' feedback on quality",
   questions: [
-    "Is the price right for your customers?",
-    "Which size sells best in your store?",
-    "What do your customers ask for that nobody makes?",
+    "How clear is the water after one dose?",
+    "How fast does it work for your customers?",
+    "What would make it even better?",
   ],
   site: "agriaqua.ca",
-  founder: "Mohadeseh Zamani, Co-founder and CMO",
+  founder: "Mohadeseh Zamani, Co-founder and CEO",
   notes: [
-    "\"Here is what I'd like: put one case on your shelf for the 2027 season. If it doesn't sell, we take it back. And I'd love your honest feedback: is the price right, which size do you need, and what do your customers ask for? Thank you.\"",
+    "\"Here is what I'd like: we begin with 500 litres this spring. If you are not satisfied, we take it back. And I'd love your customers' feedback on quality: how clear the water is after one dose, how fast it works, and what would make it even better. Thank you.\"",
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -282,8 +280,9 @@ export const ui: PageUi = {
   close: "Close",
   prev: "Previous section",
   next: "Next section",
-  timerFooter: "Clarifier in:",
-  timerLabel: "Time since the clarifier went into cup B",
+  // Version 2 has no demo timer, so these never show.
+  timerFooter: "",
+  timerLabel: "",
   slideOf: (n: number, total: number) => `${n} of ${total}`,
   goTo: (n: number, title: string) => `Go to section ${n}, ${title}`,
   openImage: (caption: string) => `Open image full size: ${caption}`,

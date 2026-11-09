@@ -1,4 +1,4 @@
-import { reveal, RichText, SlideFrame } from "../../shared/kit";
+import { reveal, SlideFrame } from "../../shared/kit";
 import { questionsSlide as c } from "../content/slides";
 
 /** The mentor's two questions, one card each: a real sequence, and what holds us back. */
@@ -8,7 +8,7 @@ export function QuestionsSection({ index }: { index: number }) {
       <h2 className="t-headline" {...reveal(1, "clear")}>
         {c.headline}
       </h2>
-      <div className="cards cards--2 f-questions__cards">
+      <div className="f-questions__cards">
         <div className="card card--pool" {...reveal(3)}>
           <h3 className="card__title">{c.first.heading}</h3>
           <ol className="f-steps">
@@ -18,7 +18,8 @@ export function QuestionsSection({ index }: { index: number }) {
                   {i + 1}
                 </span>
                 <span>
-                  <RichText value={s} />
+                  {s.text}
+                  {"small" in s && <small className="f-steps__small">{s.small}</small>}
                 </span>
               </li>
             ))}

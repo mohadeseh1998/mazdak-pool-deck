@@ -48,9 +48,9 @@ The same design and the same shared components, as their own pages:
 | `customer/` | https://mohadeseh1998.github.io/mazdak-pool-deck/customer/ | A five-minute pitch for a pool store, nine sections |
 | `financials/` | https://mohadeseh1998.github.io/mazdak-pool-deck/financials/ | The pool line financials for the mentor meeting, three sections |
 
-Both pages use the keys above (N notes, A audit, S sources, arrows and Space). The customer pitch also has T for the cup timer, and its section 3 opens the video in a lightbox. On the financials page, **W** switches between Base and Worst, or click the pill in section 2.
+Both pages use the keys above (N notes, A audit, S sources, arrows and Space). The customer pitch's section 3 opens the video in a lightbox. Neither page has a demo timer or a Base / Worst switch (version 2).
 
-Copy lives in each page's `src/pages/<page>/content/`. Every price, cost and total on both pages comes from one file, `src/content/poolModel.ts`. `npm run check` recomputes the model on its own and fails unless every total equals the financials brief's Section 4, and every figure on screen equals the briefs.
+Copy lives in each page's `src/pages/<page>/content/`. The customer page reads its prices from the root deck's `src/content/pricing.ts`. Every figure on the financials page comes from one file, `src/content/poolModel.ts`: the package (price, store share, cost to make), the $60,000 start-up cash and the three seasons; change a number there and the table, chart and copy follow. `npm run check` recomputes the model on its own and fails unless the season table matches the version 2 changes exactly, every line on both pages matches them, and nothing version 2 removed comes back.
 
 How it is built: a classic script (needed to open from a USB stick) cannot be shared between pages, so `npm run build` runs three builds into one `dist/`: the root deck exactly as before, then `customer/` and `financials/`. The shared components read their words from `../content/`. On a page build, a small Vite plugin (`pageContent` in `vite.config.ts`) answers those imports with the page's own content files, so the same TopBar, Claim, notes and sources show that page's words. The root deck's files are never touched, so its build output stays byte-for-byte the same.
 

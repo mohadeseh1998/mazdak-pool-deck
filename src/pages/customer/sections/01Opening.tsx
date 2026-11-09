@@ -1,26 +1,6 @@
-import { useEffect, useState } from "react";
 import { assets } from "../../../content/assets";
-import { useDeck } from "../../../components/DeckContext";
 import { Logo, Plain, reveal, SlideFrame, ZoomImage } from "../../shared/kit";
 import { openingSlide as c } from "../content/slides";
-
-const HINT_MS = 6000;
-
-/** The demo hint shows for six seconds after load, then only in presenter mode (N). */
-function DemoHint() {
-  const { notes } = useDeck();
-  const [fresh, setFresh] = useState(true);
-  useEffect(() => {
-    const t = window.setTimeout(() => setFresh(false), HINT_MS);
-    return () => window.clearTimeout(t);
-  }, []);
-  if (!fresh && !notes) return null;
-  return (
-    <p className="hero__hint" role="status">
-      {c.demoHint.before} <kbd className="key">{c.demoHint.key}</kbd> {c.demoHint.after}
-    </p>
-  );
-}
 
 /** The name, one large line, and the product itself rising into place under it. */
 export function OpeningSection({ index }: { index: number }) {
@@ -43,7 +23,6 @@ export function OpeningSection({ index }: { index: number }) {
           <ZoomImage src={assets.bottles} thumb={thumb} alt={c.bottlesAlt} caption={c.sub} className="rise" />
         </div>
       )}
-      <DemoHint />
     </SlideFrame>
   );
 }

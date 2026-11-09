@@ -1,98 +1,76 @@
 import {
-  cashSummary,
   count,
-  FIXED_COSTS_2027,
   money,
   money2,
-  moneyShort,
+  PACKAGE,
+  PAYBACK_YEAR,
   PMRA_ANNUAL,
-  PMRA_FEE_RANGE,
-  PMRA_FEES,
-  PRICES,
   RESULTS,
-  SCENARIOS,
+  SEASONS,
+  STARTUP_CASH,
+  STORE_SHARE_TEST,
   UNIT,
-  WORST_COST_RISE_PCT,
-  type ScenarioId,
   type SeasonResult,
 } from "../../../content/poolModel";
 import type { PageSlide, PageUi, Rich } from "../../shared/types";
 import { countClaims } from "../../shared/types";
 import { claims, type ClaimId } from "./claims";
-import { buyingBoth } from "./pricing";
 
-// All copy for /financials/ (financials brief, Section 2), set word for word.
-// Every figure is computed from src/content/poolModel.ts, never typed here.
-// scripts/check-content.mjs rebuilds the totals on its own and holds every
-// string below to the brief's exact words.
+// All copy for /financials/ (version 2 changes, Part B), set word for word.
+// One package is the Atlantic Pool Pack: 1 L Atlantic Clarifier plus 1 L
+// Atlantic Anti-Algae. Every figure is computed from src/content/poolModel.ts,
+// never typed here. scripts/check-content.mjs rebuilds the totals on its own
+// and holds every string below to the version 2 file's exact words.
 
 type C = { text: Rich; claim: ClaimId };
 const claim = (text: Rich, id: ClaimId): C => ({ text, claim: id });
 
-const base = SCENARIOS.base;
-const worst = SCENARIOS.worst;
-export const CASH = { base: cashSummary(RESULTS.base), worst: cashSummary(RESULTS.worst) };
+const pct = (share: number) => Math.round(share * 100);
+const running = SEASONS.filter((s) => s.runningCosts > 0);
 
-/* 1. What one sale earns (about 60 s) ------------------------------ */
-
-const unitRow = (label: string, pick: (u: typeof UNIT.clarifier) => string) => ({
-  label,
-  values: [pick(UNIT.clarifier), pick(UNIT.pack)],
-});
+/* 1. What one package earns (about 60 s) --------------------------- */
 
 export const saleSlide = {
   n: 1,
-  title: "What one sale earns",
+  title: "What one package earns",
   ground: "deep",
-  headline: "What one sale earns.",
+  headline: "What one package earns.",
   honesty: "Every number here is a planning assumption. No store has quoted our price and we have not run a full production batch yet.",
   unit: {
-    columns: ["Atlantic Clarifier, 1 L", "Atlantic Pool Pack, 2 x 1 L"],
+    column: "Atlantic Pool Pack",
     // The whole table carries one [assumption] tag.
     claim: "unit-economics" as ClaimId,
     rows: [
-      unitRow("Suggested retail", (u) => money2(u.retail)),
-      unitRow(`Store keeps ${UNIT.clarifier.storePct}%`, (u) => money2(u.storeKeeps)),
-      unitRow("We sell to the store at", (u) => money2(u.wholesale)),
-      unitRow("Our cost to make (bottle, label and contents)", (u) => money2(u.cost)),
+      { label: "Suggested retail", value: money2(UNIT.pack.retail) },
+      { label: `Store keeps ${UNIT.pack.storePct}% (negotiable)`, value: money2(UNIT.pack.storeKeeps) },
+      { label: "We sell to the store at", value: money2(UNIT.pack.wholesale) },
+      { label: "Our cost to make (2 bottles, labels, contents)", value: money2(UNIT.pack.cost) },
     ],
     keep: {
-      label: "We keep, per sale",
+      label: "We keep, per package",
       /** In cents, for the count-up. */
-      cents: [Math.round(UNIT.clarifier.weKeep * 100), Math.round(UNIT.pack.weKeep * 100)],
-      pct: [`(${UNIT.clarifier.weKeepPct}%)`, `(${UNIT.pack.weKeepPct}%)`],
+      cents: Math.round(UNIT.pack.weKeep * 100),
+      pct: `(${UNIT.pack.weKeepPct}%)`,
     },
   },
-  fixed: {
-    heading: "Fixed costs, per year, before any sale",
-    items: FIXED_COSTS_2027.map((f) => ({ label: f.label, amount: claim(money(f.amount), f.id) })),
-    total: { label: "Total, 2027", amount: money(FIXED_COSTS_2027.reduce((s, f) => s + f.amount, 0)) },
-    oneTime: {
-      label: "One-time: PMRA application fees for the anti-algae",
-      amount: `${money(PMRA_FEE_RANGE.low)} to ${money(PMRA_FEE_RANGE.high)}`,
-    },
+  negotiable: `The store share is negotiable. Even at ${pct(STORE_SHARE_TEST)} percent, we still keep ${money2(UNIT.packAtTest.weKeep)} per package.`,
+  startup: {
+    figure: STARTUP_CASH,
+    label: "Start-up cash, one-time, 2027",
+    covers: [
+      claim("Covers set-up, licences, PMRA registration and the first season's running costs. Founders' estimate.", "startup"),
+    ] as Rich,
+    running: [
+      claim(`Running costs after that: ${running.map((s) => `${money(s.runningCosts)} in ${s.year}`).join(", ")}.`, "running"),
+    ] as Rich,
   },
-  footnote:
-    `Founders are unpaid in this plan. PMRA fees from the Pest Control Products Fees and Charges Regulations: ` +
-    `product chemistry ${money(PMRA_FEES.productChemistry)}, acute toxicity ${money(PMRA_FEES.acuteToxicity)}, ` +
-    `value ${money(PMRA_FEES.value)}, plus ${money(PMRA_FEES.exposureData)} exposure data if PMRA asks for it. ` +
-    `Annual PMRA charge after registration: ${Math.round(PMRA_ANNUAL.rate * 100)} percent of the previous year's revenue, ` +
-    `minimum ${money(PMRA_ANNUAL.min)}, maximum ${money(PMRA_ANNUAL.max)}.`,
-  warnings: [
-    `At ${moneyShort(PRICES.packRetail)}, the pack earns us ${moneyShort(UNIT.pack.weKeep)}. ` +
-      `If a store wants ${UNIT.packWorst.storePct} percent and our cost rises ${WORST_COST_RISE_PCT} percent, ` +
-      `that drops to ${Math.round(UNIT.packWorst.weKeep * 100)} cents. The price, or the cost, has to move.`,
-    `Price check: at ${moneyShort(UNIT.packAtCheck.retail)} retail, the pack would earn us ${moneyShort(UNIT.packAtCheck.weKeep)} per sale, ` +
-      `${UNIT.packAtCheck.weKeep === 2 * UNIT.pack.weKeep ? "twice as much" : "CHECK THE MODEL"}, ` +
-      `and still be cheaper than buying a clarifier and an algaecide today ` +
-      `(${money(buyingBoth.min)} to ${money(buyingBoth.max)}).`,
-  ],
+  footnote: `Founders are unpaid in this plan. PMRA annual charge after registration: ${pct(PMRA_ANNUAL.rate)} percent of the previous year's revenue, up to ${money2(PMRA_ANNUAL.max)}.`,
   notes: [
-    "\"Here is one sale. The store sells our pack for 29.99, keeps 40 percent, and pays us 18 dollars. It costs us 12 to make, so we keep 6. The clarifier alone earns us 4.20. Before any sale we have about 10,000 dollars a year in fixed costs, plus a one-time PMRA fee for the anti-algae. And here is my worry: 6 dollars is thin. If a store wants 50 percent and costs go up, we earn almost nothing. At 39.99 we would earn 12 and still be cheaper than today's shelf. I'd like your view on that.\"",
+    `"Here is one package, the Atlantic Pool Pack. It sells for 49.99. The store keeps 25 percent, and that is negotiable, so we sell to the store at 37.49. It costs us 8 dollars to make, so we keep 29.49. Even if a store wants 40 percent, we still keep 21.99. To start, we need 60,000 dollars of start-up cash in 2027, then running costs of 12,000 in 2028 and 20,000 in 2029."`,
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
-/* 2. Three seasons, base and worst (about 60 s) -------------------- */
+/* 2. Three pool seasons (about 60 s) ------------------------------- */
 
 export interface TableRow {
   key: keyof Omit<SeasonResult, "year">;
@@ -106,87 +84,49 @@ export interface TableRow {
 }
 
 export const TABLE_ROWS: readonly TableRow[] = [
-  { key: "stores", label: "Stores", format: count, money: false },
-  { key: "clarBottles", label: "Clarifier bottles", format: count, money: false },
-  { key: "packs", label: "Pool Packs", format: count, money: false },
+  { key: "packages", label: "Packages", format: count, money: false },
+  { key: "litresEach", label: "Litres of each product", format: count, money: false },
   { key: "revenue", label: "Revenue", format: money, money: true, rule: true },
   { key: "cogs", label: "Cost of goods", format: money, money: true },
-  { key: "fixedAndPmra", label: "Fixed costs and PMRA", format: money, money: true },
+  { key: "startupAndRunning", label: "Start-up and running costs", format: money, money: true },
+  { key: "pmra", label: "PMRA annual charge", format: money, money: true },
   { key: "net", label: "Net", format: money, money: true, strong: true, rule: true },
   { key: "cumulative", label: "Cumulative cash", format: money, money: true, strong: true },
 ];
 
-/** The table exactly as it reads when settled: what the content check compares to the brief. */
-export function seasonTable(id: ScenarioId): { label: string; cells: string[] }[] {
-  return TABLE_ROWS.map((row) => ({ label: row.label, cells: RESULTS[id].map((r) => row.format(r[row.key])) }));
+/** The table exactly as it reads when settled: what the content check compares to the file. */
+export function seasonTable(): { label: string; cells: string[] }[] {
+  return TABLE_ROWS.map((row) => ({ label: row.label, cells: RESULTS.map((r) => row.format(r[row.key])) }));
 }
 
-const firstPackYear = worst.seasons.find((s) => s.packPerStore > 0)!.year;
-
-export const hero = {
-  base: {
-    lead: "Cash we need before we turn positive:",
-    figure: CASH.base.needRounded,
-    tail: `Positive in the ${CASH.base.positiveYear} season.`,
-    sentence: `Cash we need before we turn positive: about ${money(CASH.base.needRounded)}. Positive in the ${CASH.base.positiveYear} season.`,
-  },
-  worst: {
-    lead: "Cash we need:",
-    figure: CASH.worst.needRounded,
-    tail: CASH.worst.positiveYear === null ? "and still not positive after three seasons." : "CHECK THE MODEL",
-    sentence: `Cash we need: about ${money(CASH.worst.needRounded)}, and still not positive after three seasons.`,
-  },
-};
+/** "about 2 tonnes": a litre of each product is taken as about a kilogram. */
+const amount = (litres: number) => (litres < 1000 ? `${count(litres)} litres` : `about ${litres / 1000} tonnes`);
 
 export const seasonsSlide = {
   n: 2,
-  title: "Three seasons, base and worst",
+  title: "Three pool seasons",
   ground: "deep",
-  headline: "Three pool seasons. Base, and worst.",
-  toggle: {
-    label: "Scenario",
-    options: [
-      { id: "base" as ScenarioId, label: "Base" },
-      { id: "worst" as ScenarioId, label: "Worst" },
-    ],
-    key: "W",
+  headline: "Three pool seasons.",
+  hero: {
+    figure: STARTUP_CASH,
+    label: "Cash we need up front.",
+    tail: PAYBACK_YEAR === null ? "CHECK THE MODEL" : `Profitable and paid back in the ${PAYBACK_YEAR} season.`,
   },
-  about: "about",
   chart: {
     label: "Revenue, total costs and cumulative cash, by season",
-    seasons: RESULTS.base.map((r) => `${r.year} season`),
+    seasons: RESULTS.map((r) => `${r.year} season`),
     legend: { revenue: "Revenue", costs: "Total costs", cash: "Cumulative cash" },
   },
-  years: RESULTS.base.map((r) => String(r.year)),
-  lists: {
-    base: {
-      heading: "Base assumptions",
-      items: [
-        `${base.seasons[0].clarPerStore} clarifier bottles per store per season`,
-        `From ${base.seasons[1].year}, ${base.seasons[1].packPerStore} packs per store, then ${base.seasons[2].packPerStore} in ${base.seasons[2].year}`,
-        "Stores grow from Fredericton (2027) to other New Brunswick cities (2028) and Atlantic Canada (2029)",
-        `PMRA registration in time for the ${base.pmraYear + 1} season`,
-      ],
-    },
-    worst: {
-      heading: "What changes in the worst case",
-      items: [
-        `Stores keep ${UNIT.packWorst.storePct} percent`,
-        `Our cost rises ${WORST_COST_RISE_PCT} percent`,
-        worst.seasons[0].clarPerStore * 2 === base.seasons[0].clarPerStore ? "Half the bottles per store" : "CHECK THE MODEL",
-        `PMRA asks for exposure data and takes a year longer, so the pack starts in ${firstPackYear}`,
-      ],
-    },
-  },
+  years: RESULTS.map((r) => String(r.year)),
+  assumptions: SEASONS.map((s) => `${s.year}: ${amount(s.litresEach)} of each${s.litresEach < 1000 ? " product" : ""}.`).join(" "),
   closing: [
     claim(
-      `We plan for the worst case: about ${money(CASH.worst.needRounded)} over three seasons, from founder capital and the non-dilutive grants we are applying for.`,
-      "funding",
+      "These numbers are conservative. With the right conditions, we will produce more, and faster, and every customer conversation makes our numbers sharper.",
+      "conservative",
     ),
   ] as Rich,
   notes: [
-    "\"Here are three pool seasons. In the base case we start with 3 stores and only the clarifier, lose about 14,000 dollars in the first season, and turn positive in 2029. In the worst case, stores take 50 percent, costs go up, we sell half as much and PMRA takes a year longer. Then we need about 55,000 dollars and we are still not positive. So we plan for 55,000. Do these numbers look realistic to you?\"",
-    "Press W to switch between Base and Worst.",
+    `"Here are three pool seasons. In 2027 we sell 500 packages and spend the 60,000 dollars of start-up cash, so we end the season about 45,000 dollars down. In 2028 we sell 2,000 packages: we are profitable and the start-up cash is paid back. In 2029 we sell 4,000. These numbers are conservative. Do they look realistic to you?"`,
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -200,31 +140,24 @@ export const questionsSlide = {
   first: {
     heading: "How will we get our first customer?",
     steps: [
-      "Your introduction to Gabriela at Amazon Pools and Spas: 30 minutes, with a live jar test on the counter.",
-      "Leave two sample bottles and our price sheet. Ask what would make them say yes.",
-      [claim("Offer one case for the 2027 season, with unsold bottles taken back.", "take-back")],
-      "Call the City of Fredericton Recreation Department to learn how city pools buy chemicals.",
-      [claim("Stores plan their spring stock in winter, so we aim for a yes before March 2027.", "spring-stock")],
-    ] as readonly Rich[],
+      { text: "We talk to local pool stores, starting with your introduction to Gabriela at Amazon Pools and Spas, and compare our product with what is on their shelf." },
+      { text: "We send them photos of our jar test, so they can see the result." },
+      { text: "From our experience, stores usually accept a small first order." },
+      {
+        text: "For feedback, we give them 20 litres of samples.",
+        small: "Both products once the anti-algae is registered. Clarifier only before that.",
+      },
+    ],
   },
   holding: {
     heading: "What is holding us back?",
     items: [
-      {
-        lead: "Licences.",
-        text: "We are still confirming which approvals the clarifier needs: federal labelling, New Brunswick, and the City of Fredericton.",
-      },
-      {
-        lead: "PMRA for the anti-algae.",
-        text: `${money(PMRA_FEE_RANGE.low)} to ${money(PMRA_FEE_RANGE.high)} in application fees, and the time it takes. If the fee is more than 10 percent of expected revenue, PMRA lets us pay 10 percent up front.`,
-      },
-      { lead: "No customer conversation yet.", text: "Zero so far. Your introduction is our first." },
-      { lead: `Thin margin at ${moneyShort(PRICES.packRetail)}.`, text: "We need your advice on price." },
-      { lead: "Cash for the worst case.", text: `About ${money(CASH.worst.needRounded)} over three seasons.` },
+      { lead: "Capital:", text: `the ${money(STARTUP_CASH)} start-up cost.` },
+      { lead: "Our co-founder's visa:", text: "Dr. Ali Kalateh's visa." },
     ],
   },
   notes: [
-    "\"My first customer: your introduction to Gabriela, a jar test on her counter, two free bottles, and one case on her shelf with a take-back promise. What holds us back: licences, PMRA cost and time, no customer conversation yet, a thin margin, and cash for the worst case.\"",
+    "\"My first customer: we talk to local pool stores, starting with your introduction to Gabriela, and compare our product with what is on their shelf. We send photos of our jar test. Stores usually accept a small first order, and we give them 20 litres of samples for feedback. What holds us back: capital, the 60,000 dollar start-up cost, and Dr. Ali Kalateh's visa.\"",
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -234,6 +167,9 @@ export const SLIDE_COUNT = slides.length;
 
 /** The shared DemoTimer reads these; this page has no live demo, so T is off. */
 export const liveSlide = { timerNotStarted: "", timerPrint: "", timerCaption: "" };
+
+/** For the content check: the package price the page uses. */
+export const packageRetail = PACKAGE.retail;
 
 /* Interface strings ------------------------------------------------ */
 
