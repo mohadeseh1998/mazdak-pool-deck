@@ -30,9 +30,13 @@
   transform: translateY(36px) scale(0.95);
 }
 
+/* Arrived: sharp and in place. This must outrank the softer starting state
+   above, which also sets the blur, or headlines would stay blurred. */
 .gate2 .slide.is-entered [data-reveal],
 .gate2 .slide.is-entered .pop {
+  opacity: 1;
   transform: none;
+  filter: none;
 }
 
 /* Assumption tags and their cards, one step larger than on the other decks. */
