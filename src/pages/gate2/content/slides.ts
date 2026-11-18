@@ -14,7 +14,7 @@ type C = { text: Rich; claim: ClaimId };
 const claim = (text: Rich, id: ClaimId): C => ({ text, claim: id });
 
 /** The one place the video link lives. Change it here and every copy follows. */
-export const VIDEO_URL = "https://youtu.be/rKsXcTqSfsI";
+export const VIDEO_URL = "https://youtu.be/wk7ismudn6U";
 
 /** The YouTube id inside VIDEO_URL (youtu.be/ID or youtube.com/watch?v=ID). */
 export const VIDEO_ID = (VIDEO_URL.match(/(?:youtu\.be\/|[?&]v=|embed\/)([\w-]{11})/) ?? [])[1] ?? "";
@@ -87,6 +87,8 @@ export const answerSlide = {
       tone: "algae",
       heading: "Atlantic Anti-Algae.",
       body: "A chelated anti-algae, made for pools. Sold after PMRA registration.",
+      /** A short pointer to slide 4. */
+      note: "Dr. Ali Kalateh explains it in the video.",
     },
   ],
   price: [claim([{ b: "Atlantic Pool Pack: $49.99" }, " suggested retail."], "price")] as Rich,
@@ -106,14 +108,14 @@ export const video: VideoInfo = {
   watchUrl: VIDEO_URL,
   embedUrl: `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?rel=0&modestbranding=1&playsinline=1`,
   posterUrl: `https://i.ytimg.com/vi/${VIDEO_ID}/hqdefault.jpg`,
-  title: "Atlantic Clarifier and Atlantic Anti-Algae",
-  caption: "Atlantic Clarifier and Atlantic Anti-Algae.",
-  playLabel: "Play the video: Atlantic Clarifier and Atlantic Anti-Algae",
+  title: "Atlantic Anti-Algae",
+  caption: "Atlantic Anti-Algae.",
+  playLabel: "Play the video: Atlantic Anti-Algae",
   escapeHint: "Press Escape to return to slide controls.",
   iframeHint: "Click outside the video to return to slide controls.",
   fallback: "The video could not load here.",
   fallbackLink: `Watch on YouTube, ${VIDEO_URL.replace(/^https?:\/\//, "")}`,
-  posterAlt: "Video poster: the Atlantic Pool Pack bottles.",
+  posterAlt: "Poster for the video by Dr. Ali Kalateh.",
 };
 
 export const videoSlide = {
@@ -121,10 +123,14 @@ export const videoSlide = {
   title: "Ali's video",
   eyebrow: "Our CTO",
   ground: "deep",
-  headline: "Dr. Ali Kalateh explains both products.",
-  /** Print, PDF and PowerPoint only: the video becomes a link. */
+  headline: "Dr. Ali Kalateh explains the Atlantic Anti-Algae.",
+  /** The link to the video, under the player (and over the poster on paper). */
   watch: `Watch the video: ${VIDEO_URL.replace(/^https?:\/\//, "")}`,
-  notes: ["\"Our CTO, Dr. Ali Kalateh, explains both products.\"", "Play, stay quiet, glance at beaker B."],
+  notes: [
+    "\"Our CTO, Dr. Ali Kalateh, explains our Atlantic Anti-Algae. You'll see the clarifier at work in the live test at the end.\"",
+    "Play, stay quiet, glance at beaker B.",
+    "This video is about the anti-algae only. The clarifier is shown live, in the beakers, on the last slide.",
+  ],
   time: "1:00",
 } as const satisfies PageSlide & Record<string, unknown>;
 

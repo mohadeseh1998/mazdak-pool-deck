@@ -28,7 +28,9 @@ const BANNED_FILE = "banned-words.local.txt";
 const problems = [];
 const notes = [];
 
-const BINARY = /\.(png|jpe?g|webp|gif|mp4|mov|ico|pdf|woff2?|ttf|otf)$/i;
+// Binary files, never read as text. A .pptx is a zip: its bytes can look like
+// any character by chance. Its words all come from src/ and scripts/, checked here.
+const BINARY = /\.(png|jpe?g|webp|gif|mp4|mov|ico|pdf|pptx|woff2?|ttf|otf)$/i;
 
 const listed = (cmd) =>
   execSync(cmd, { encoding: "utf8" })
@@ -146,7 +148,9 @@ for (const file of copyFiles) {
 // Item 11: only the client's approved images may ship.
 const ALLOWED_ASSETS = new Set(["logo.png", "pool-pack-bottles.png", "pool-pack-bottles-cutout.webp", "jar-test.jpg", "iron-removal.jpg", "mohadeseh-zamani.jpg", "ali-kalateh.jpg", "pool-video.mp4",
   // /gate2/ slide 8 only: the supporters' logos, as the founder sent them (Gate 2 brief, Section 3).
-  "jhsc-logo.png", "ican-logo.png", "mitacs-logo.png", "planet-hatch-logo.png", "ignite-fredericton-logo.png"]);
+  "jhsc-logo.png", "ican-logo.png", "mitacs-logo.png", "planet-hatch-logo.png", "ignite-fredericton-logo.png",
+  // /gate2/ slide 4: Ali's anti-algae video for the PowerPoint, and one frame of it as the cover (PowerPoint and PDF).
+  "ali-video.mp4", "ali-video-poster.jpg"]);
 for (const f of files.filter((f) => f.startsWith("assets/") || f.startsWith("public/"))) {
   const name = f.split("/").pop();
   if (BINARY.test(name) && !ALLOWED_ASSETS.has(name.toLowerCase()))
@@ -600,6 +604,16 @@ const g2Source = read("src/pages/gate2/content/slides.ts");
 if ((g2Source.match(/https:\/\/youtu\.be\//g) || []).length !== 1 || !/export const VIDEO_URL = "https:\/\/youtu\.be\/[\w-]{11}";/.test(g2Source))
   problems.push("gate2: the video link must live in one VIDEO_URL constant");
 if (g2.video.watchUrl !== g2.VIDEO_URL || !g2.video.embedUrl.includes(g2.VIDEO_ID)) problems.push("gate2: the video does not use VIDEO_URL");
+// The Gate 2 video (founder's update, 18 November): the anti-algae video.
+expect("gate2 video link", g2.VIDEO_URL, "https://youtu.be/wk7ismudn6U");
+expect("gate2 video watch line", g2.videoSlide.watch, "Watch the video: youtu.be/wk7ismudn6U");
+expect("gate2 video eyebrow", g2.videoSlide.eyebrow, "Our CTO");
+expect("gate2 video headline", g2.videoSlide.headline, "Dr. Ali Kalateh explains the Atlantic Anti-Algae.");
+expect("gate2 video caption", g2.video.caption, "Atlantic Anti-Algae.");
+expect("gate2 anti-algae card note", g2.answerSlide.products[1].note, "Dr. Ali Kalateh explains it in the video.");
+const G2_FILES = files.filter((f) => /^(src\/pages\/gate2\/|gate2\/|docs\/gate2\/index\.html$|scripts\/gate2-)/.test(f) && !BINARY.test(f));
+for (const f of G2_FILES) if (read(f).includes("rKsXcTqSfsI")) problems.push(`${f}: the old Gate 2 video link is back`);
+if (/both products/i.test(JSON.stringify(g2.slides))) problems.push('gate2: still says "both products"');
 
 // Claims: exactly the brief's five, each used on screen.
 const G2_CLAIMS = ["price", "iron", "oil-sands", "roadmap", "startup-capital"];

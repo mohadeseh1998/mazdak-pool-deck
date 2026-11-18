@@ -8,8 +8,9 @@
 // 120 canvas px = 1 inch, and 1 canvas px of type = 0.6 pt. Body text is never
 // under 24 px (14.4 pt, which is 28.8 px at 1920 by 1080).
 //
-// If assets/gate2/ali-video.mp4 exists, slide 4 embeds it; otherwise slide 4
-// shows a poster with a play mark, and both link to VIDEO_URL.
+// If assets/gate2/ali-video.mp4 exists, slide 4 embeds it (cover picture:
+// assets/gate2/ali-video-poster.jpg, a frame from the video) with the link to
+// VIDEO_URL under it; otherwise slide 4 shows a poster that links to VIDEO_URL.
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import pptxgen from "pptxgenjs";
@@ -208,9 +209,10 @@ function bottles(slide, x, y, w, h, link) {
     [cl, 100, T.poolOnDeep],
     [aa, 1011, T.algaeOnDeep],
   ].forEach(([p, x, tone]) => {
-    card(slide, x, 312, 489, 300, tone);
+    card(slide, x, 306, 489, 316, tone);
     text(slide, p.heading, x + 48, 352, 400, 46, { size: 36, bold: true, color: tone });
-    text(slide, p.body, x + 48, 410, 400, 150, { size: 26, color: T.slate, line: 1.3 });
+    text(slide, p.body, x + 48, 410, 400, 110, { size: 26, color: T.slate, line: 1.3 });
+    if (p.note) text(slide, p.note, x + 48, 536, 400, 64, { size: 24, line: 1.25 });
   });
   bottles(slide, 629, 262, 340, 400);
   text(slide, runs(s.price, { color: T.paper, fontSize: P(34), boldColor: T.poolOnDeep }), 96, 690, 1408, 50, { align: "center", valign: "middle" });
@@ -225,8 +227,23 @@ function bottles(slide, x, y, w, h, link) {
   const vx = 320;
   const vy = 243;
   const mp4 = "assets/gate2/ali-video.mp4";
+  const cover = "assets/gate2/ali-video-poster.jpg";
   if (existsSync(mp4)) {
-    slide.addMedia({ type: "video", path: mp4, x: X(vx), y: X(vy), w: X(960), h: X(540) });
+    // Ali's video, embedded, at its own shape (848 by 800) inside the dark
+    // rounded frame. It plays inside PowerPoint; the link stays below it.
+    const vh = 540;
+    const vw = Math.round((vh * 848) / 800);
+    slide.addShape(pptx.ShapeType.roundRect, { x: X(vx), y: X(vy), w: X(960), h: X(540), rectRadius: X(28), fill: { color: "000000" }, line: { color: "000000" } });
+    slide.addMedia({
+      type: "video",
+      path: mp4,
+      x: X(800 - vw / 2),
+      y: X(vy),
+      w: X(vw),
+      h: X(vh),
+      ...(existsSync(cover) ? { cover: jpg(cover) } : {}),
+    });
+    text(slide, [{ text: s.watch, options: { color: T.poolOnDeep, bold: true, fontSize: P(24), hyperlink: { url: c.VIDEO_URL, tooltip: "Watch the video" } } }], 96, 836, 1408, 36, { align: "center", valign: "middle" });
   } else {
     slide.addShape(pptx.ShapeType.roundRect, { x: X(vx), y: X(vy), w: X(960), h: X(540), rectRadius: X(28), fill: { color: "22394A" }, line: { color: "22394A" }, hyperlink: { url: c.VIDEO_URL, tooltip: "Watch the video" } });
     bottles(slide, vx + 60, vy + 20, 840, 500, c.VIDEO_URL);
@@ -238,7 +255,7 @@ function bottles(slide, x, y, w, h, link) {
       extra: { fill: { color: T.deep, transparency: 15 } },
     });
   }
-  text(slide, c.video.caption, 96, 800, 1408, 36, { size: 24, color: T.slate, align: "center" });
+  text(slide, c.video.caption, 96, existsSync(mp4) ? 794 : 800, 1408, 36, { size: 24, color: T.slate, align: "center" });
 }
 
 /* 5. Progress since Gate 1 */

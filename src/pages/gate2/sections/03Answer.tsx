@@ -14,6 +14,7 @@ export function AnswerSection({ index }: { index: number }) {
       <p className="g2-card__body">
         <Plain text={p.body} />
       </p>
+      {"note" in p && p.note && <p className="g2-card__note">{p.note}</p>}
     </div>
   );
   return (

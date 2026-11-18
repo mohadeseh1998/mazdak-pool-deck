@@ -129,6 +129,11 @@
     font-size: 16px;
   }
 
+  .gate2 .g2-card__note {
+    margin-top: 10px;
+    font-size: 15px;
+  }
+
   /* 1. Title */
   .gate2 .g2-hero {
     flex-direction: column;
@@ -227,6 +232,7 @@
     height: 24px;
   }
 
+  .gate2 .g2-video__link,
   .gate2 .g2-video .video__caption,
   .gate2 .g2-video .video__unavailable {
     font-size: 15px;

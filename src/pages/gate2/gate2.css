@@ -125,6 +125,15 @@
   color: var(--slate-on-deep);
 }
 
+/* A short pointer under a card's text, for example to the video. */
+.g2-card__note {
+  margin-top: 14px;
+  font-size: var(--g2-min);
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--paper);
+}
+
 /* The coloured line along a card's top edge (silt, pool, algae) is the
    root deck's own, from app.css. */
 .g2-card.card--silt::before,
@@ -269,7 +278,9 @@
   margin-top: 64px;
 }
 
+/* Both cards share the row's height, so they always match. */
 .g2-answer__stage > .g2-card {
+  align-self: stretch;
   min-height: 300px;
   display: flex;
   flex-direction: column;
@@ -336,8 +347,8 @@
 }
 
 .g2-video .video__frame {
-  width: 960px;
-  height: 540px;
+  width: 912px;
+  height: 513px;
 }
 
 .g2-video .video__caption {
@@ -349,9 +360,23 @@
   font-size: var(--g2-min);
 }
 
-/* On screen the player is the link; on paper this takes its place. */
+/* On paper this takes the player's place. */
 .g2-video__print {
   display: none;
+}
+
+/* The link under the player. */
+.g2-video__link {
+  margin-top: 6px;
+  font-size: var(--g2-min);
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--pool-on-deep);
+  text-decoration: none;
+}
+
+.g2-video__link:hover {
+  text-decoration: underline;
 }
 
 /* ================================================================ */
@@ -907,7 +932,8 @@
     color: var(--slate-on-deep);
   }
 
-  .gate2 .video__print-url {
+  .gate2 .video__print-url,
+  .g2-video__link {
     display: none;
   }
 
@@ -916,8 +942,8 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 960px;
-    height: 540px;
+    width: 912px;
+    height: 513px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -925,6 +951,22 @@
     gap: 22px;
     text-decoration: none;
     color: var(--paper);
+  }
+
+  /* A frame from Ali's video, at its own shape, on black. */
+  .g2-video__print-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-card);
+    background: #000;
+  }
+
+  .g2-video__print-play,
+  .g2-video__print-url {
+    position: relative;
   }
 
   .g2-video__print-play {
