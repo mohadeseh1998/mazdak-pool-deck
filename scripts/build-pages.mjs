@@ -5,9 +5,10 @@
 //   dist/index.html             Funding Committee deck (root)
 //   dist/customer/index.html    customer pitch for a pool store
 //   dist/financials/index.html  pool line financials
+//   dist/gate2/index.html       JHSC Ventures Gate 2 final pitch
 import { execSync } from "node:child_process";
 
-const PAGES = ["customer", "financials"];
+const PAGES = ["customer", "financials", "gate2"];
 const run = (label, env = {}) => {
   console.log(`\nBuilding ${label}`);
   execSync("npx vite build", { stdio: "inherit", env: { ...process.env, ...env } });

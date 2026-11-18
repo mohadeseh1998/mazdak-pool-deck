@@ -87,7 +87,7 @@ if (existsSync(BANNED_FILE)) {
 // Copy files: what the room or a reader of the repo can see. CSS is left out
 // because its font fallback stack names a typeface that shares a country name.
 const copyFiles = sourceFiles.filter(
-  (f) => /^src\/.*\.(ts|tsx)$/.test(f) || f === "README.md" || /^(customer\/|financials\/)?index\.html$/.test(f),
+  (f) => /^src\/.*\.(ts|tsx)$/.test(f) || f === "README.md" || /^(customer\/|financials\/|gate2\/)?index\.html$/.test(f),
 );
 
 // Item 1: no country other than Canada. Names come from the runtime's own
@@ -144,7 +144,9 @@ for (const file of copyFiles) {
 }
 
 // Item 11: only the client's approved images may ship.
-const ALLOWED_ASSETS = new Set(["logo.png", "pool-pack-bottles.png", "pool-pack-bottles-cutout.webp", "jar-test.jpg", "iron-removal.jpg", "mohadeseh-zamani.jpg", "ali-kalateh.jpg", "pool-video.mp4"]);
+const ALLOWED_ASSETS = new Set(["logo.png", "pool-pack-bottles.png", "pool-pack-bottles-cutout.webp", "jar-test.jpg", "iron-removal.jpg", "mohadeseh-zamani.jpg", "ali-kalateh.jpg", "pool-video.mp4",
+  // /gate2/ slide 8 only: the supporters' logos, as the founder sent them (Gate 2 brief, Section 3).
+  "jhsc-logo.png", "ican-logo.png", "mitacs-logo.png", "planet-hatch-logo.png", "ignite-fredericton-logo.png"]);
 for (const f of files.filter((f) => f.startsWith("assets/") || f.startsWith("public/"))) {
   const name = f.split("/").pop();
   if (BINARY.test(name) && !ALLOWED_ASSETS.has(name.toLowerCase()))
@@ -576,6 +578,75 @@ for (const [page, mod, registry] of [
   if (mod.slides.length !== { customer: 9, financials: 3 }[page]) problems.push(`${page}: ${mod.slides.length} sections`);
 }
 notes.push(`claims: ${Object.keys(custClaims).length} on /customer/, ${Object.keys(finClaims).length} on /financials/`);
+
+/* 10. /gate2/, the JHSC Ventures Gate 2 final pitch (Gate 2 brief). ------ */
+// Section 4 (nine slides, in order), Section 6 (never include), Section 7
+// (the claims registry) and Section 3 (one VIDEO_URL constant).
+const g2 = await loadModule("src/pages/gate2/content/slides.ts");
+const g2Claims = (await loadModule("src/pages/gate2/content/claims.ts")).claims;
+const G2_TITLES = ["Title", "Problem", "Our answer", "Ali's video", "Progress since Gate 1", "Roadmap", "The ask", "Recognition and supporters", "Live test"];
+if (g2.slides.length !== 9) problems.push(`gate2: ${g2.slides.length} slides, not 9`);
+g2.slides.forEach((s, i) => {
+  if (s.n !== i + 1) problems.push(`gate2: slide ${i + 1} is numbered ${s.n}`);
+  if (s.title !== G2_TITLES[i]) problems.push(`gate2: slide ${i + 1} is "${s.title}", not "${G2_TITLES[i]}"`);
+  if (!s.notes?.length) problems.push(`gate2: slide ${i + 1} has no presenter notes`);
+});
+expect("gate2 title", g2.titleSlide.headline.join(" "), "Clear pools, made in New Brunswick.");
+expect("gate2 roadmap", g2.roadmapSlide.headline, "Five steps to the 2027 pool season.");
+expect("gate2 ask", g2.askSlide.headline.figure + g2.askSlide.headline.rest, "$60,000 to launch, non-dilutive first.");
+expect("gate2 statement", g2.liveSlide.statement, "Same water. Same soil. One bottle.");
+expect("gate2 footer", `${g2.liveSlide.thanks} ${g2.liveSlide.contact}`, "Thank you. agriaqua.ca");
+const g2Source = read("src/pages/gate2/content/slides.ts");
+if ((g2Source.match(/https:\/\/youtu\.be\//g) || []).length !== 1 || !/export const VIDEO_URL = "https:\/\/youtu\.be\/[\w-]{11}";/.test(g2Source))
+  problems.push("gate2: the video link must live in one VIDEO_URL constant");
+if (g2.video.watchUrl !== g2.VIDEO_URL || !g2.video.embedUrl.includes(g2.VIDEO_ID)) problems.push("gate2: the video does not use VIDEO_URL");
+
+// Claims: exactly the brief's five, each used on screen.
+const G2_CLAIMS = ["price", "iron", "oil-sands", "roadmap", "startup-capital"];
+for (const id of G2_CLAIMS) if (!(id in g2Claims)) problems.push(`gate2 claims: "${id}" is missing`);
+for (const id of Object.keys(g2Claims)) if (!G2_CLAIMS.includes(id)) problems.push(`gate2 claims: "${id}" is not in the brief`);
+const g2Used = usedClaims(g2.slides);
+for (const id of G2_CLAIMS) if (!g2Used.has(id)) problems.push(`gate2: claim "${id}" is never shown`);
+
+// Everything a viewer can see or hear on /gate2/, notes included.
+const g2Text = [
+  JSON.stringify(g2.slides),
+  JSON.stringify(g2.video),
+  JSON.stringify(g2Claims),
+  ...["01Title", "02Problem", "03Answer", "04Video", "05Progress", "06Roadmap", "07Ask", "08Recognition", "09Live"].map((f) => read(`src/pages/gate2/sections/${f}.tsx`)),
+  read("src/pages/gate2/App.tsx"),
+  read("gate2/index.html"),
+].join("\n");
+const G2_BANNED = [
+  [/\breaction|\bacids?\b|\bheating\b|\bheated\b|microwave|\bUV\b|formula/i, "how the products are made (Section 6)"],
+  [/\bsafe\b|non-toxic|harmless|not harmful/i, '"safe", "non-toxic", "harmless" or "not harmful" (Section 6)'],
+  [/won gate 2|gate 2 winner/i, '"Won Gate 2" (Section 6)'],
+  [/clump/i, '"clump" (slide 9)'],
+  [/market size|\bTAM\b|competitor/i, "market sizing or competitors (Section 6)"],
+  [/DemoTimer|timerStart|\b\d+ ?(min|minutes|seconds|sec)\b|1:00 video/i, "a demo timer or video duration (Sections 2 and 4)"],
+];
+for (const [re, label] of G2_BANNED) if (re.test(g2Text)) problems.push(`gate2: says ${label}`);
+// The process word "steps" is ruled out for how products are made; the
+// approved roadmap headline and the live test's steps are the only uses.
+for (const m of g2Text.matchAll(/\bsteps\b/gi)) {
+  const around = g2Text.slice(Math.max(0, m.index - 40), m.index + 40);
+  if (!/Five steps to the 2027|g2-live__steps|g2-road__steps|steps\.map|steps: \[|"steps"/.test(around)) problems.push(`gate2: "steps" outside the roadmap headline: ${around}`);
+}
+// Links on the page: our own site and the video only. (index.html also loads
+// the Inter font, as every page here does; that is a font, not a link.)
+for (const m of g2Text.matchAll(/https?:\/\/([\w.-]+)/g)) {
+  if (/^fonts\.(googleapis|gstatic)\.com$/.test(m[1])) continue;
+  if (!/(^|\.)(youtu\.be|youtube-nocookie\.com|ytimg\.com|agriaqua\.ca)$/.test(m[1])) problems.push(`gate2: links to ${m[1]}`);
+}
+
+// Spoken words: the quoted script in the presenter notes (Section 1: about 430).
+let g2Words = 0;
+for (const s of g2.slides) {
+  const spoken = s.notes.filter((n) => typeof n === "string" && n.startsWith('"')).join(" ");
+  g2Words += [...spoken.matchAll(/"([^"]+)"/g)].map((x) => x[1]).join(" ").split(/\s+/).filter(Boolean).length;
+}
+if (g2Words < 380 || g2Words > 480) problems.push(`gate2: ${g2Words} spoken words, the brief says about 430`);
+notes.push(`gate2: 9 slides, ${Object.keys(g2Claims).length} claims, ${g2Words} spoken words`);
 
 /* Report. --------------------------------------------------------------- */
 if (problems.length) {

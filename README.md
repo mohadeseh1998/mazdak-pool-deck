@@ -54,6 +54,26 @@ Copy lives in each page's `src/pages/<page>/content/`. The customer page reads i
 
 How it is built: a classic script (needed to open from a USB stick) cannot be shared between pages, so `npm run build` runs three builds into one `dist/`: the root deck exactly as before, then `customer/` and `financials/`. The shared components read their words from `../content/`. On a page build, a small Vite plugin (`pageContent` in `vite.config.ts`) answers those imports with the page's own content files, so the same TopBar, Claim, notes and sources show that page's words. The root deck's files are never touched, so its build output stays byte-for-byte the same.
 
+## Gate 2 final pitch
+
+| Page | Live | What it is |
+|---|---|---|
+| `gate2/` | https://mohadeseh1998.github.io/mazdak-pool-deck/gate2/ | The JHSC Ventures Gate 2 final pitch, nine slides, about 4:30 |
+
+Downloads: [PDF](https://mohadeseh1998.github.io/mazdak-pool-deck/gate2/Mazdak-Gate2-Final-Pitch.pdf) and [PowerPoint](https://mohadeseh1998.github.io/mazdak-pool-deck/gate2/Mazdak-Gate2-Final-Pitch.pptx).
+
+Keys: arrows, Space, Page Up and Down, Home, End; N presenter notes (with each slide's target time); A audit mode. No demo timer, no source register.
+
+All words, the presenter script and the video link live in `src/pages/gate2/content/slides.ts`. To change the video, edit `VIDEO_URL` there; the page, the PDF and the PowerPoint all follow. The supporters' logos for slide 8 are in `assets/gate2/` (`jhsc-logo.png`, `ican-logo.png`, `mitacs-logo.png`, `planet-hatch-logo.png`, `ignite-fredericton-logo.png`); a missing logo shows its name as text instead. To embed the video in the PowerPoint, add `assets/gate2/ali-video.mp4`.
+
+After `npm run publish`, remake the PDF and PowerPoint in `docs/gate2/` (needs Playwright with Chromium):
+
+```bash
+npm run export:gate2
+```
+
+`npm run check` also checks this page: nine slides in order, the five claims, one `VIDEO_URL`, none of the words the brief rules out, and about 430 spoken words in the script.
+
 Live preview of one page:
 
 ```bash
@@ -62,4 +82,8 @@ npm run dev:customer
 
 ```bash
 npm run dev:financials
+```
+
+```bash
+npm run dev:gate2
 ```

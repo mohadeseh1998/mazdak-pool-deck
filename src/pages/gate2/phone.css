@@ -1,0 +1,448 @@
+/* Phone layout for /gate2/ only (html.gate2). On a laptop or projector every
+   slide is a 1600 by 900 canvas scaled to fit. A phone held upright is too
+   narrow for that, so each slide reflows into one readable column. Same
+   words, same order, same colours. The roadmap turns vertical. */
+
+@media (max-width: 760px) and (orientation: portrait), (max-width: 560px) {
+  html.gate2 {
+    scroll-snap-type: y proximity;
+  }
+
+  .gate2 .slide {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+    /* The glow under the bottles is wider than a phone; never scroll sideways. */
+    overflow-x: clip;
+    scroll-snap-stop: normal;
+  }
+
+  .gate2 .canvas {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    height: auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 84px 20px 56px;
+    transform: none !important;
+  }
+
+  .gate2 .eyebrow {
+    position: static;
+    margin-bottom: 12px;
+    font-size: 17px;
+  }
+
+  .gate2 .frame {
+    position: static;
+    inset: auto;
+    padding: 0;
+  }
+
+  /* The top bar at phone size; the pager and notes are for the presenter's
+     keyboard, so they stay off a phone. */
+  .gate2 .topbar {
+    height: 52px !important;
+  }
+
+  .gate2 .topbar__inner {
+    left: 0;
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    transform: none !important;
+    font-size: 14px;
+  }
+
+  .gate2 .topbar__logo img {
+    width: 104px;
+    height: auto;
+  }
+
+  .gate2 .topbar__title {
+    font-size: 15px;
+  }
+
+  .gate2 .hud {
+    display: none;
+  }
+
+  /* Type */
+  .gate2 .g2-headline,
+  .gate2 .g2-live__title {
+    font-size: 36px;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    max-width: 100%;
+  }
+
+  .gate2 .g2-headline--sm {
+    font-size: 30px;
+  }
+
+  .gate2 .g2-line,
+  .gate2 .g2-small {
+    margin-top: 24px;
+    font-size: 17px;
+  }
+
+  .gate2 .g2-foot {
+    font-size: 13px;
+  }
+
+  .gate2 .claim__tag {
+    font-size: 12px;
+  }
+
+  .gate2 .claim-card {
+    font-size: 15px;
+  }
+
+  /* Cards stack. */
+  .gate2 .g2-cards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .gate2 .g2-card {
+    padding: 26px 22px;
+    border-radius: 22px;
+  }
+
+  .gate2 .g2-card.card--silt::before,
+  .gate2 .g2-card.card--pool::before,
+  .gate2 .g2-card.card--algae::before {
+    left: 22px;
+    right: 22px;
+  }
+
+  .gate2 .g2-card__title {
+    font-size: 22px;
+  }
+
+  .gate2 .g2-card__body {
+    font-size: 16px;
+  }
+
+  /* 1. Title */
+  .gate2 .g2-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gate2 .g2-hero__text {
+    width: 100%;
+  }
+
+  .gate2 .g2-hero__logo img {
+    width: 180px;
+    height: auto;
+  }
+
+  .gate2 .g2-hero__title {
+    margin-top: 22px;
+    font-size: 42px;
+    letter-spacing: -0.035em;
+  }
+
+  .gate2 .g2-hero__sub {
+    margin-top: 16px;
+    font-size: 19px;
+  }
+
+  .gate2 .g2-hero__founders {
+    margin-top: 14px;
+    font-size: 15px;
+  }
+
+  .gate2 .g2-hero__product {
+    position: relative;
+    right: auto;
+    top: auto;
+    align-self: center;
+    width: 240px;
+    height: 286px;
+    margin-top: 24px;
+  }
+
+  .gate2 .g2-hero__foot {
+    position: static;
+    margin-top: 24px;
+  }
+
+  /* 2 and 3 */
+  .gate2 .g2-problem .g2-cards {
+    margin-top: 28px;
+  }
+
+  .gate2 .g2-answer__stage {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .gate2 .g2-answer__stage > .g2-card {
+    min-height: 0;
+  }
+
+  .gate2 .g2-answer__product {
+    order: -1;
+    height: 220px;
+  }
+
+  .gate2 .g2-answer__price {
+    margin-top: 24px;
+    font-size: 21px;
+  }
+
+  .gate2 .g2-answer__bonus {
+    margin-top: 10px;
+  }
+
+  /* 4. Video */
+  .gate2 .g2-video__wrap {
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  .gate2 .g2-video .video__frame {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+  }
+
+  .gate2 .video__play {
+    width: 64px;
+    height: 64px;
+  }
+
+  .gate2 .video__play svg {
+    width: 22px;
+    height: 24px;
+  }
+
+  .gate2 .g2-video .video__caption,
+  .gate2 .g2-video .video__unavailable {
+    font-size: 15px;
+  }
+
+  /* 5. Progress */
+  .gate2 .g2-progress__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    margin-top: 28px;
+  }
+
+  .gate2 .g2-progress__done {
+    gap: 14px;
+  }
+
+  .gate2 .g2-progress__done li {
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 12px;
+    font-size: 16px;
+  }
+
+  .gate2 .g2-check {
+    width: 26px;
+    height: 26px;
+  }
+
+  .gate2 .g2-check svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .gate2 .g2-lead {
+    padding: 22px 22px 24px;
+    border-radius: 20px;
+  }
+
+  .gate2 .g2-lead__title {
+    font-size: 22px;
+  }
+
+  .gate2 .g2-lead__body {
+    font-size: 16px;
+  }
+
+  .gate2 .g2-progress__foot {
+    position: static;
+    margin-top: 24px;
+  }
+
+  /* 6. Roadmap: vertical, the rail on the left. */
+  .gate2 .g2-road__track {
+    margin-top: 28px;
+  }
+
+  .gate2 .g2-road__rail {
+    left: 19px;
+    right: auto;
+    top: 20px;
+    bottom: 40px;
+    width: 2px;
+    height: auto;
+    background: linear-gradient(180deg, var(--pool-on-deep), rgb(95 168 224 / 0.25));
+  }
+
+  .gate2 .g2-road__tag {
+    position: static;
+    display: block;
+    margin: 0 0 14px 56px;
+    text-align: left;
+  }
+
+  .gate2 .g2-road__steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .gate2 .g2-road__step {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: 16px;
+  }
+
+  .gate2 .g2-road__num {
+    grid-row: span 2;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .gate2 .g2-road__when {
+    margin-top: 6px;
+    font-size: 20px;
+  }
+
+  .gate2 .g2-road__what {
+    margin-top: 4px;
+    font-size: 16px;
+  }
+
+  .gate2 .g2-road__then {
+    margin-top: 28px;
+  }
+
+  /* 7. Ask */
+  .gate2 .g2-ask__title {
+    font-size: 40px;
+  }
+
+  .gate2 .g2-ask__sub {
+    margin-top: 18px;
+    font-size: 17px;
+  }
+
+  .gate2 .g2-ask__rule {
+    margin-top: 32px;
+  }
+
+  .gate2 .g2-ask__big {
+    margin-top: 28px;
+    font-size: 32px;
+  }
+
+  .gate2 .g2-ask__chips {
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .gate2 .g2-chip {
+    padding: 10px 18px 11px;
+    font-size: 16px;
+  }
+
+  /* 8. Recognition */
+  .gate2 .g2-recog__awards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .gate2 .g2-recog__awards li {
+    grid-template-columns: 10px minmax(0, 1fr);
+    gap: 12px;
+    font-size: 16px;
+  }
+
+  .gate2 .g2-recog__mark {
+    width: 8px;
+    height: 8px;
+    transform: translateY(-1px);
+  }
+
+  .gate2 .g2-recog__support {
+    position: static;
+    margin-top: 28px;
+  }
+
+  .gate2 .g2-logos {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px 22px;
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .gate2 .g2-logos__item.is-lead {
+    flex-basis: 100%;
+  }
+
+  .gate2 .g2-logos__item img {
+    height: 52px;
+    max-width: 120px;
+  }
+
+  .gate2 .g2-logos__item.is-lead img {
+    height: 84px;
+  }
+
+  .gate2 .slide--9 .eyebrow {
+    text-align: left;
+  }
+
+  .gate2 .g2-logos__name {
+    font-size: 15px;
+  }
+
+  /* 9. Live test */
+  .gate2 .g2-live__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .gate2 .g2-live__statement {
+    margin-top: 18px;
+    font-size: 26px;
+  }
+
+  .gate2 .g2-live__beakers li,
+  .gate2 .g2-live__steps li {
+    font-size: 16px;
+  }
+
+  .gate2 .g2-live__photo {
+    margin-top: 0;
+    align-items: center;
+  }
+
+  .gate2 .g2-live__img {
+    width: 200px;
+    height: 330px;
+    border-radius: 18px;
+  }
+
+  .gate2 .g2-live__thanks {
+    position: static;
+    margin-top: 28px;
+    font-size: 22px;
+  }
+}

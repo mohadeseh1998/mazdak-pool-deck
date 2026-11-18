@@ -7,12 +7,14 @@
     "dev": "vite",
     "dev:customer": "node scripts/dev-page.mjs customer",
     "dev:financials": "node scripts/dev-page.mjs financials",
+    "dev:gate2": "node scripts/dev-page.mjs gate2",
     "build": "npm run check && tsc -b && node scripts/build-pages.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "check": "node scripts/check-content.mjs",
     "prepare": "node -e \"try{require('child_process').execSync('git config core.hooksPath .githooks',{stdio:'ignore'})}catch(e){}\"",
-    "publish": "npm run build && node scripts/publish.mjs"
+    "publish": "npm run build && node scripts/publish.mjs",
+    "export:gate2": "node scripts/gate2-export.mjs && node scripts/gate2-pptx.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -23,6 +25,7 @@
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.7.0",
+    "pptxgenjs": "^3.12.0",
     "typescript": "^5.9.3",
     "vite": "^5.4.21"
   }

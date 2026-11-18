@@ -28,7 +28,7 @@ function classicScriptTag(): Plugin {
 // output stays byte-for-byte the same.
 // ---------------------------------------------------------------------------
 
-const PAGES = ["customer", "financials"] as const;
+const PAGES = ["customer", "financials", "gate2"] as const;
 type Page = (typeof PAGES)[number];
 
 const rootConfig: UserConfig = {
