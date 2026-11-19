@@ -194,12 +194,12 @@ export const fundSlide = {
   figure: "$100,000",
   figureLabel: "Our own capital, already working.",
   /** "$150,000" is drawn large. */
-  more: ["Plus $50,000 more from the founders by early 2027: ", { b: "$150,000" }, " in total."] as Rich,
+  more: ["Plus $50,000 more from the founders by the middle of 2027: ", { b: "$150,000" }, " in total."] as Rich,
   mentor: "Our mentor's advice: plan for twice what you think you need. So we did.",
   big: "What would help us most: your introductions.",
   chips: ["Pool stores", "City pools", "Industrial water users"],
   notes: [
-    "\"We're funding this ourselves. We started with one hundred thousand dollars of our own capital, and we'll add fifty thousand more by early next year. Our mentor told us to plan for twice what we think we need, so we did. What would help us most is your introductions: to pool stores, city pools, and anyone working with industrial water.\"",
+    "\"We're funding this ourselves. We started with one hundred thousand dollars of our own capital, and we'll add fifty thousand more by the middle of next year. Our mentor told us to plan for twice what we think we need, so we did. What would help us most is your introductions: to pool stores, city pools, and anyone working with industrial water.\"",
   ],
   time: "0:18",
 } as const satisfies PageSlide & Record<string, unknown>;
@@ -212,28 +212,50 @@ export const recognitionSlide = {
   eyebrow: "Recognition",
   ground: "deep",
   headline: "Recognized before we shipped a litre.",
+  /** The large card, built like the iron fertilizer deck's: two photos, four smaller ones, then the words. */
+  ican: {
+    label: "iCAN 2026",
+    caption:
+      "Gold Medal, WIIPA Special Award, Romanian Inventors Forum Special Award and a Certificate of Excellence, iCAN 2026, Toronto, for our iron fertilizer.",
+    main: [
+      {
+        file: "ican-awards.jpg",
+        alt: "Mohadeseh Zamani holding the iCAN 2026 Certificate of Excellence, with the Gold Medal, the WIIPA and Romanian Inventors Forum special awards and their certificates on the table.",
+      },
+      { file: "ican-gold-medal-1.jpg", alt: "The iCAN 2026 Gold Medal certificate with the medal." },
+    ],
+    thumbs: [
+      { file: "ican-gold-medal-2.jpg", alt: "The Gold Medal certificate with the medal on its ribbon." },
+      { file: "ican-certificate-of-excellence.jpg", alt: "The iCAN 2026 Certificate of Excellence." },
+      { file: "ican-wiipa-special-award.jpg", alt: "The WIIPA Special Award certificate with its medal." },
+      { file: "ican-fir-special-award.jpg", alt: "The Romanian Inventors Forum diploma and special award." },
+    ],
+  },
   /** Photo cards. A card whose photo file is missing becomes a text card. */
   photoCards: [
     {
-      id: "ican",
-      label: "iCAN 2026",
-      photo: "ican-awards.jpg",
-      alt: "Mohadeseh Zamani holding the iCAN 2026 Certificate of Excellence, with the Gold Medal, the WIIPA and Romanian Inventors Forum special awards and their certificates on the table.",
-      caption:
-        "Gold Medal, WIIPA Special Award, Romanian Inventors Forum Special Award and a Certificate of Excellence, iCAN 2026, Toronto, for our iron fertilizer.",
+      id: "bmo",
+      photo: "bmo-apex-team.jpg",
+      alt: "Five people holding certificates at the BMO Apex Startup Challenge 2025 at UNB.",
+      caption: "3rd place, Elevator Pitch Competition, BMO Apex Startup Challenge 2025, UNB.",
     },
     {
       id: "gate1",
-      /** The caption names the award, so the card shows no label. */
-      label: "",
       photo: "gate1-award.jpg",
       alt: "Mohadeseh Zamani and three others holding the JHSC Ventures Shadow Institute Gate 1 award cheque.",
       caption: "JHSC Ventures Shadow Institute: Gate 1 award, October 2026.",
     },
   ],
+  press: {
+    label: "Press.",
+    text: "Featured by AllNewBrunswick.",
+    photos: [
+      { file: "press-ali-kalateh.jpg", alt: "Dr. Ali Kalateh's photo in the AllNewBrunswick article." },
+      { file: "press-mohadeseh-zamani.jpg", alt: "Mohadeseh Zamani's photo in the AllNewBrunswick article." },
+    ],
+  },
   /** Small text cards: no photo. */
   textCards: [
-    { id: "bmo", text: "3rd place, Elevator Pitch Competition, BMO Apex Startup Challenge 2025, UNB." },
     { id: "jhsc-funding", text: "Summer Institute funding approved by the JHSC Funding Committee." },
     { id: "letters", lead: "Planet Hatch and Ignite Fredericton.", text: "Support letters from both." },
   ],

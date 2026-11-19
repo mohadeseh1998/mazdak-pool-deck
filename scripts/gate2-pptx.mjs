@@ -115,10 +115,24 @@ async function coverCrop(file, boxW, boxH, posY = 0.5) {
   }
 }
 
+// Slide 8's two cropped photos, framed as the page frames them.
 const PHOTOS = {
-  ican: existsSync("assets/gate2/ican-awards.jpg") ? jpg("assets/gate2/ican-awards.jpg") : null,
-  gate1: existsSync("assets/gate2/gate1-award.jpg") ? await coverCrop("assets/gate2/gate1-award.jpg", 548, 228, 0.22) : null,
+  bmo: existsSync("assets/gate2/bmo-apex-team.jpg") ? await coverCrop("assets/gate2/bmo-apex-team.jpg", 360, 178, 0.4) : null,
+  gate1: existsSync("assets/gate2/gate1-award.jpg") ? await coverCrop("assets/gate2/gate1-award.jpg", 360, 204, 0.22) : null,
 };
+
+/** Width and height of a JPEG, from its frame header. */
+function jpgSize(file) {
+  const b = readFileSync(file);
+  let i = 2;
+  while (i < b.length) {
+    const marker = b[i + 1];
+    const len = b.readUInt16BE(i + 2);
+    if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) return { height: b.readUInt16BE(i + 5), width: b.readUInt16BE(i + 7) };
+    i += 2 + len;
+  }
+  throw new Error(`No size in ${file}`);
+}
 
 const IMG = {
   logo: png("assets/logo.png"),
@@ -362,55 +376,70 @@ function bottles(slide, x, y, w, h, link) {
   });
 }
 
-/* 8. Recognition: photo cards */
+/* 8. Recognition: photo cards, like the iron fertilizer deck */
 {
   const s = c.recognitionSlide;
   const slide = base(s);
   headline(slide, s.headline, 150, 60);
-  const top = 239;
-  const rowH = 352;
-  const inset = 12;
-  const photoCard = (x, y, w, h) =>
+  const top = 233;
+  const cardBox = (x, y, w, h) =>
     slide.addShape(pptx.ShapeType.roundRect, { x: X(x), y: X(y), w: X(w), h: X(h), rectRadius: X(24), fill: { color: T.card }, line: { color: T.cardLine, width: 0.75 } });
+  const caption = (value, x, y, w, h) => text(slide, value, x, y, w, h, { size: 20, line: 1.2 });
   const textCard = (card, x, y, w, h) => {
-    photoCard(x, y, w, h);
+    cardBox(x, y, w, h);
     const r = [];
     if (card.lead) r.push({ text: `${card.lead} `, options: { bold: true, color: T.paper } });
     r.push({ text: card.text, options: { color: T.paper } });
-    slide.addText(r, { x: X(x + 28), y: X(y), w: X(w - 56), h: X(h), fontFace: FONT, fontSize: P(24), valign: "middle", margin: 0, lineSpacingMultiple: 1.2 });
+    slide.addText(r, { x: X(x + 22), y: X(y), w: X(w - 44), h: X(h), fontFace: FONT, fontSize: P(20), valign: "middle", margin: 0, lineSpacingMultiple: 1.2 });
   };
-  const [ican, gate1] = s.photoCards;
-  // iCAN 2026: the photo at its own shape on the left, words on the right.
-  const icanFile = `assets/gate2/${ican.photo}`;
-  if (existsSync(icanFile)) {
-    photoCard(96, top, 812, rowH);
-    const ph = rowH - 2 * inset;
-    const pw = Math.round((ph * 1024) / 982);
-    slide.addImage({ data: PHOTOS.ican, x: X(96 + inset), y: X(top + inset), w: X(pw), h: X(ph), altText: ican.alt });
-    const tx = 96 + inset + pw + 28;
-    slide.addText(
-      [
-        { text: ican.label, options: { bold: true, color: T.poolOnDeep, fontSize: P(32), breakLine: true } },
-        { text: ican.caption, options: { color: T.paper, fontSize: P(24) } },
-      ],
-      { x: X(tx), y: X(top), w: X(908 - tx - 24), h: X(rowH), fontFace: FONT, valign: "middle", margin: 0, lineSpacingMultiple: 1.25, paraSpaceAfter: 6 },
-    );
-  } else textCard({ lead: `${ican.label}.`, text: ican.caption }, 96, top, 812, rowH);
-  // Gate 1: the photo on top, the caption under it.
-  const gx = 932;
-  const gw = 572;
-  const gateFile = `assets/gate2/${gate1.photo}`;
-  if (existsSync(gateFile)) {
-    photoCard(gx, top, gw, rowH);
-    slide.addImage({ data: PHOTOS.gate1, x: X(gx + inset), y: X(top + inset), w: X(gw - 2 * inset), h: X(240 - inset), altText: gate1.alt });
-    text(slide, gate1.caption, gx + 28, top + 248, gw - 56, rowH - 256, { size: 24, valign: "middle", line: 1.2 });
-  } else textCard({ text: gate1.caption }, gx, top, gw, rowH);
-  // Three small text cards.
-  const tw = (1408 - 2 * 24) / 3;
-  s.textCards.forEach((t, i) => textCard(t, 96 + i * (tw + 24), top + rowH + 18, tw, 136));
+  // A row of photos at their own shapes, one height, centred in the given width.
+  const row = (pics, x, y, w, h, gap) => {
+    const found = pics.filter((p) => existsSync(`assets/gate2/${p.file}`)).map((p) => ({ ...p, ...jpgSize(`assets/gate2/${p.file}`) }));
+    const widths = found.map((p) => (h * p.width) / p.height);
+    let px = x + (w - (widths.reduce((a, b) => a + b, 0) + gap * (found.length - 1))) / 2;
+    found.forEach((p, k) => {
+      slide.addImage({ data: jpg(`assets/gate2/${p.file}`), x: X(px), y: X(y), w: X(widths[k]), h: X(h), altText: p.alt });
+      px += widths[k] + gap;
+    });
+  };
+
+  // iCAN 2026: two photos, four smaller ones, then the words.
+  cardBox(96, top, 600, 560);
+  row(s.ican.main, 114, top + 18, 564, 252, 12);
+  row(s.ican.thumbs, 114, top + 282, 564, 106, 10);
+  text(slide, s.ican.label, 120, top + 404, 552, 36, { size: 28, bold: true, color: T.poolOnDeep, valign: "middle" });
+  caption(s.ican.caption, 120, top + 444, 552, 100);
+
+  // BMO Apex and the Gate 1 award: one photo across the top, the caption under it.
+  const [bmo, gate1] = s.photoCards;
+  [
+    [bmo, 720, 178],
+    [gate1, 1124, 204],
+  ].forEach(([card, x, ph]) => {
+    if (!PHOTOS[card.id]) return textCard({ text: card.caption }, x, top, 380, 300);
+    cardBox(x, top, 380, 300);
+    slide.addImage({ data: PHOTOS[card.id], x: X(x + 10), y: X(top + 10), w: X(360), h: X(ph), altText: card.alt });
+    caption(card.caption, x + 20, top + ph + 22, 340, 300 - ph - 30);
+  });
+
+  // Press: the two photos from the AllNewBrunswick article.
+  const py = top + 324;
+  cardBox(720, py, 380, 236);
+  row(s.press.photos, 736, py + 16, 348, 140, 12);
+  slide.addText(
+    [
+      { text: `${s.press.label} `, options: { bold: true, color: T.paper } },
+      { text: s.press.text, options: { color: T.paper } },
+    ],
+    { x: X(742), y: X(py + 164), w: X(336), h: X(62), fontFace: FONT, fontSize: P(20), valign: "middle", margin: 0, lineSpacingMultiple: 1.2 },
+  );
+
+  // Two small text cards.
+  s.textCards.forEach((t, i) => textCard(t, 1124, py + i * 130, 380, 106));
+
   // The supporters' logos, as they are, on one light strip.
-  const sy = 776;
-  const sh = 86;
+  const sy = 804;
+  const sh = 66;
   slide.addShape(pptx.ShapeType.roundRect, { x: X(96), y: X(sy), w: X(1408), h: X(sh), rectRadius: X(20), fill: { color: T.paper }, line: { color: T.paper } });
   text(slide, s.supportedBy, 140, sy, 160, sh, { size: 17, bold: true, color: "5B6870", valign: "middle" });
   const slotX = 320;
@@ -418,7 +447,7 @@ function bottles(slide, x, y, w, h, link) {
   s.logos.forEach((l, i) => {
     const file = `assets/gate2/${l.file}`;
     const cx = slotX + slotW * (i + 0.5);
-    const h = l.lead ? 62 : 52;
+    const h = l.lead ? 48 : 40;
     if (!existsSync(file)) {
       text(slide, l.name, cx - 110, sy, 220, sh, { size: 20, bold: true, color: T.deep, align: "center", valign: "middle" });
       return;

@@ -629,18 +629,50 @@
 }
 
 /* ================================================================ */
-/* 8. Recognition: photo cards                                      */
+/* 8. Recognition: photo cards, like the iron fertilizer deck        */
+/* Card words here are captions under photos: 20px on the canvas     */
+/* (24px at 1920), above the 18px floor for captions.                */
 /* ================================================================ */
 
 .g2-recog__grid {
   display: grid;
-  grid-template-columns: 812px minmax(0, 1fr);
-  grid-template-rows: 352px 136px;
-  gap: 18px 24px;
+  grid-template-columns: 600px 380px minmax(0, 1fr);
+  grid-template-rows: 300px 106px 106px;
+  gap: 24px;
   width: 100%;
   max-width: 1408px;
-  margin-top: 26px;
+  margin-top: 20px;
   text-align: left;
+}
+
+.g2-rc--ican {
+  grid-column: 1;
+  grid-row: 1 / 4;
+}
+
+.g2-rc--bmo {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.g2-rc--gate1 {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.g2-rc--press {
+  grid-column: 2;
+  grid-row: 2 / 4;
+}
+
+.g2-rc--jhsc-funding {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.g2-rc--letters {
+  grid-column: 3;
+  grid-row: 3;
 }
 
 .g2-rc {
@@ -651,10 +683,77 @@
   border: 1px solid var(--card-line);
 }
 
+/* Rows of photos at their own shapes, one height each. */
+.g2-ican__main,
+.g2-ican__thumbs,
+.g2-press__photos {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.g2-ican__main .zoom,
+.g2-ican__thumbs .zoom,
+.g2-press__photos .zoom {
+  flex: none;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.g2-ican__main .zoom img,
+.g2-ican__thumbs .zoom img,
+.g2-press__photos .zoom img {
+  width: auto;
+  height: 100%;
+}
+
+.g2-rc--ican {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 18px 0;
+}
+
+.g2-ican__main {
+  height: 252px;
+}
+
+.g2-ican__thumbs {
+  height: 106px;
+  margin-top: 12px;
+  gap: 10px;
+}
+
+.g2-rc--ican .g2-rc__body {
+  padding: 16px 6px 18px;
+}
+
+.g2-rc--press {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 0;
+}
+
+.g2-press__photos {
+  flex: 1;
+  min-height: 0;
+}
+
+.g2-rc--press .g2-rc__body {
+  padding: 12px 6px 14px;
+}
+
+/* One photo across the top, the caption under it. */
+.g2-rc--photo {
+  display: flex;
+  flex-direction: column;
+}
+
 .g2-rc__img {
   display: block;
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  height: 100%;
   padding: 0;
   border: 0;
   background: #000;
@@ -667,21 +766,8 @@
   object-fit: cover;
 }
 
-/* iCAN 2026: the photo at its own shape on the left, words on the right. */
-.g2-rc--ican {
-  display: grid;
-  grid-template-columns: 368px minmax(0, 1fr);
-}
-
-/* Gate 1: the photo on top, the caption under it. */
-.g2-rc--gate1 {
-  display: flex;
-  flex-direction: column;
-}
-
-.g2-rc--gate1 .g2-rc__img {
-  flex: 1;
-  min-height: 0;
+.g2-rc--bmo .g2-rc__img img {
+  object-position: 50% 40%;
 }
 
 .g2-rc--gate1 .g2-rc__img img {
@@ -691,13 +777,12 @@
 .g2-rc__body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  padding: 22px 28px 24px;
+  gap: 6px;
+  padding: 14px 20px 16px;
 }
 
 .g2-rc__label {
-  font-size: 32px;
+  font-size: 28px;
   line-height: 1.15;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -705,28 +790,20 @@
 }
 
 .g2-rc__text {
-  font-size: var(--g2-min);
-  line-height: 1.38;
+  font-size: 20px;
+  line-height: 1.35;
   color: var(--paper);
 }
 
-.g2-recog__texts {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+.g2-rc__text strong {
+  font-weight: 700;
 }
 
 /* A small text card: words only, never an empty photo area. */
 .g2-rc--text {
   display: flex;
   align-items: center;
-  padding: 18px 28px;
-}
-
-.g2-rc--text strong {
-  font-weight: 700;
-  color: var(--paper);
+  padding: 14px 22px;
 }
 
 /* The supporters' logos, as they are, on one light strip. */
@@ -734,11 +811,11 @@
   position: absolute;
   left: var(--margin);
   right: var(--margin);
-  bottom: 38px;
+  bottom: 30px;
   display: flex;
   align-items: center;
   gap: 32px;
-  padding: 12px 44px;
+  padding: 9px 44px;
   border-radius: 20px;
   background: var(--paper);
 }
@@ -768,14 +845,14 @@
 
 .g2-logos__item img {
   display: block;
-  height: 52px;
+  height: 40px;
   width: auto;
   max-width: 200px;
   object-fit: contain;
 }
 
 .g2-logos__item.is-lead img {
-  height: 62px;
+  height: 48px;
   border-radius: 4px;
 }
 

@@ -151,6 +151,9 @@ const ALLOWED_ASSETS = new Set(["logo.png", "pool-pack-bottles.png", "pool-pack-
   "jhsc-logo.png", "ican-logo.png", "planet-hatch-logo.png", "ignite-fredericton-logo.png",
   // /gate2/ slide 8: the founder's photos of the iCAN 2026 awards and the Gate 1 award.
   "ican-awards.jpg", "gate1-award.jpg",
+  // /gate2/ slide 8: from the iron fertilizer deck's recognition slide (founder's photos).
+  "ican-gold-medal-1.jpg", "ican-gold-medal-2.jpg", "ican-certificate-of-excellence.jpg", "ican-wiipa-special-award.jpg",
+  "ican-fir-special-award.jpg", "bmo-apex-team.jpg", "press-ali-kalateh.jpg", "press-mohadeseh-zamani.jpg",
   // /gate2/ slide 4: Ali's anti-algae video for the PowerPoint, and one frame of it as the cover (PowerPoint and PDF).
   "ali-video.mp4", "ali-video-poster.jpg"]);
 for (const f of files.filter((f) => f.startsWith("assets/") || f.startsWith("public/"))) {
@@ -602,14 +605,22 @@ expect("gate2 roadmap", g2.roadmapSlide.headline, "Five steps to the 2027 pool s
 // Final changes (19 November): founder-funded, recognition as photo cards, results.
 expect("gate2 fund headline", g2.fundSlide.headline, "Founder-funded from day one.");
 expect("gate2 fund figure", `${g2.fundSlide.figure} ${g2.fundSlide.figureLabel}`, "$100,000 Our own capital, already working.");
-expect("gate2 fund total", flat(g2.fundSlide.more), "Plus $50,000 more from the founders by early 2027: $150,000 in total.");
+expect("gate2 fund total", flat(g2.fundSlide.more), "Plus $50,000 more from the founders by the middle of 2027: $150,000 in total.");
 expect("gate2 fund mentor", g2.fundSlide.mentor, "Our mentor's advice: plan for twice what you think you need. So we did.");
 expect("gate2 fund ask", g2.fundSlide.big, "What would help us most: your introductions.");
 expect("gate2 fund chips", g2.fundSlide.chips.join(" | "), "Pool stores | City pools | Industrial water users");
 expect("gate2 recognition headline", g2.recognitionSlide.headline, "Recognized before we shipped a litre.");
 expect("gate2 recognition logos", g2.recognitionSlide.logos.map((l) => l.file).join(" "), "jhsc-logo.png ican-logo.png planet-hatch-logo.png ignite-fredericton-logo.png");
-expect("gate2 recognition photos", g2.recognitionSlide.photoCards.map((p) => p.photo).join(" "), "ican-awards.jpg gate1-award.jpg");
-for (const p of g2.recognitionSlide.photoCards) if (!existsSync(`assets/gate2/${p.photo}`)) problems.push(`gate2: the photo ${p.photo} is missing`);
+// Slide 8 photos: the founder's photo with all the medals (not the one-medal
+// photo), the five iCAN medal and certificate photos, BMO Apex, Gate 1, press.
+const rs = g2.recognitionSlide;
+const g2Photos = [...rs.ican.main, ...rs.ican.thumbs].map((p) => p.file).concat(rs.photoCards.map((p) => p.photo), rs.press.photos.map((p) => p.file));
+expect(
+  "gate2 recognition photos",
+  g2Photos.join(" "),
+  "ican-awards.jpg ican-gold-medal-1.jpg ican-gold-medal-2.jpg ican-certificate-of-excellence.jpg ican-wiipa-special-award.jpg ican-fir-special-award.jpg bmo-apex-team.jpg gate1-award.jpg press-ali-kalateh.jpg press-mohadeseh-zamani.jpg",
+);
+for (const f of g2Photos) if (!existsSync(`assets/gate2/${f}`)) problems.push(`gate2: the photo ${f} is missing`);
 expect("gate2 results headline", g2.resultsSlide.headline, "Same water. Same soil. One bottle.");
 expect("gate2 results caption", g2.resultsSlide.photo.caption, "Our jar test with Atlantic Clarifier.");
 expect("gate2 footer", `${g2.resultsSlide.thanks} ${g2.resultsSlide.contact}`, "Thank you. agriaqua.ca");
