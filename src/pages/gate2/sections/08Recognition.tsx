@@ -53,9 +53,6 @@ export function RecognitionSection({ index }: { index: number }) {
   const pressFound = c.press.photos.some((p) => logoUrl(p.file));
   return (
     <SlideFrame slide={c} index={index} className="g2-recog">
-      <h2 className="g2-headline g2-headline--sm" {...reveal(1, "clear")}>
-        {c.headline}
-      </h2>
       <div className="g2-recog__grid">
         <figure className="g2-rc g2-rc--ican" {...reveal(3)}>
           <Row pics={ican.main} caption={ican.caption} className="g2-ican__main" />

@@ -630,18 +630,18 @@
 
 /* ================================================================ */
 /* 8. Recognition: photo cards, like the iron fertilizer deck        */
-/* Card words here are captions under photos: 20px on the canvas     */
-/* (24px at 1920), above the 18px floor for captions.                */
+/* No headline: the eyebrow names the slide and the cards start under */
+/* it. Card words are 24px on the canvas (28.8px at 1920).           */
 /* ================================================================ */
 
 .g2-recog__grid {
   display: grid;
   grid-template-columns: 600px 380px minmax(0, 1fr);
-  grid-template-rows: 300px 106px 106px;
+  grid-template-rows: 340px 126px 126px;
   gap: 24px;
   width: 100%;
   max-width: 1408px;
-  margin-top: 20px;
+  margin-top: 0;
   text-align: left;
 }
 
@@ -715,11 +715,11 @@
 }
 
 .g2-ican__main {
-  height: 252px;
+  height: 284px;
 }
 
 .g2-ican__thumbs {
-  height: 106px;
+  height: 116px;
   margin-top: 12px;
   gap: 10px;
 }
@@ -790,8 +790,8 @@
 }
 
 .g2-rc__text {
-  font-size: 20px;
-  line-height: 1.35;
+  font-size: var(--g2-min);
+  line-height: 1.32;
   color: var(--paper);
 }
 
@@ -803,7 +803,7 @@
 .g2-rc--text {
   display: flex;
   align-items: center;
-  padding: 14px 22px;
+  padding: 10px 22px;
 }
 
 /* The supporters' logos, as they are, on one light strip. */

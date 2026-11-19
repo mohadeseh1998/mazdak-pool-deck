@@ -609,7 +609,9 @@ expect("gate2 fund total", flat(g2.fundSlide.more), "Plus $50,000 more from the 
 expect("gate2 fund mentor", g2.fundSlide.mentor, "Our mentor's advice: plan for twice what you think you need. So we did.");
 expect("gate2 fund ask", g2.fundSlide.big, "What would help us most: your introductions.");
 expect("gate2 fund chips", g2.fundSlide.chips.join(" | "), "Pool stores | City pools | Industrial water users");
-expect("gate2 recognition headline", g2.recognitionSlide.headline, "Recognized before we shipped a litre.");
+// The founder removed slide 8's headline (19 November): the eyebrow alone names it.
+if ("headline" in g2.recognitionSlide) problems.push("gate2: slide 8 has a headline again");
+if (/shipped a litre/i.test(read("src/pages/gate2/sections/08Recognition.tsx") + JSON.stringify(g2.slides))) problems.push('gate2: "Recognized before we shipped a litre" is back');
 expect("gate2 recognition logos", g2.recognitionSlide.logos.map((l) => l.file).join(" "), "jhsc-logo.png ican-logo.png planet-hatch-logo.png ignite-fredericton-logo.png");
 // Slide 8 photos: the founder's photo with all the medals (not the one-medal
 // photo), the five iCAN medal and certificate photos, BMO Apex, Gate 1, press.

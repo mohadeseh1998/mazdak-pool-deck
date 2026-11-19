@@ -211,7 +211,6 @@ export const recognitionSlide = {
   title: "Recognition",
   eyebrow: "Recognition",
   ground: "deep",
-  headline: "Recognized before we shipped a litre.",
   /** The large card, built like the iron fertilizer deck's: two photos, four smaller ones, then the words. */
   ican: {
     label: "iCAN 2026",

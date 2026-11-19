@@ -117,8 +117,8 @@ async function coverCrop(file, boxW, boxH, posY = 0.5) {
 
 // Slide 8's two cropped photos, framed as the page frames them.
 const PHOTOS = {
-  bmo: existsSync("assets/gate2/bmo-apex-team.jpg") ? await coverCrop("assets/gate2/bmo-apex-team.jpg", 360, 178, 0.4) : null,
-  gate1: existsSync("assets/gate2/gate1-award.jpg") ? await coverCrop("assets/gate2/gate1-award.jpg", 360, 204, 0.22) : null,
+  bmo: existsSync("assets/gate2/bmo-apex-team.jpg") ? await coverCrop("assets/gate2/bmo-apex-team.jpg", 360, 176, 0.4) : null,
+  gate1: existsSync("assets/gate2/gate1-award.jpg") ? await coverCrop("assets/gate2/gate1-award.jpg", 360, 176, 0.22) : null,
 };
 
 /** Width and height of a JPEG, from its frame header. */
@@ -380,17 +380,17 @@ function bottles(slide, x, y, w, h, link) {
 {
   const s = c.recognitionSlide;
   const slide = base(s);
-  headline(slide, s.headline, 150, 60);
-  const top = 233;
+  // No headline: the eyebrow names the slide; the cards start under it.
+  const top = 150;
   const cardBox = (x, y, w, h) =>
     slide.addShape(pptx.ShapeType.roundRect, { x: X(x), y: X(y), w: X(w), h: X(h), rectRadius: X(24), fill: { color: T.card }, line: { color: T.cardLine, width: 0.75 } });
-  const caption = (value, x, y, w, h) => text(slide, value, x, y, w, h, { size: 20, line: 1.2 });
+  const caption = (value, x, y, w, h) => text(slide, value, x, y, w, h, { size: 24, line: 1.2 });
   const textCard = (card, x, y, w, h) => {
     cardBox(x, y, w, h);
     const r = [];
     if (card.lead) r.push({ text: `${card.lead} `, options: { bold: true, color: T.paper } });
     r.push({ text: card.text, options: { color: T.paper } });
-    slide.addText(r, { x: X(x + 22), y: X(y), w: X(w - 44), h: X(h), fontFace: FONT, fontSize: P(20), valign: "middle", margin: 0, lineSpacingMultiple: 1.2 });
+    slide.addText(r, { x: X(x + 22), y: X(y), w: X(w - 44), h: X(h), fontFace: FONT, fontSize: P(24), valign: "middle", margin: 0, lineSpacingMultiple: 1.15 });
   };
   // A row of photos at their own shapes, one height, centred in the given width.
   const row = (pics, x, y, w, h, gap) => {
@@ -404,38 +404,38 @@ function bottles(slide, x, y, w, h, link) {
   };
 
   // iCAN 2026: two photos, four smaller ones, then the words.
-  cardBox(96, top, 600, 560);
-  row(s.ican.main, 114, top + 18, 564, 252, 12);
-  row(s.ican.thumbs, 114, top + 282, 564, 106, 10);
-  text(slide, s.ican.label, 120, top + 404, 552, 36, { size: 28, bold: true, color: T.poolOnDeep, valign: "middle" });
-  caption(s.ican.caption, 120, top + 444, 552, 100);
+  cardBox(96, top, 600, 640);
+  row(s.ican.main, 114, top + 18, 564, 284, 12);
+  row(s.ican.thumbs, 114, top + 314, 564, 116, 10);
+  text(slide, s.ican.label, 120, top + 446, 552, 36, { size: 28, bold: true, color: T.poolOnDeep, valign: "middle" });
+  caption(s.ican.caption, 120, top + 486, 552, 140);
 
   // BMO Apex and the Gate 1 award: one photo across the top, the caption under it.
   const [bmo, gate1] = s.photoCards;
   [
-    [bmo, 720, 178],
-    [gate1, 1124, 204],
+    [bmo, 720, 176],
+    [gate1, 1124, 176],
   ].forEach(([card, x, ph]) => {
-    if (!PHOTOS[card.id]) return textCard({ text: card.caption }, x, top, 380, 300);
-    cardBox(x, top, 380, 300);
+    if (!PHOTOS[card.id]) return textCard({ text: card.caption }, x, top, 380, 340);
+    cardBox(x, top, 380, 340);
     slide.addImage({ data: PHOTOS[card.id], x: X(x + 10), y: X(top + 10), w: X(360), h: X(ph), altText: card.alt });
-    caption(card.caption, x + 20, top + ph + 22, 340, 300 - ph - 30);
+    caption(card.caption, x + 20, top + ph + 20, 340, 340 - ph - 28);
   });
 
   // Press: the two photos from the AllNewBrunswick article.
-  const py = top + 324;
-  cardBox(720, py, 380, 236);
-  row(s.press.photos, 736, py + 16, 348, 140, 12);
+  const py = top + 364;
+  cardBox(720, py, 380, 276);
+  row(s.press.photos, 736, py + 16, 348, 168, 12);
   slide.addText(
     [
       { text: `${s.press.label} `, options: { bold: true, color: T.paper } },
       { text: s.press.text, options: { color: T.paper } },
     ],
-    { x: X(742), y: X(py + 164), w: X(336), h: X(62), fontFace: FONT, fontSize: P(20), valign: "middle", margin: 0, lineSpacingMultiple: 1.2 },
+    { x: X(742), y: X(py + 192), w: X(336), h: X(74), fontFace: FONT, fontSize: P(24), valign: "middle", margin: 0, lineSpacingMultiple: 1.15 },
   );
 
   // Two small text cards.
-  s.textCards.forEach((t, i) => textCard(t, 1124, py + i * 130, 380, 106));
+  s.textCards.forEach((t, i) => textCard(t, 1124, py + i * 150, 380, 126));
 
   // The supporters' logos, as they are, on one light strip.
   const sy = 804;
