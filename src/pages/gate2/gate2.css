@@ -11,7 +11,7 @@
   --g2-body: 26px;
   --g2-min: 24px;
   --g2-foot: 17px;
-  /* Calm motion: a softer blur, a shorter rise. Nothing competes with the beakers. */
+  /* Calm motion: a softer blur, a shorter rise. Nothing distracts from the words. */
   --clear-ms: 1300ms;
   --reveal-ms: 900ms;
   --beat: 120ms;
@@ -552,62 +552,73 @@
 }
 
 /* ================================================================ */
-/* 7. The ask                                                       */
+/* 7. How we fund it                                                */
 /* ================================================================ */
 
-.g2-ask {
-  justify-content: center;
-  padding-top: 120px;
-}
-
-.g2-ask__title {
-  font-size: 84px;
-  line-height: 1.05;
+.g2-fund__figure {
+  margin-top: 20px;
+  font-size: 132px;
+  line-height: 1.02;
   font-weight: 700;
-  letter-spacing: -0.04em;
-  max-width: 1400px;
-  text-wrap: balance;
+  letter-spacing: -0.045em;
+  color: var(--pool-on-deep);
+  font-variant-numeric: tabular-nums;
 }
 
-.g2-ask__figure {
+.g2-fund__label {
+  margin-top: 6px;
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.g2-fund__more {
+  margin-top: 26px;
+  font-size: 28px;
+  line-height: 1.35;
+  color: var(--paper);
+}
+
+.g2-fund__more strong {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--pool-on-deep);
 }
 
-.g2-ask__sub {
-  margin-top: 28px;
-  max-width: 1100px;
-  font-size: 28px;
-  line-height: 1.45;
-  font-weight: 500;
+.g2-fund__mentor {
+  margin-top: 12px;
+  font-size: var(--g2-min);
+  line-height: 1.4;
   color: var(--slate-on-deep);
-  text-wrap: balance;
 }
 
-.g2-ask__rule {
+.g2-fund__rule {
   width: 72px;
   height: 2px;
-  margin: 56px auto 0;
+  margin: 34px auto 0;
   background: var(--rule);
 }
 
-.g2-ask__big {
-  margin-top: 52px;
-  font-size: 64px;
+.g2-fund__big {
+  margin-top: 30px;
+  font-size: 50px;
   line-height: 1.1;
   font-weight: 700;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.03em;
 }
 
-.g2-ask__chips {
+.g2-fund__chips {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 18px;
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
 .g2-chip {
-  padding: 16px 32px 17px;
+  padding: 14px 30px 15px;
   border-radius: var(--radius-pill);
   background: var(--card);
   border: 1px solid rgb(95 168 224 / 0.45);
@@ -618,64 +629,135 @@
 }
 
 /* ================================================================ */
-/* 8. Recognition and supporters                                    */
+/* 8. Recognition: photo cards                                      */
 /* ================================================================ */
 
-.g2-recog__awards {
+.g2-recog__grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-flow: row;
-  gap: 24px 64px;
+  grid-template-columns: 812px minmax(0, 1fr);
+  grid-template-rows: 352px 136px;
+  gap: 18px 24px;
   width: 100%;
   max-width: 1408px;
-  margin-top: 48px;
+  margin-top: 26px;
   text-align: left;
 }
 
-.g2-recog__awards li {
+.g2-rc {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--card);
+  border: 1px solid var(--card-line);
+}
+
+.g2-rc__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: #000;
+}
+
+.g2-rc__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* iCAN 2026: the photo at its own shape on the left, words on the right. */
+.g2-rc--ican {
   display: grid;
-  grid-template-columns: 14px minmax(0, 1fr);
-  gap: 18px;
-  align-items: baseline;
+  grid-template-columns: 368px minmax(0, 1fr);
+}
+
+/* Gate 1: the photo on top, the caption under it. */
+.g2-rc--gate1 {
+  display: flex;
+  flex-direction: column;
+}
+
+.g2-rc--gate1 .g2-rc__img {
+  flex: 1;
+  min-height: 0;
+}
+
+.g2-rc--gate1 .g2-rc__img img {
+  object-position: 50% 22%;
+}
+
+.g2-rc__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px 28px 24px;
+}
+
+.g2-rc__label {
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--pool-on-deep);
+}
+
+.g2-rc__text {
   font-size: var(--g2-min);
   line-height: 1.38;
   color: var(--paper);
 }
 
-.g2-recog__mark {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  background: var(--pool-on-deep);
-  transform: translateY(-3px);
+.g2-recog__texts {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
 }
 
+/* A small text card: words only, never an empty photo area. */
+.g2-rc--text {
+  display: flex;
+  align-items: center;
+  padding: 18px 28px;
+}
+
+.g2-rc--text strong {
+  font-weight: 700;
+  color: var(--paper);
+}
+
+/* The supporters' logos, as they are, on one light strip. */
 .g2-recog__support {
   position: absolute;
   left: var(--margin);
   right: var(--margin);
-  bottom: 44px;
+  bottom: 38px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 12px 44px;
+  border-radius: 20px;
+  background: var(--paper);
 }
 
 .g2-recog__label {
+  flex: none;
   font-size: var(--g2-foot);
   line-height: 1;
   font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--slate-on-deep);
-  text-align: left;
+  color: var(--slate);
+  white-space: nowrap;
 }
 
-/* A light rounded panel; each logo in its own colours. */
 .g2-logos {
+  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 40px;
-  margin-top: 14px;
-  padding: 20px 64px;
-  border-radius: var(--radius-card);
-  background: var(--paper);
+  justify-content: space-around;
+  gap: 32px;
 }
 
 .g2-logos__item {
@@ -686,22 +768,19 @@
 
 .g2-logos__item img {
   display: block;
-  height: 100px;
+  height: 52px;
   width: auto;
-  max-width: 240px;
+  max-width: 200px;
   object-fit: contain;
 }
 
 .g2-logos__item.is-lead img {
-  height: 136px;
-}
-
-.g2-logos__item.is-lead img {
-  border-radius: 6px;
+  height: 62px;
+  border-radius: 4px;
 }
 
 .g2-logos__name {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--deep);
@@ -709,10 +788,10 @@
 }
 
 /* ================================================================ */
-/* 9. Live test, thank you                                          */
+/* 9. Results, thank you                                            */
 /* ================================================================ */
 
-.g2-live {
+.g2-results {
   padding-top: 150px;
 }
 
@@ -722,104 +801,99 @@
   text-align: left;
 }
 
-.g2-live__grid {
+.g2-results__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr) 400px;
   gap: 80px;
   width: 100%;
   max-width: 1408px;
   text-align: left;
 }
 
-.g2-live__grid.is-solo {
+.g2-results__grid.is-solo {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.g2-live__title {
-  font-size: 68px;
+.g2-results__title {
+  font-size: 72px;
 }
 
-.g2-live__statement {
-  margin-top: 26px;
-  font-size: 46px;
-  line-height: 1.12;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--pool-on-deep);
-}
-
-.g2-live__statement span {
+.g2-results__title span {
   display: block;
 }
 
-.g2-live__beakers {
-  display: grid;
-  gap: 12px;
-  margin-top: 30px;
+.g2-results__last {
+  color: var(--pool-on-deep);
 }
 
-.g2-live__beakers li {
+.g2-results__jars {
+  display: grid;
+  gap: 14px;
+  margin-top: 40px;
+}
+
+.g2-results__jars li {
   display: flex;
   align-items: baseline;
   gap: 16px;
-  font-size: var(--g2-min);
+  font-size: var(--g2-body);
   line-height: 1.4;
   color: var(--slate-on-deep);
 }
 
-.g2-live__beakers .sq {
+.g2-results__jars .sq {
   transform: translateY(-2px);
 }
 
-.g2-live__beakers strong {
+.g2-results__jars strong {
   font-weight: 700;
   color: var(--paper);
 }
 
-.g2-live__steps {
+.g2-results__steps {
   display: grid;
-  gap: 10px;
-  margin-top: 26px;
-  padding-top: 24px;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 28px;
   border-top: 1px solid var(--rule);
 }
 
-.g2-live__steps li {
+.g2-results__steps li {
   display: flex;
   gap: 12px;
-  font-size: var(--g2-min);
+  font-size: var(--g2-body);
   line-height: 1.4;
   color: var(--paper);
 }
 
-.g2-live__num {
-  min-width: 26px;
+.g2-results__num {
+  min-width: 28px;
   font-weight: 700;
   color: var(--pool-on-deep);
   font-variant-numeric: tabular-nums;
 }
 
-.g2-live__photo {
+.g2-results__photo {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-top: -54px;
 }
 
-.g2-live__img {
-  width: 340px;
-  height: 560px;
+.g2-results__img {
+  width: 400px;
+  height: 650px;
   border-radius: var(--radius-card);
   overflow: hidden;
 }
 
-.g2-live__img img {
+.g2-results__img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.g2-live__thanks {
+.g2-results__thanks {
   position: absolute;
   left: 0;
   right: 0;
@@ -831,7 +905,7 @@
   text-align: center;
 }
 
-.g2-live__contact {
+.g2-results__contact {
   margin-left: 6px;
   color: var(--pool-on-deep);
 }

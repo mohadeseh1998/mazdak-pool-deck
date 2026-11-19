@@ -35,10 +35,7 @@ export const titleSlide = {
   ],
   bottlesAlt:
     "The Atlantic Pool Pack: two white one-litre bottles with bilingual labels, Atlantic Clarifier with a blue cap and Atlantic Anti-Algae with a green cap.",
-  notes: [
-    "Action: add a few drops of clarifier to beaker B and stir both. Don't explain.",
-    "\"Hi everyone, I'm Mohi, CEO of Mazdak Atlantic AgriAqua. I'm starting a small test here, and I'll come back to it at the end.\"",
-  ],
+  notes: ["\"Hi everyone, I'm Mohi, co-founder and CEO of Mazdak Atlantic AgriAqua.\""],
   time: "0:10",
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -86,7 +83,7 @@ export const answerSlide = {
       id: "anti-algae",
       tone: "algae",
       heading: "Atlantic Anti-Algae.",
-      body: "A chelated anti-algae, made for pools. Sold after PMRA registration.",
+      body: "A chelated anti-algae, made for pools. Coming after the clarifier.",
       /** A short pointer to slide 4. */
       note: "Dr. Ali Kalateh explains it in the video.",
     },
@@ -96,7 +93,7 @@ export const answerSlide = {
   bottlesAlt:
     "Atlantic Clarifier with a blue cap and Atlantic Anti-Algae with a green cap, two white one-litre bottles with labels in English and French.",
   notes: [
-    "\"Our answer is two bottles that do the work of a shelf. Atlantic Clarifier launches first. Atlantic Anti-Algae, a chelated anti-algae made for pools, follows after PMRA registration. Together they're the Atlantic Pool Pack, at forty-nine ninety-nine, made here in New Brunswick.\"",
+    "\"Our answer is two bottles that do the work of a shelf. Atlantic Clarifier launches first. Atlantic Anti-Algae, a chelated anti-algae made for pools, comes after the clarifier. Together they're the Atlantic Pool Pack, at forty-nine ninety-nine, made here in New Brunswick.\"",
   ],
   time: "0:20",
 } as const satisfies PageSlide & Record<string, unknown>;
@@ -126,12 +123,8 @@ export const videoSlide = {
   headline: "Dr. Ali Kalateh explains the Atlantic Anti-Algae.",
   /** The link to the video, under the player (and over the poster on paper). */
   watch: `Watch the video: ${VIDEO_URL.replace(/^https?:\/\//, "")}`,
-  notes: [
-    "\"Our CTO, Dr. Ali Kalateh, explains our Atlantic Anti-Algae. You'll see the clarifier at work in the live test at the end.\"",
-    "Play, stay quiet, glance at beaker B.",
-    "This video is about the anti-algae only. The clarifier is shown live, in the beakers, on the last slide.",
-  ],
-  time: "1:00",
+  notes: ["\"Our CTO, Dr. Ali Kalateh, explains our Atlantic Anti-Algae.\"", "Play the video and stay quiet."],
+  time: "1:10",
 } as const satisfies PageSlide & Record<string, unknown>;
 
 /* 5. Progress since Gate 1 (0:37) ------------------------------------ */
@@ -144,7 +137,7 @@ export const progressSlide = {
   headline: "From idea to product.",
   done: [
     "Raw materials received from Canadian suppliers.",
-    "Atlantic Clarifier made and tested many times in the lab.",
+    "Atlantic Clarifier made and tested many times.",
     "Live demo to the JHSC Funding Committee: $1,000 prototype funding approved.",
     "Bottle and label suppliers chosen. First prototype batch under way.",
     "Reached out to the market: an Atlantic Canada chemical distributor and a Fredericton pool and spa retailer.",
@@ -156,9 +149,9 @@ export const progressSlide = {
       claim("industrial water: clarifying oil sands tailings water so it can be reused.", "oil-sands"),
     ] as Rich,
   },
-  footer: "Made by our team in a lab at UNB. UNB does not test or endorse our products.",
+  footer: "Made by our team.",
   notes: [
-    "\"Since Gate 1, we've moved from idea to product. Our raw materials arrived from Canadian suppliers. We made our clarifier and tested it many times in the lab. We demonstrated it live to the Funding Committee and won one thousand dollars in prototype funding. We've chosen our bottle and label suppliers, and we've reached out to the market: an Atlantic Canada chemical distributor and a Fredericton pool and spa retailer. And a judge pointed us to a new use: clarifying industrial water, like oil sands tailings.\"",
+    "\"Since Gate 1, we've moved from idea to product. Our raw materials arrived from Canadian suppliers. We made our clarifier and tested it many times. We demonstrated it live to the Funding Committee and won one thousand dollars in prototype funding. We've chosen our bottle and label suppliers, and we've reached out to the market: an Atlantic Canada chemical distributor and a Fredericton pool and spa retailer. And a judge pointed us to a new use: clarifying industrial water, like oil sands tailings.\"",
   ],
   time: "0:37",
 } as const satisfies PageSlide & Record<string, unknown>;
@@ -177,97 +170,115 @@ export const roadmapSlide = {
     { when: "Dec 2026.", what: "First prototype batch and the lab analyses our licences need." },
     {
       when: "Winter 2027.",
-      what: "Clarifier samples to pool owners and stores for feedback. PMRA application for the anti-algae.",
+      what: "Clarifier samples to pool owners and stores for feedback.",
     },
     { when: "By March 2027.", what: "First store orders. Stores plan their spring stock in winter." },
     { when: "Spring 2027.", what: "Launch Atlantic Clarifier in Fredericton: 500 litres for the first season." },
-    { when: "2028.", what: "Atlantic Pool Pack after PMRA registration, and growth across Atlantic Canada." },
+    { when: "2028.", what: "Atlantic Pool Pack and growth across Atlantic Canada." },
   ],
   then: "Then: our iron fertilizer, already a Gold Medal winner.",
   notes: [
-    "\"Here's where we're going. In December, our first prototype batch and the lab analyses for our licences. This winter, samples to pool owners and stores, and our PMRA application for the anti-algae. By March, our first store orders, because stores plan spring stock in winter. In spring 2027, we launch Atlantic Clarifier in Fredericton with five hundred litres. Then the Pool Pack, and in 2028, Atlantic Canada.\"",
+    "\"Here's where we're going. In December, our first prototype batch and the lab analyses for our licences. This winter, samples to pool owners and stores. By March, our first store orders, because stores plan spring stock in winter. In spring 2027, we launch Atlantic Clarifier in Fredericton with five hundred litres. Then the Pool Pack, and in 2028, Atlantic Canada.\"",
   ],
   time: "0:33",
 } as const satisfies PageSlide & Record<string, unknown>;
 
-/* 7. The ask (0:18) -------------------------------------------------- */
+/* 7. How we fund it (0:18) ----------------------------------------- */
 
-export const askSlide = {
+export const fundSlide = {
   n: 7,
-  title: "The ask",
-  eyebrow: "The ask",
+  title: "How we fund it",
+  eyebrow: "How we fund it",
   ground: "deep",
-  /** Set as one headline; the figure is drawn in pool blue. */
-  headline: { figure: "$60,000", rest: " to launch, non-dilutive first." },
-  sub: [
-    claim("Start-up capital for set-up, licences, PMRA registration and our first season.", "startup-capital"),
-  ] as Rich,
-  big: "And your introductions.",
+  headline: "Founder-funded from day one.",
+  figure: "$100,000",
+  figureLabel: "Our own capital, already working.",
+  /** "$150,000" is drawn large. */
+  more: ["Plus $50,000 more from the founders by early 2027: ", { b: "$150,000" }, " in total."] as Rich,
+  mentor: "Our mentor's advice: plan for twice what you think you need. So we did.",
+  big: "What would help us most: your introductions.",
   chips: ["Pool stores", "City pools", "Industrial water users"],
   notes: [
-    "\"To get there, we need sixty thousand dollars in start-up capital, and we're starting with non-dilutive programs. And we'd love your introductions: pool stores, city pools, and anyone working on industrial water.\"",
+    "\"We're funding this ourselves. We started with one hundred thousand dollars of our own capital, and we'll add fifty thousand more by early next year. Our mentor told us to plan for twice what we think we need, so we did. What would help us most is your introductions: to pool stores, city pools, and anyone working with industrial water.\"",
   ],
   time: "0:18",
 } as const satisfies PageSlide & Record<string, unknown>;
 
-/* 8. Recognition and supporters (0:18) ------------------------------- */
+/* 8. Recognition (0:18) ---------------------------------------------- */
 
 export const recognitionSlide = {
   n: 8,
-  title: "Recognition and supporters",
+  title: "Recognition",
   eyebrow: "Recognition",
   ground: "deep",
-  headline: "Built with support.",
-  awards: [
-    "iCAN 2026: Gold Medal, WIIPA Special Award, FIR Special Award and a Certificate of Excellence (our iron fertilizer)",
-    "3rd place, Elevator Pitch Competition, BMO Apex Startup Challenge 2025, UNB",
-    "JHSC Ventures Gate 1 award: one of 3 of 9 teams",
-    "JHSC Funding Committee: $1,000 prototype funding",
-    "Mitacs Accelerate research partnership with UNB",
-    "Support letters from Planet Hatch and Ignite Fredericton",
+  headline: "Recognized before we shipped a litre.",
+  /** Photo cards. A card whose photo file is missing becomes a text card. */
+  photoCards: [
+    {
+      id: "ican",
+      label: "iCAN 2026",
+      photo: "ican-awards.jpg",
+      alt: "Mohadeseh Zamani holding the iCAN 2026 Certificate of Excellence, with the Gold Medal, the WIIPA and Romanian Inventors Forum special awards and their certificates on the table.",
+      caption:
+        "Gold Medal, WIIPA Special Award, Romanian Inventors Forum Special Award and a Certificate of Excellence, iCAN 2026, Toronto, for our iron fertilizer.",
+    },
+    {
+      id: "gate1",
+      /** The caption names the award, so the card shows no label. */
+      label: "",
+      photo: "gate1-award.jpg",
+      alt: "Mohadeseh Zamani and three others holding the JHSC Ventures Shadow Institute Gate 1 award cheque.",
+      caption: "JHSC Ventures Shadow Institute: Gate 1 award, October 2026.",
+    },
+  ],
+  /** Small text cards: no photo. */
+  textCards: [
+    { id: "bmo", text: "3rd place, Elevator Pitch Competition, BMO Apex Startup Challenge 2025, UNB." },
+    { id: "jhsc-funding", text: "Summer Institute funding approved by the JHSC Funding Committee." },
+    { id: "letters", lead: "Planet Hatch and Ignite Fredericton.", text: "Support letters from both." },
   ],
   supportedBy: "Supported by",
-  /** In this order. JHSC first and largest. A logo whose file is missing shows its name instead. */
+  /** In this order. A logo whose file is missing shows its name instead. */
   logos: [
-    { file: "jhsc-logo.png", name: "JHSC Ventures, J Herbert Smith Centre", lead: true },
+    { file: "jhsc-logo.png", name: "J Herbert Smith Centre", lead: true },
     { file: "ican-logo.png", name: "iCAN" },
-    { file: "mitacs-logo.png", name: "Mitacs" },
     { file: "planet-hatch-logo.png", name: "Planet Hatch" },
     { file: "ignite-fredericton-logo.png", name: "Ignite Fredericton" },
   ],
   notes: [
-    "\"We're grateful for the support so far: a Gold Medal and two special awards at iCAN 2026, third place at UNB's BMO Apex, our Gate 1 award and prototype funding from JHSC, and support from Mitacs, Planet Hatch and Ignite Fredericton.\"",
+    "\"We're grateful for the recognition so far: a Gold Medal and special awards at iCAN 2026, our Gate 1 award from JHSC, third place at BMO Apex, and support from JHSC, Planet Hatch and Ignite Fredericton.\"",
   ],
   time: "0:18",
 } as const satisfies PageSlide & Record<string, unknown>;
 
-/* 9. Live test, thank you (0:24) ------------------------------------- */
+/* 9. Results, thank you (0:24) --------------------------------------- */
 
-export const liveSlide = {
+export const resultsSlide = {
   n: 9,
-  title: "Live test",
-  eyebrow: "Live test",
+  title: "Results",
+  eyebrow: "Results",
   ground: "deep",
-  headline: "Now look at the beakers.",
-  statement: "Same water. Same soil. One bottle.",
-  beakers: [
-    { tone: "silt", name: "Beaker A.", text: "Soil and water. Nothing added." },
-    { tone: "pool", name: "Beaker B.", text: "Same soil and water, a few drops of Atlantic Clarifier." },
+  /** Set on two lines; the last sentence in pool blue. */
+  headline: "Same water. Same soil. One bottle.",
+  jars: [
+    { tone: "silt", name: "Untreated.", text: "Soil and water. Nothing added." },
+    { tone: "pool", name: "Treated.", text: "Same soil and water, a few drops of Atlantic Clarifier." },
   ],
   steps: ["The fine particles settle.", "A pool filter or vacuum removes them.", "The water turns clear."],
   thanks: "Thank you.",
   contact: "agriaqua.ca",
   photo: {
-    alt: "A jar test. Left: a tall cylinder of clear water with soil settled at the bottom. Right: a beaker of cloudy brown water, beside a small vial with a dropper.",
-    caption: "An earlier jar test with our clarifier.",
+    alt: "Our jar test. Left: a tall cylinder of clear water with soil settled at the bottom. Right: a jar of cloudy brown water, beside a small vial with a dropper.",
+    caption: "Our jar test with Atlantic Clarifier.",
   },
   notes: [
-    "Action: hold up both beakers.",
-    "\"Now, back to the beakers. Same water, same soil. Beaker A got nothing. Beaker B got a few drops of our clarifier at the start. The fine particles settle, and the water clears. In a pool, the filter or a vacuum removes them. Clear pools, made in New Brunswick. Thank you.\"",
-    "If beaker B is slow: \"Clarifiers keep working for hours. This photo is the same test, run earlier.\"",
+    "\"Here's the result. Same water, same soil. The untreated jar stays cloudy. With just a few drops of our clarifier, the fine particles settle and the water turns clear. In a pool, the filter or a vacuum takes them out. Clear pools, made in New Brunswick. Thank you.\"",
   ],
   time: "0:24",
 } as const satisfies PageSlide & Record<string, unknown>;
+
+/** The shared top bar's timer reads a slide named liveSlide; this deck has no timer. */
+export const liveSlide = resultsSlide;
 
 export const slides = [
   titleSlide,
@@ -276,9 +287,9 @@ export const slides = [
   videoSlide,
   progressSlide,
   roadmapSlide,
-  askSlide,
+  fundSlide,
   recognitionSlide,
-  liveSlide,
+  resultsSlide,
 ] as const;
 
 export const SLIDE_COUNT = slides.length;

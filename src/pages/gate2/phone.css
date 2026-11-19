@@ -73,7 +73,7 @@
 
   /* Type */
   .gate2 .g2-headline,
-  .gate2 .g2-live__title {
+  .gate2 .g2-results__title {
     font-size: 36px;
     line-height: 1.08;
     letter-spacing: -0.03em;
@@ -337,28 +337,41 @@
     margin-top: 28px;
   }
 
-  /* 7. Ask */
-  .gate2 .g2-ask__title {
-    font-size: 40px;
+  /* 7. How we fund it */
+  .gate2 .g2-fund__figure {
+    margin-top: 16px;
+    font-size: 64px;
   }
 
-  .gate2 .g2-ask__sub {
+  .gate2 .g2-fund__label {
+    font-size: 17px;
+  }
+
+  .gate2 .g2-fund__more {
     margin-top: 18px;
     font-size: 17px;
   }
 
-  .gate2 .g2-ask__rule {
-    margin-top: 32px;
+  .gate2 .g2-fund__more strong {
+    font-size: 22px;
   }
 
-  .gate2 .g2-ask__big {
-    margin-top: 28px;
-    font-size: 32px;
+  .gate2 .g2-fund__mentor {
+    font-size: 15px;
   }
 
-  .gate2 .g2-ask__chips {
-    gap: 10px;
+  .gate2 .g2-fund__rule {
+    margin-top: 24px;
+  }
+
+  .gate2 .g2-fund__big {
     margin-top: 22px;
+    font-size: 28px;
+  }
+
+  .gate2 .g2-fund__chips {
+    gap: 10px;
+    margin-top: 20px;
   }
 
   .gate2 .g2-chip {
@@ -366,87 +379,121 @@
     font-size: 16px;
   }
 
-  /* 8. Recognition */
-  .gate2 .g2-recog__awards {
+  /* 8. Recognition: the cards stack. */
+  .gate2 .g2-recog__grid {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
     gap: 12px;
-    margin-top: 24px;
+    margin-top: 22px;
   }
 
-  .gate2 .g2-recog__awards li {
-    grid-template-columns: 10px minmax(0, 1fr);
-    gap: 12px;
+  .gate2 .g2-rc {
+    border-radius: 18px;
+  }
+
+  .gate2 .g2-rc--ican {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gate2 .g2-rc--ican .g2-rc__img {
+    aspect-ratio: 1024 / 982;
+    height: auto;
+  }
+
+  .gate2 .g2-rc--gate1 .g2-rc__img {
+    flex: none;
+    aspect-ratio: 3 / 2;
+    height: auto;
+  }
+
+  .gate2 .g2-rc__body {
+    padding: 14px 16px 16px;
+    gap: 6px;
+  }
+
+  .gate2 .g2-rc__label {
+    font-size: 20px;
+  }
+
+  .gate2 .g2-rc__text {
     font-size: 16px;
   }
 
-  .gate2 .g2-recog__mark {
-    width: 8px;
-    height: 8px;
-    transform: translateY(-1px);
+  .gate2 .g2-recog__texts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .gate2 .g2-rc--text {
+    padding: 14px 16px;
   }
 
   .gate2 .g2-recog__support {
     position: static;
-    margin-top: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 18px;
+    margin-top: 22px;
+    padding: 14px 16px;
+    border-radius: 18px;
+  }
+
+  .gate2 .g2-recog__label {
+    flex-basis: 100%;
+    text-align: center;
+    font-size: 13px;
   }
 
   .gate2 .g2-logos {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 16px 22px;
-    padding: 18px;
-    border-radius: 20px;
-  }
-
-  .gate2 .g2-logos__item.is-lead {
-    flex-basis: 100%;
+    gap: 14px 20px;
   }
 
   .gate2 .g2-logos__item img {
-    height: 52px;
-    max-width: 120px;
+    height: 40px;
+    max-width: 110px;
   }
 
   .gate2 .g2-logos__item.is-lead img {
-    height: 84px;
-  }
-
-  .gate2 .slide--9 .eyebrow {
-    text-align: left;
+    height: 48px;
   }
 
   .gate2 .g2-logos__name {
     font-size: 15px;
   }
 
-  /* 9. Live test */
-  .gate2 .g2-live__grid {
+  /* 9. Results */
+  .gate2 .slide--9 .eyebrow {
+    text-align: left;
+  }
+
+  .gate2 .g2-results__grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 24px;
   }
 
-  .gate2 .g2-live__statement {
-    margin-top: 18px;
-    font-size: 26px;
+  .gate2 .g2-results__jars {
+    margin-top: 22px;
   }
 
-  .gate2 .g2-live__beakers li,
-  .gate2 .g2-live__steps li {
+  .gate2 .g2-results__jars li,
+  .gate2 .g2-results__steps li {
     font-size: 16px;
   }
 
-  .gate2 .g2-live__photo {
+  .gate2 .g2-results__photo {
     margin-top: 0;
     align-items: center;
   }
 
-  .gate2 .g2-live__img {
-    width: 200px;
-    height: 330px;
+  .gate2 .g2-results__img {
+    width: 220px;
+    height: 360px;
     border-radius: 18px;
   }
 
-  .gate2 .g2-live__thanks {
+  .gate2 .g2-results__thanks {
     position: static;
     margin-top: 28px;
     font-size: 22px;

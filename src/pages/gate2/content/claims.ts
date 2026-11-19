@@ -22,11 +22,6 @@ export const claims = {
     proof: "Our plan. Dates can move.",
     ownLead: true,
   },
-  "startup-capital": {
-    claim: "$60,000 start-up capital",
-    proof: "Founders' estimate.",
-    ownLead: true,
-  },
 } as const;
 
 export type ClaimId = keyof typeof claims;

@@ -7,9 +7,9 @@ import { AnswerSection } from "./sections/03Answer";
 import { VideoSection } from "./sections/04Video";
 import { ProgressSection } from "./sections/05Progress";
 import { RoadmapSection } from "./sections/06Roadmap";
-import { AskSection } from "./sections/07Ask";
+import { FundSection } from "./sections/07Fund";
 import { RecognitionSection } from "./sections/08Recognition";
-import { LiveSection } from "./sections/09Live";
+import { ResultsSection } from "./sections/09Results";
 
 /** Presenter notes (key N) open with the slide's target time. */
 const withTimes = slides.map((s) => ({ ...s, notes: [`Target time ${s.time}.`, ...s.notes] }));
@@ -29,9 +29,9 @@ export function App() {
       <VideoSection index={3} />
       <ProgressSection index={4} />
       <RoadmapSection index={5} />
-      <AskSection index={6} />
+      <FundSection index={6} />
       <RecognitionSection index={7} />
-      <LiveSection index={8} />
+      <ResultsSection index={8} />
     </PageShell>
   );
 }

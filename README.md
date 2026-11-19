@@ -64,7 +64,7 @@ Downloads: [PDF](https://mohadeseh1998.github.io/mazdak-pool-deck/gate2/Mazdak-G
 
 Keys: arrows, Space, Page Up and Down, Home, End; N presenter notes (with each slide's target time); A audit mode. No demo timer, no source register.
 
-All words, the presenter script and the video link live in `src/pages/gate2/content/slides.ts`. To change the video, edit `VIDEO_URL` there; the page, the PDF and the PowerPoint all follow. The supporters' logos for slide 8 are in `assets/gate2/` (`jhsc-logo.png`, `ican-logo.png`, `mitacs-logo.png`, `planet-hatch-logo.png`, `ignite-fredericton-logo.png`); a missing logo shows its name as text instead. To embed the video in the PowerPoint, add `assets/gate2/ali-video.mp4`.
+All words, the presenter script and the video link live in `src/pages/gate2/content/slides.ts`. To change the video, edit `VIDEO_URL` there; the page, the PDF and the PowerPoint all follow. The supporters' logos for slide 8 are in `assets/gate2/` (`jhsc-logo.png`, `ican-logo.png`, `planet-hatch-logo.png`, `ignite-fredericton-logo.png`), with the photos `ican-awards.jpg` and `gate1-award.jpg`; a missing logo shows its name as text, and a missing photo turns its card into a text card. To embed the video in the PowerPoint, add `assets/gate2/ali-video.mp4`.
 
 After `npm run publish`, remake the PDF and PowerPoint in `docs/gate2/` (needs Playwright with Chromium):
 

@@ -78,6 +78,48 @@ async function webpToPng(file) {
   }
 }
 
+// Crops a photo the way the page's object-fit: cover does (centred, or at a
+// given vertical position), in the browser, so the PowerPoint shows the same
+// framing. Returns a JPEG data URI; without Playwright, the uncropped photo.
+async function coverCrop(file, boxW, boxH, posY = 0.5) {
+  const src = jpg(file);
+  let playwright;
+  try {
+    playwright = require("playwright");
+  } catch {
+    return src;
+  }
+  const browser = await playwright.chromium.launch();
+  try {
+    const page = await browser.newPage();
+    return await page.evaluate(
+      async ({ src, boxW, boxH, posY }) => {
+        const img = new Image();
+        img.src = src;
+        await img.decode();
+        const k = Math.max(boxW / img.naturalWidth, boxH / img.naturalHeight);
+        const sw = boxW / k;
+        const sh = boxH / k;
+        const sx = (img.naturalWidth - sw) / 2;
+        const sy = (img.naturalHeight - sh) * posY;
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(sw);
+        canvas.height = Math.round(sh);
+        canvas.getContext("2d").drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL("image/jpeg", 0.92);
+      },
+      { src, boxW, boxH, posY },
+    );
+  } finally {
+    await browser.close();
+  }
+}
+
+const PHOTOS = {
+  ican: existsSync("assets/gate2/ican-awards.jpg") ? jpg("assets/gate2/ican-awards.jpg") : null,
+  gate1: existsSync("assets/gate2/gate1-award.jpg") ? await coverCrop("assets/gate2/gate1-award.jpg", 548, 228, 0.22) : null,
+};
+
 const IMG = {
   logo: png("assets/logo.png"),
   bottles: (await webpToPng("assets/pool-pack-bottles-cutout.webp")) ?? png("assets/pool-pack-bottles.png"),
@@ -298,89 +340,131 @@ function bottles(slide, x, y, w, h, link) {
   text(slide, s.then, 96, 672, 1408, 40, { size: 26, color: T.slate, align: "center" });
 }
 
-/* 7. The ask */
+/* 7. How we fund it */
 {
-  const s = c.askSlide;
+  const s = c.fundSlide;
   const slide = base(s);
-  slide.addText(
-    [
-      { text: s.headline.figure, options: { color: T.poolOnDeep } },
-      { text: s.headline.rest, options: { color: T.paper } },
-    ],
-    { x: X(96), y: X(252), w: X(1408), h: X(110), fontFace: FONT, fontSize: P(72), bold: true, align: "center", valign: "middle", margin: 0, charSpacing: -1.5 },
-  );
-  text(slide, runs(s.sub, { color: T.slate, fontSize: P(28) }), 96, 376, 1408, 44, { align: "center", valign: "middle" });
-  slide.addShape(pptx.ShapeType.line, { x: X(764), y: X(472), w: X(72), h: 0, line: { color: T.rule, width: 1.5 } });
-  text(slide, s.big, 96, 520, 1408, 84, { size: 64, bold: true, align: "center", valign: "middle", spacing: -1 });
+  headline(slide, s.headline, 150, 60);
+  text(slide, s.figure, 96, 228, 1408, 140, { size: 132, bold: true, color: T.poolOnDeep, align: "center", valign: "middle", spacing: -2, line: 1.0 });
+  text(slide, s.figureLabel, 96, 372, 1408, 40, { size: 28, bold: true, align: "center", valign: "middle" });
+  slide.addText(runs(s.more, { color: T.paper, fontSize: P(28), boldColor: T.poolOnDeep }).map((r) => (r.options.bold ? { ...r, options: { ...r.options, fontSize: P(36) } } : r)), {
+    x: X(96), y: X(430), w: X(1408), h: X(54), fontFace: FONT, align: "center", valign: "middle", margin: 0,
+  });
+  text(slide, s.mentor, 96, 494, 1408, 36, { size: 24, color: T.slate, align: "center", valign: "middle" });
+  slide.addShape(pptx.ShapeType.line, { x: X(764), y: X(562), w: X(72), h: 0, line: { color: T.rule, width: 1.5 } });
+  text(slide, s.big, 96, 590, 1408, 66, { size: 50, bold: true, align: "center", valign: "middle", spacing: -1 });
   const widths = [208, 195, 343];
   let x = (1600 - (widths.reduce((a, b) => a + b, 0) + 2 * 18)) / 2;
   s.chips.forEach((chip, i) => {
-    slide.addShape(pptx.ShapeType.roundRect, { x: X(x), y: X(636), w: X(widths[i]), h: X(68), rectRadius: X(34), fill: { color: T.card }, line: { color: "34607F", width: 0.75 } });
-    text(slide, chip, x, 636, widths[i], 68, { size: 28, bold: true, align: "center", valign: "middle" });
+    slide.addShape(pptx.ShapeType.roundRect, { x: X(x), y: X(682), w: X(widths[i]), h: X(66), rectRadius: X(33), fill: { color: T.card }, line: { color: "34607F", width: 0.75 } });
+    text(slide, chip, x, 682, widths[i], 66, { size: 28, bold: true, align: "center", valign: "middle" });
     x += widths[i] + 18;
   });
 }
 
-/* 8. Recognition and supporters */
+/* 8. Recognition: photo cards */
 {
   const s = c.recognitionSlide;
   const slide = base(s);
-  headline(slide, s.headline);
-  const rows = [278, 392, 448];
-  s.awards.forEach((a, i) => {
-    const col = i % 2;
-    const row = Math.floor(i / 2);
-    const x = 96 + col * 720;
-    const y = rows[row];
-    slide.addShape(pptx.ShapeType.rect, { x: X(x), y: X(y + 12), w: X(10), h: X(10), fill: { color: T.poolOnDeep }, line: { color: T.poolOnDeep } });
-    text(slide, a, x + 32, y, 656, row === 0 ? 100 : 36, { size: 24, line: 1.2 });
-  });
-  text(slide, s.supportedBy, 96, 642, 400, 24, { size: 17, bold: true, color: T.slate });
-  slide.addShape(pptx.ShapeType.roundRect, { x: X(96), y: X(680), w: X(1408), h: X(176), rectRadius: X(28), fill: { color: T.paper }, line: { color: T.paper } });
-  // Each logo as it is, in its own colours, never wider or taller than its slot.
-  const centres = [228, 526, 806, 1085, 1377];
+  headline(slide, s.headline, 150, 60);
+  const top = 239;
+  const rowH = 352;
+  const inset = 12;
+  const photoCard = (x, y, w, h) =>
+    slide.addShape(pptx.ShapeType.roundRect, { x: X(x), y: X(y), w: X(w), h: X(h), rectRadius: X(24), fill: { color: T.card }, line: { color: T.cardLine, width: 0.75 } });
+  const textCard = (card, x, y, w, h) => {
+    photoCard(x, y, w, h);
+    const r = [];
+    if (card.lead) r.push({ text: `${card.lead} `, options: { bold: true, color: T.paper } });
+    r.push({ text: card.text, options: { color: T.paper } });
+    slide.addText(r, { x: X(x + 28), y: X(y), w: X(w - 56), h: X(h), fontFace: FONT, fontSize: P(24), valign: "middle", margin: 0, lineSpacingMultiple: 1.2 });
+  };
+  const [ican, gate1] = s.photoCards;
+  // iCAN 2026: the photo at its own shape on the left, words on the right.
+  const icanFile = `assets/gate2/${ican.photo}`;
+  if (existsSync(icanFile)) {
+    photoCard(96, top, 812, rowH);
+    const ph = rowH - 2 * inset;
+    const pw = Math.round((ph * 1024) / 982);
+    slide.addImage({ data: PHOTOS.ican, x: X(96 + inset), y: X(top + inset), w: X(pw), h: X(ph), altText: ican.alt });
+    const tx = 96 + inset + pw + 28;
+    slide.addText(
+      [
+        { text: ican.label, options: { bold: true, color: T.poolOnDeep, fontSize: P(32), breakLine: true } },
+        { text: ican.caption, options: { color: T.paper, fontSize: P(24) } },
+      ],
+      { x: X(tx), y: X(top), w: X(908 - tx - 24), h: X(rowH), fontFace: FONT, valign: "middle", margin: 0, lineSpacingMultiple: 1.25, paraSpaceAfter: 6 },
+    );
+  } else textCard({ lead: `${ican.label}.`, text: ican.caption }, 96, top, 812, rowH);
+  // Gate 1: the photo on top, the caption under it.
+  const gx = 932;
+  const gw = 572;
+  const gateFile = `assets/gate2/${gate1.photo}`;
+  if (existsSync(gateFile)) {
+    photoCard(gx, top, gw, rowH);
+    slide.addImage({ data: PHOTOS.gate1, x: X(gx + inset), y: X(top + inset), w: X(gw - 2 * inset), h: X(240 - inset), altText: gate1.alt });
+    text(slide, gate1.caption, gx + 28, top + 248, gw - 56, rowH - 256, { size: 24, valign: "middle", line: 1.2 });
+  } else textCard({ text: gate1.caption }, gx, top, gw, rowH);
+  // Three small text cards.
+  const tw = (1408 - 2 * 24) / 3;
+  s.textCards.forEach((t, i) => textCard(t, 96 + i * (tw + 24), top + rowH + 18, tw, 136));
+  // The supporters' logos, as they are, on one light strip.
+  const sy = 776;
+  const sh = 86;
+  slide.addShape(pptx.ShapeType.roundRect, { x: X(96), y: X(sy), w: X(1408), h: X(sh), rectRadius: X(20), fill: { color: T.paper }, line: { color: T.paper } });
+  text(slide, s.supportedBy, 140, sy, 160, sh, { size: 17, bold: true, color: "5B6870", valign: "middle" });
+  const slotX = 320;
+  const slotW = (1504 - 44 - slotX) / s.logos.length;
   s.logos.forEach((l, i) => {
     const file = `assets/gate2/${l.file}`;
-    const h = l.lead ? 136 : 100;
+    const cx = slotX + slotW * (i + 0.5);
+    const h = l.lead ? 62 : 52;
     if (!existsSync(file)) {
-      text(slide, l.name, centres[i] - 120, 768 - 20, 240, 40, { size: 22, bold: true, color: T.deep, align: "center", valign: "middle" });
+      text(slide, l.name, cx - 110, sy, 220, sh, { size: 20, bold: true, color: T.deep, align: "center", valign: "middle" });
       return;
     }
     const { width, height } = pngSize(file);
     const w = (h * width) / height;
-    slide.addImage({ data: png(file), x: X(centres[i] - w / 2), y: X(768 - h / 2), w: X(w), h: X(h), altText: l.name });
+    slide.addImage({ data: png(file), x: X(cx - w / 2), y: X(sy + (sh - h) / 2), w: X(w), h: X(h), altText: l.name });
   });
 }
 
-/* 9. Live test, thank you */
+/* 9. Results, thank you */
 {
-  const s = c.liveSlide;
+  const s = c.resultsSlide;
   const slide = base(s);
-  text(slide, s.headline, 96, 146, 1100, 84, { size: 68, bold: true, spacing: -1, line: 1.0 });
-  text(slide, s.statement.replace("soil. ", "soil.\n"), 96, 246, 1100, 110, { size: 46, bold: true, color: T.poolOnDeep, line: 1.05, spacing: -0.5 });
-  s.beakers.forEach((b, i) => {
-    const y = 380 + i * 46;
-    slide.addShape(pptx.ShapeType.rect, { x: X(96), y: X(y + 13), w: X(10), h: X(10), fill: { color: b.tone === "silt" ? T.silt : T.poolOnDeep }, line: { color: b.tone === "silt" ? T.silt : T.poolOnDeep } });
+  const at = s.headline.lastIndexOf(". ", s.headline.length - 2);
+  slide.addText(
+    [
+      { text: s.headline.slice(0, at + 1), options: { color: T.paper, breakLine: true } },
+      { text: s.headline.slice(at + 2), options: { color: T.poolOnDeep } },
+    ],
+    { x: X(96), y: X(146), w: X(940), h: X(160), fontFace: FONT, fontSize: P(72), bold: true, valign: "top", margin: 0, lineSpacingMultiple: 1.0, charSpacing: -1 },
+  );
+  s.jars.forEach((b, i) => {
+    const y = 341 + i * 50;
+    const tone = b.tone === "silt" ? T.silt : T.poolOnDeep;
+    slide.addShape(pptx.ShapeType.rect, { x: X(96), y: X(y + 14), w: X(10), h: X(10), fill: { color: tone }, line: { color: tone } });
     slide.addText(
       [
         { text: `${b.name} `, options: { bold: true, color: T.paper } },
         { text: b.text, options: { color: T.slate } },
       ],
-      { x: X(122), y: X(y), w: X(960), h: X(36), fontFace: FONT, fontSize: P(24), margin: 0, valign: "top" },
+      { x: X(122), y: X(y), w: X(900), h: X(38), fontFace: FONT, fontSize: P(26), margin: 0, valign: "top" },
     );
   });
-  slide.addShape(pptx.ShapeType.line, { x: X(96), y: X(486), w: X(988), h: 0, line: { color: T.rule, width: 0.75 } });
+  slide.addShape(pptx.ShapeType.line, { x: X(96), y: X(457), w: X(928), h: 0, line: { color: T.rule, width: 0.75 } });
   s.steps.forEach((st, i) => {
     slide.addText(
       [
         { text: `${i + 1}.  `, options: { bold: true, color: T.poolOnDeep } },
         { text: st, options: { color: T.paper } },
       ],
-      { x: X(96), y: X(510 + i * 44), w: X(960), h: X(36), fontFace: FONT, fontSize: P(24), margin: 0, valign: "top" },
+      { x: X(96), y: X(485 + i * 48), w: X(900), h: X(38), fontFace: FONT, fontSize: P(26), margin: 0, valign: "top" },
     );
   });
-  slide.addImage({ data: IMG.jar, x: X(1164), y: X(96), w: X(340), h: X(560), sizing: { type: "cover", w: X(340), h: X(560) }, altText: s.photo.alt });
-  text(slide, s.photo.caption, 1164, 668, 340, 26, { size: 17, color: T.slate });
+  slide.addImage({ data: IMG.jar, x: X(1104), y: X(96), w: X(400), h: X(650), sizing: { type: "cover", w: X(400), h: X(650) }, altText: s.photo.alt });
+  text(slide, s.photo.caption, 1104, 758, 400, 26, { size: 17, color: T.slate });
   slide.addText(
     [
       { text: `${s.thanks}  `, options: { color: T.paper } },

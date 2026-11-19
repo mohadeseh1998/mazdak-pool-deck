@@ -148,7 +148,9 @@ for (const file of copyFiles) {
 // Item 11: only the client's approved images may ship.
 const ALLOWED_ASSETS = new Set(["logo.png", "pool-pack-bottles.png", "pool-pack-bottles-cutout.webp", "jar-test.jpg", "iron-removal.jpg", "mohadeseh-zamani.jpg", "ali-kalateh.jpg", "pool-video.mp4",
   // /gate2/ slide 8 only: the supporters' logos, as the founder sent them (Gate 2 brief, Section 3).
-  "jhsc-logo.png", "ican-logo.png", "mitacs-logo.png", "planet-hatch-logo.png", "ignite-fredericton-logo.png",
+  "jhsc-logo.png", "ican-logo.png", "planet-hatch-logo.png", "ignite-fredericton-logo.png",
+  // /gate2/ slide 8: the founder's photos of the iCAN 2026 awards and the Gate 1 award.
+  "ican-awards.jpg", "gate1-award.jpg",
   // /gate2/ slide 4: Ali's anti-algae video for the PowerPoint, and one frame of it as the cover (PowerPoint and PDF).
   "ali-video.mp4", "ali-video-poster.jpg"]);
 for (const f of files.filter((f) => f.startsWith("assets/") || f.startsWith("public/"))) {
@@ -588,7 +590,7 @@ notes.push(`claims: ${Object.keys(custClaims).length} on /customer/, ${Object.ke
 // (the claims registry) and Section 3 (one VIDEO_URL constant).
 const g2 = await loadModule("src/pages/gate2/content/slides.ts");
 const g2Claims = (await loadModule("src/pages/gate2/content/claims.ts")).claims;
-const G2_TITLES = ["Title", "Problem", "Our answer", "Ali's video", "Progress since Gate 1", "Roadmap", "The ask", "Recognition and supporters", "Live test"];
+const G2_TITLES = ["Title", "Problem", "Our answer", "Ali's video", "Progress since Gate 1", "Roadmap", "How we fund it", "Recognition", "Results"];
 if (g2.slides.length !== 9) problems.push(`gate2: ${g2.slides.length} slides, not 9`);
 g2.slides.forEach((s, i) => {
   if (s.n !== i + 1) problems.push(`gate2: slide ${i + 1} is numbered ${s.n}`);
@@ -597,9 +599,20 @@ g2.slides.forEach((s, i) => {
 });
 expect("gate2 title", g2.titleSlide.headline.join(" "), "Clear pools, made in New Brunswick.");
 expect("gate2 roadmap", g2.roadmapSlide.headline, "Five steps to the 2027 pool season.");
-expect("gate2 ask", g2.askSlide.headline.figure + g2.askSlide.headline.rest, "$60,000 to launch, non-dilutive first.");
-expect("gate2 statement", g2.liveSlide.statement, "Same water. Same soil. One bottle.");
-expect("gate2 footer", `${g2.liveSlide.thanks} ${g2.liveSlide.contact}`, "Thank you. agriaqua.ca");
+// Final changes (19 November): founder-funded, recognition as photo cards, results.
+expect("gate2 fund headline", g2.fundSlide.headline, "Founder-funded from day one.");
+expect("gate2 fund figure", `${g2.fundSlide.figure} ${g2.fundSlide.figureLabel}`, "$100,000 Our own capital, already working.");
+expect("gate2 fund total", flat(g2.fundSlide.more), "Plus $50,000 more from the founders by early 2027: $150,000 in total.");
+expect("gate2 fund mentor", g2.fundSlide.mentor, "Our mentor's advice: plan for twice what you think you need. So we did.");
+expect("gate2 fund ask", g2.fundSlide.big, "What would help us most: your introductions.");
+expect("gate2 fund chips", g2.fundSlide.chips.join(" | "), "Pool stores | City pools | Industrial water users");
+expect("gate2 recognition headline", g2.recognitionSlide.headline, "Recognized before we shipped a litre.");
+expect("gate2 recognition logos", g2.recognitionSlide.logos.map((l) => l.file).join(" "), "jhsc-logo.png ican-logo.png planet-hatch-logo.png ignite-fredericton-logo.png");
+expect("gate2 recognition photos", g2.recognitionSlide.photoCards.map((p) => p.photo).join(" "), "ican-awards.jpg gate1-award.jpg");
+for (const p of g2.recognitionSlide.photoCards) if (!existsSync(`assets/gate2/${p.photo}`)) problems.push(`gate2: the photo ${p.photo} is missing`);
+expect("gate2 results headline", g2.resultsSlide.headline, "Same water. Same soil. One bottle.");
+expect("gate2 results caption", g2.resultsSlide.photo.caption, "Our jar test with Atlantic Clarifier.");
+expect("gate2 footer", `${g2.resultsSlide.thanks} ${g2.resultsSlide.contact}`, "Thank you. agriaqua.ca");
 const g2Source = read("src/pages/gate2/content/slides.ts");
 if ((g2Source.match(/https:\/\/youtu\.be\//g) || []).length !== 1 || !/export const VIDEO_URL = "https:\/\/youtu\.be\/[\w-]{11}";/.test(g2Source))
   problems.push("gate2: the video link must live in one VIDEO_URL constant");
@@ -616,7 +629,7 @@ for (const f of G2_FILES) if (read(f).includes("rKsXcTqSfsI")) problems.push(`${
 if (/both products/i.test(JSON.stringify(g2.slides))) problems.push('gate2: still says "both products"');
 
 // Claims: exactly the brief's five, each used on screen.
-const G2_CLAIMS = ["price", "iron", "oil-sands", "roadmap", "startup-capital"];
+const G2_CLAIMS = ["price", "iron", "oil-sands", "roadmap"];
 for (const id of G2_CLAIMS) if (!(id in g2Claims)) problems.push(`gate2 claims: "${id}" is missing`);
 for (const id of Object.keys(g2Claims)) if (!G2_CLAIMS.includes(id)) problems.push(`gate2 claims: "${id}" is not in the brief`);
 const g2Used = usedClaims(g2.slides);
@@ -627,7 +640,7 @@ const g2Text = [
   JSON.stringify(g2.slides),
   JSON.stringify(g2.video),
   JSON.stringify(g2Claims),
-  ...["01Title", "02Problem", "03Answer", "04Video", "05Progress", "06Roadmap", "07Ask", "08Recognition", "09Live"].map((f) => read(`src/pages/gate2/sections/${f}.tsx`)),
+  ...["01Title", "02Problem", "03Answer", "04Video", "05Progress", "06Roadmap", "07Fund", "08Recognition", "09Results"].map((f) => read(`src/pages/gate2/sections/${f}.tsx`)),
   read("src/pages/gate2/App.tsx"),
   read("gate2/index.html"),
 ].join("\n");
@@ -636,6 +649,13 @@ const G2_BANNED = [
   [/\bsafe\b|non-toxic|harmless|not harmful/i, '"safe", "non-toxic", "harmless" or "not harmful" (Section 6)'],
   [/won gate 2|gate 2 winner/i, '"Won Gate 2" (Section 6)'],
   [/clump/i, '"clump" (slide 9)'],
+  // Final changes (19 November): none of these anywhere in /gate2/.
+  [/PMRA/, '"PMRA"'],
+  [/lab at UNB|in the lab\b|endorse/i, '"lab at UNB", "in the lab" or "endorse"'],
+  [/live test|beakers?\b|add (a few )?drops|hold up/i, '"live test", beakers or a demo action'],
+  [/Mitacs/i, '"Mitacs"'],
+  [/3 of 9/, '"3 of 9"'],
+  [/\$60,000|non-dilutive|start-up capital/i, '"$60,000", "non-dilutive" or start-up capital'],
   [/market size|\bTAM\b|competitor/i, "market sizing or competitors (Section 6)"],
   [/DemoTimer|timerStart|\b\d+ ?(min|minutes|seconds|sec)\b|1:00 video/i, "a demo timer or video duration (Sections 2 and 4)"],
 ];
@@ -659,7 +679,8 @@ for (const s of g2.slides) {
   const spoken = s.notes.filter((n) => typeof n === "string" && n.startsWith('"')).join(" ");
   g2Words += [...spoken.matchAll(/"([^"]+)"/g)].map((x) => x[1]).join(" ").split(/\s+/).filter(Boolean).length;
 }
-if (g2Words < 380 || g2Words > 480) problems.push(`gate2: ${g2Words} spoken words, the brief says about 430`);
+// The final changes shortened the script (no live test); it must still fit 5 minutes with the 1:10 video.
+if (g2Words < 250 || g2Words > 480) problems.push(`gate2: ${g2Words} spoken words, outside 250 to 480`);
 notes.push(`gate2: 9 slides, ${Object.keys(g2Claims).length} claims, ${g2Words} spoken words`);
 
 /* Report. --------------------------------------------------------------- */
