@@ -2,7 +2,7 @@ import { sourcesChecked as rootChecked } from "../../../content/sources";
 
 // Source register for /financials/ (version 2), key S. Only what this page
 // still shows: the store share it tests against, the PMRA annual charge, and
-// the founders' own estimates. The PMRA application fees, the insurance tile
+// the founders' own estimates, including their investment. The PMRA application fees, the insurance tile
 // and the shelf prices left the page in version 2, and their sources with them.
 export const sourcesChecked = rootChecked;
 
@@ -19,7 +19,7 @@ export const sources = {
     text: "Founders' cost estimate: $8.00 per package (2 bottles, labels, contents).",
   },
   startup: {
-    text: "Founders' estimate: $60,000 start-up cash, one-time, 2027; running costs $12,000 in 2028 and $20,000 in 2029.",
+    text: "Founders' estimate: $60,000 founders' investment in the pool line, one-time, 2027, from the founders' own capital; running costs $12,000 in 2028 and $20,000 in 2029.",
   },
 };
 

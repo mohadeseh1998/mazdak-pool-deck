@@ -23,6 +23,9 @@ export const PACKAGE = {
 /** One-time, 2027, founders' estimate. Includes the 2027 running costs. */
 export const STARTUP_CASH = 60000;
 
+/** The founders' own money put into the pool line, one-time, at the start of 2027. */
+export const FOUNDERS_INVESTMENT = 60000;
+
 export interface Season {
   year: number;
   packages: number;
@@ -56,20 +59,28 @@ export interface SeasonResult {
   litresEach: number;
   revenue: number;
   cogs: number;
-  /** The start-up cash in the first season, the running costs after it. */
+  /** The start-up costs in the first season, the running costs after it. */
   startupAndRunning: number;
   pmra: number;
+  /** The founders' investment that season: all of it in the first season. */
+  investment: number;
   net: number;
+  /** Cumulative net, before the founders' money. */
   cumulative: number;
+  /** Cash on hand at year-end: the founders' investment so far plus the cumulative net. */
+  cashOnHand: number;
 }
 
 /**
  * Net = revenue - cost of goods - start-up and running costs - PMRA annual charge.
  * The annual charge is round(0.04 x the previous season's revenue), at most $4,509.90.
+ * The founders' investment is not income, so it does not change the net; it
+ * only adds to the cash on hand: investment so far + cumulative net.
  */
 export function runSeasons(seasons: readonly Season[] = SEASONS): SeasonResult[] {
   let previousRevenue = 0;
   let cumulative = 0;
+  let invested = 0;
   return seasons.map((s, i) => {
     const revenue = toDollars(s.packages * cents(PACKAGE.wholesale));
     const cogs = toDollars(s.packages * cents(PACKAGE.costPerPackage));
@@ -77,6 +88,9 @@ export function runSeasons(seasons: readonly Season[] = SEASONS): SeasonResult[]
     const pmra = Math.min(PMRA_ANNUAL.max, Math.round(PMRA_ANNUAL.rate * previousRevenue));
     const net = toDollars(cents(revenue) - cents(cogs) - cents(startupAndRunning) - cents(pmra));
     cumulative = toDollars(cents(cumulative) + cents(net));
+    const investment = i === 0 ? FOUNDERS_INVESTMENT : 0;
+    invested += investment;
+    const cashOnHand = toDollars(cents(invested) + cents(cumulative));
     previousRevenue = revenue;
     return {
       year: s.year,
@@ -86,15 +100,17 @@ export function runSeasons(seasons: readonly Season[] = SEASONS): SeasonResult[]
       cogs,
       startupAndRunning,
       pmra,
+      investment,
       net,
       cumulative,
+      cashOnHand,
     };
   });
 }
 
 export const RESULTS: SeasonResult[] = runSeasons();
 
-/** The first season that is profitable and has paid the start-up cash back, or null. */
+/** The first season that is profitable and has paid the start-up costs back, or null. */
 export const PAYBACK_YEAR: number | null = RESULTS.find((r) => r.net > 0 && r.cumulative >= 0)?.year ?? null;
 
 /* ------------------------------------------------------------------ */

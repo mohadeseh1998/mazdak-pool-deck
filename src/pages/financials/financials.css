@@ -105,7 +105,7 @@
   color: var(--paper);
 }
 
-/* The start-up cash: one large figure, the way the root deck lands a number. */
+/* The founders' investment: one large figure, the way the root deck lands a number. */
 .f-startup {
   padding-top: 26px;
 }
@@ -156,8 +156,8 @@
 
 .f-seasons__grid {
   display: grid;
-  grid-template-columns: 640px minmax(0, 1fr);
-  gap: 56px;
+  grid-template-columns: 590px minmax(0, 1fr);
+  gap: 44px;
   width: 100%;
   margin-top: 36px;
   text-align: left;
@@ -194,12 +194,12 @@
 }
 
 .f-chart-wrap {
-  margin-top: 30px;
+  margin-top: 22px;
 }
 
 .f-chart {
   display: block;
-  width: 640px;
+  width: 590px;
   height: auto;
   overflow: visible;
   font-family: var(--font);
@@ -299,7 +299,7 @@
 
 .f-table th,
 .f-table td {
-  padding: 9px 0;
+  padding: 6px 0;
 }
 
 .f-table thead th {
@@ -308,14 +308,16 @@
 }
 
 .f-table tbody th {
-  font-size: 17px;
+  white-space: nowrap;
+  font-size: 16px;
   color: var(--slate-on-deep);
 }
 
 .f-table td {
-  width: 21%;
-  padding-left: 16px;
-  font-size: 21px;
+  width: 1%;
+  white-space: nowrap;
+  padding-left: 22px;
+  font-size: 19px;
   font-weight: 500;
   letter-spacing: -0.01em;
   color: var(--paper);
@@ -335,23 +337,37 @@
 }
 
 .f-table tr.is-strong td {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-.f-assumptions {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-top: 20px;
+.f-yearend {
+  margin-top: 16px;
   padding: 0 4px;
-  font-size: 17px;
+  font-size: 15px;
   line-height: 1.45;
   color: var(--slate-on-deep);
 }
 
+.f-assumptions {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 0 4px;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--slate-on-deep);
+}
+
+.f-assumptions p {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
 .f-assumptions .sq {
+  flex: none;
   transform: translateY(-1px);
 }
 

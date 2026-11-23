@@ -8,12 +8,20 @@ export const claims = {
     proof: "A store quote on our price, and cost measured on a full production batch",
   },
   startup: {
-    claim: "$60,000 start-up cash, one-time, 2027",
+    claim: "$60,000 founders' investment in the pool line, 2027",
     proof: "Quotes for set-up, licences and PMRA registration, then the first season's receipts",
   },
   running: {
     claim: "Running costs of $12,000 in 2028 and $20,000 in 2029",
     proof: "Receipts from the 2028 and 2029 seasons",
+  },
+  "founders-capital": {
+    claim: "The founders' investment comes from their own capital",
+    proof: "The founders' $60,000 in the company's bank account before the 2027 season",
+  },
+  "year-end": {
+    claim: "Cash on hand is a year-end figure",
+    proof: "A month-by-month cash plan for 2027, then the bank balance at each year-end",
   },
   conservative: {
     claim: "These numbers are conservative",

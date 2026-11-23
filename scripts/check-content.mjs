@@ -316,6 +316,7 @@ if (model.UNIT.packAtTest.weKeep !== 21.99) problems.push(`${MODEL}: UNIT.packAt
 function recompute() {
   let prev = 0;
   let cum = 0;
+  let invested = 0;
   return model.SEASONS.map((s, i) => {
     const revenue = (s.packages * c100(P.wholesale)) / 100;
     const cogs = (s.packages * c100(P.costPerPackage)) / 100;
@@ -324,7 +325,12 @@ function recompute() {
     const net = (c100(revenue) - c100(cogs) - c100(startupAndRunning) - c100(pmra)) / 100;
     cum = (c100(cum) + c100(net)) / 100;
     prev = revenue;
-    return { revenue, cogs, startupAndRunning, pmra, net, cumulative: cum };
+    // 23 November: the founders put in $60,000 of their own money in 2027. It
+    // is not income, so the net is unchanged; it adds to the cash on hand.
+    const investment = i === 0 ? 60000 : 0;
+    invested += investment;
+    const cashOnHand = (c100(invested) + c100(cum)) / 100;
+    return { revenue, cogs, startupAndRunning, pmra, investment, net, cumulative: cum, cashOnHand };
   });
 }
 
@@ -334,9 +340,17 @@ const WANT = {
   cogs: [4000, 16000, 32000],
   startupAndRunning: [60000, 12000, 20000],
   pmra: [0, 750, 2999],
+  investment: [60000, 0, 0],
   net: [-45255, 46230, 94961],
   cumulative: [-45255, 975, 95936],
+  cashOnHand: [14745, 60975, 155936],
 };
+if (model.FOUNDERS_INVESTMENT !== 60000) problems.push(`${MODEL}: FOUNDERS_INVESTMENT is ${model.FOUNDERS_INVESTMENT}, not 60000`);
+// Cash on hand is the investment plus the cumulative net, and never below zero.
+model.RESULTS.forEach((r) => {
+  if (r.cashOnHand !== model.FOUNDERS_INVESTMENT + r.cumulative) problems.push(`${MODEL}: cash on hand ${r.year} is not the investment plus the cumulative net`);
+  if (r.cashOnHand < 0) problems.push(`${MODEL}: cash on hand goes below zero in ${r.year}`);
+});
 const mine = recompute();
 for (const key of Object.keys(WANT)) {
   WANT[key].forEach((want, i) => {
@@ -355,8 +369,10 @@ const TABLE_WANT = [
   ["Cost of goods", "$4,000", "$16,000", "$32,000"],
   ["Start-up and running costs", "$60,000", "$12,000", "$20,000"],
   ["PMRA annual charge", "$0", "$750", "$2,999"],
+  ["Founders' investment", "$60,000", "$0", "$0"],
   ["Net", "-$45,255", "$46,230", "$94,961"],
-  ["Cumulative cash", "-$45,255", "$975", "$95,936"],
+  ["Cash on hand (year-end)", "$14,745", "$60,975", "$155,936"],
+  ["Cumulative net, before founders' money", "-$45,255", "$975", "$95,936"],
 ];
 const table = fin.seasonTable();
 if (table.length !== TABLE_WANT.length) problems.push(`financials: the season table has ${table.length} rows, not ${TABLE_WANT.length}`);
@@ -387,7 +403,7 @@ if (s1.unit.rows.length !== 4) problems.push("financials: the unit table has mor
 expect("financials, we keep", `${s1.unit.keep.label} $${(s1.unit.keep.cents / 100).toFixed(2)} ${s1.unit.keep.pct}`, "We keep, per package $29.49 (79%)");
 expect("financials, negotiable", s1.negotiable, "The store share is negotiable. Even at 40 percent, we still keep $21.99 per package.");
 expect("financials start-up figure", model.money(s1.startup.figure), "$60,000");
-expect("financials start-up label", s1.startup.label, "Start-up cash, one-time, 2027");
+expect("financials investment label", s1.startup.label, "Founders' investment in the pool line, 2027");
 expect(
   "financials start-up text",
   s1.startup.covers[0].text,
@@ -405,7 +421,11 @@ expect(
 const s2 = fin.seasonsSlide;
 expect("financials slide 2 title", s2.headline, "Three pool seasons.");
 expect("financials big stat", model.money(s2.hero.figure), "$60,000");
-expect("financials big stat label", s2.hero.label, "Cash we need up front.");
+expect("financials big stat label", s2.hero.label, "Founders' investment, one-time");
+expect("financials year-end footnote", s2.footnote[0].text, "Year-end figures. Cash during 2027 may be lower before spring sales.");
+if (!s2.footnote[0].claim) problems.push("financials: the year-end footnote must carry an assumption tag");
+expect("financials capital note", s2.capital[0].text, "The founders' investment comes from the founders' own capital.");
+expect("financials chart cash line", s2.chart.legend.cash, "Cash on hand (year-end)");
 expect("financials big stat line", s2.hero.tail, "Profitable and paid back in the 2028 season.");
 expect("financials assumptions", s2.assumptions, "2027: 500 litres of each product. 2028: about 2 tonnes of each. 2029: about 4 tonnes of each.");
 expect(
@@ -431,7 +451,7 @@ const held = s3.holding.items.map((x) => `${x.lead} ${x.text}`);
 expect("financials holding 1", held[0], "Capital: the $60,000 start-up cost.");
 expect("financials holding 2", held[1], "Our co-founder's visa: Dr. Ali Kalateh's visa.");
 if (held.length !== 2) problems.push(`financials: ${held.length} items hold us back, not 2`);
-notes.push("pool model: version 2 season table reproduced, every figure on /financials/ matches");
+notes.push("pool model: version 2 season table reproduced, cash on hand $14,745 / $60,975 / $155,936, every figure on /financials/ matches");
 
 /* 8. The customer page (version 2 changes, Part A). ---------------------- */
 expect("customer title", cust.openingSlide.headline.join(" "), "Clear pools, made in New Brunswick.");
@@ -561,6 +581,9 @@ const FIN_BANNED = [
   [/\$29\.99|\$39\.99|\$6\.00|60 cents|\$2,713|\$2,954|\$906|\$5,214|\$6,573|\$11,787|\$3,600|\$10,000|\$55,000/, "a removed figure"],
   [/Clarifier bottles|Pool Packs|per sale/, "the old units (say package)"],
   [/No customer conversation yet|Thin margin|Licences\./, "a removed line"],
+  // 23 November: the $60,000 is the founders' own investment.
+  [/start-up cash|cumulative cash|cash we need/i, '"start-up cash" or "cumulative cash" (now the founders\' investment and cash on hand)'],
+  [/\b(needs?|ask(s|ed|ing)?|grants?)\b/i, '"need", "ask" or "grant" (the $60,000 is the founders\' investment)'],
 ];
 for (const [re, label] of FIN_BANNED) if (re.test(finText)) problems.push(`financials: says ${label}`);
 if (!/package/.test(fin.saleSlide.headline) || !TABLE_WANT[0][0].startsWith("Packages")) problems.push("financials: does not say package");
@@ -658,7 +681,7 @@ const g2Text = [
   read("gate2/index.html"),
 ].join("\n");
 const G2_BANNED = [
-  [/\breaction|\bacids?\b|\bheating\b|\bheated\b|microwave|\bUV\b|formula/i, "how the products are made (Section 6)"],
+  [/\breaction|\bacids?\b|\bheating\b|\bheated\b|micro[w]ave|\bUV\b|formula/i, "how the products are made (Section 6)"],
   [/\bsafe\b|non-toxic|harmless|not harmful/i, '"safe", "non-toxic", "harmless" or "not harmful" (Section 6)'],
   [/won gate 2|gate 2 winner/i, '"Won Gate 2" (Section 6)'],
   [/clump/i, '"clump" (slide 9)'],

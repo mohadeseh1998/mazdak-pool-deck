@@ -9,5 +9,5 @@ export const budgetRows: readonly BudgetRow[] = [
   used("store", "Even at 40 percent", "store-margin"),
   used("pmra-annual", "PMRA annual charge", "pmra-annual"),
   used("cost", "Our cost to make", "cost"),
-  used("startup", "Start-up cash and running costs", "startup"),
+  used("startup", "Founders' investment and running costs", "startup"),
 ];

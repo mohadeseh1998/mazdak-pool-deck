@@ -9,7 +9,7 @@ const FIELDS = TABLE_ROWS.map((r) => r.key);
 const total = (s: Fields) => s.cogs + s.startupAndRunning + s.pmra;
 
 /* ------------------------------------------------------------------ */
-/* Chart: revenue, total costs and cumulative cash, from the model     */
+/* Chart: revenue, total costs and cash on hand, from the model        */
 /* ------------------------------------------------------------------ */
 
 const W = 640;
@@ -17,8 +17,10 @@ const H = 268;
 const PAD = { left: 64, right: 8, top: 10, bottom: 40 };
 const STEP = 20000;
 
-const Y_MAX = Math.ceil(Math.max(...RESULTS.map((r) => Math.max(r.revenue, total(r), r.cumulative))) / STEP) * STEP;
-const Y_MIN = Math.floor(Math.min(0, ...RESULTS.map((r) => r.cumulative)) / STEP) * STEP;
+// The line is cash on hand at year-end: the founders' investment plus the
+// cumulative net. It never goes below zero, so the scale starts at $0.
+const Y_MAX = Math.ceil(Math.max(...RESULTS.map((r) => Math.max(r.revenue, total(r), r.cashOnHand))) / STEP) * STEP;
+const Y_MIN = Math.floor(Math.min(0, ...RESULTS.map((r) => r.cashOnHand)) / STEP) * STEP;
 const TICKS = [-50000, 0, 50000, 100000, 150000].filter((t) => t >= Y_MIN && t <= Y_MAX);
 
 const y = (v: number) => PAD.top + ((Y_MAX - v) / (Y_MAX - Y_MIN)) * (H - PAD.top - PAD.bottom);
@@ -33,12 +35,12 @@ function Chart({ seasons }: { seasons: Fields[] }) {
   const gradient = useId();
   const zero = y(0);
   const split = (zero - PAD.top) / (H - PAD.top - PAD.bottom);
-  const points = seasons.map((s, i) => [cx(i), y(s.cumulative)] as const);
+  const points = seasons.map((s, i) => [cx(i), y(s.cashOnHand)] as const);
   const line = points.map(([px, py], i) => `${i ? "L" : "M"}${px.toFixed(1)},${py.toFixed(1)}`).join(" ");
   return (
     <svg className="f-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={c.chart.label}>
       <defs>
-        {/* The cash line is paper above zero and silt below it. */}
+        {/* The cash line is paper above zero and silt below it (it stays above). */}
         <linearGradient id={gradient} gradientUnits="userSpaceOnUse" x1="0" y1={PAD.top} x2="0" y2={H - PAD.bottom}>
           <stop offset={split} stopColor="var(--paper)" />
           <stop offset={split} stopColor="var(--silt)" />
@@ -74,7 +76,7 @@ function Chart({ seasons }: { seasons: Fields[] }) {
       })}
       <path className="f-chart__cash" d={line} stroke={`url(#${gradient})`} />
       {points.map(([px, py], i) => (
-        <circle key={i} className={`f-chart__dot${seasons[i].cumulative < 0 ? " is-negative" : ""}`} cx={px} cy={py} r={6} />
+        <circle key={i} className={`f-chart__dot${seasons[i].cashOnHand < 0 ? " is-negative" : ""}`} cx={px} cy={py} r={6} />
       ))}
     </svg>
   );
@@ -167,11 +169,22 @@ function SeasonsBody() {
               </tbody>
             </table>
           </div>
-
-          <p className="f-assumptions" {...reveal(4.2)}>
-            <Square tone="outline" />
-            <span>{c.assumptions}</span>
+          <p className="f-yearend" {...reveal(3.8)}>
+            <RichText value={c.footnote} />
           </p>
+          <div className="f-assumptions" {...reveal(4.2)}>
+            <p>
+              <Square tone="outline" />
+              <span>
+                <RichText value={c.capital} />
+              </span>
+            </p>
+            <p>
+              <Square tone="outline" />
+              <span>{c.assumptions}</span>
+            </p>
+          </div>
+
         </div>
       </div>
 

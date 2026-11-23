@@ -4,7 +4,7 @@ import { saleSlide as c } from "../content/slides";
 
 const cents = (n: number) => `$${(n / 100).toFixed(2)}`;
 
-/** One package, left; the one-time start-up cash, right, set large. */
+/** One package, left; the founders' one-time investment, right, set large. */
 export function SaleSection({ index }: { index: number }) {
   const u = c.unit;
   return (

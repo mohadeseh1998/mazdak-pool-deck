@@ -1,5 +1,6 @@
 import {
   count,
+  FOUNDERS_INVESTMENT,
   money,
   money2,
   PACKAGE,
@@ -20,7 +21,9 @@ import { claims, type ClaimId } from "./claims";
 // One package is the Atlantic Pool Pack: 1 L Atlantic Clarifier plus 1 L
 // Atlantic Anti-Algae. Every figure is computed from src/content/poolModel.ts,
 // never typed here. scripts/check-content.mjs rebuilds the totals on its own
-// and holds every string below to the version 2 file's exact words.
+// and holds every string below to the version 2 file's exact words, with the
+// 23 November change: the $60,000 is the founders' own investment, so cash on
+// hand never goes below zero.
 
 type C = { text: Rich; claim: ClaimId };
 const claim = (text: Rich, id: ClaimId): C => ({ text, claim: id });
@@ -55,8 +58,8 @@ export const saleSlide = {
   },
   negotiable: `The store share is negotiable. Even at ${pct(STORE_SHARE_TEST)} percent, we still keep ${money2(UNIT.packAtTest.weKeep)} per package.`,
   startup: {
-    figure: STARTUP_CASH,
-    label: "Start-up cash, one-time, 2027",
+    figure: FOUNDERS_INVESTMENT,
+    label: "Founders' investment in the pool line, 2027",
     covers: [
       claim("Covers set-up, licences, PMRA registration and the first season's running costs. Founders' estimate.", "startup"),
     ] as Rich,
@@ -66,7 +69,7 @@ export const saleSlide = {
   },
   footnote: `Founders are unpaid in this plan. PMRA annual charge after registration: ${pct(PMRA_ANNUAL.rate)} percent of the previous year's revenue, up to ${money2(PMRA_ANNUAL.max)}.`,
   notes: [
-    `"Here is one package, the Atlantic Pool Pack. It sells for 49.99. The store keeps 25 percent, and that is negotiable, so we sell to the store at 37.49. It costs us 8 dollars to make, so we keep 29.49. Even if a store wants 40 percent, we still keep 21.99. To start, we need 60,000 dollars of start-up cash in 2027, then running costs of 12,000 in 2028 and 20,000 in 2029."`,
+    `"Here is one package, the Atlantic Pool Pack. It sells for 49.99. The store keeps 25 percent, and that is negotiable, so we sell to the store at 37.49. It costs us 8 dollars to make, so we keep 29.49. Even if a store wants 40 percent, we still keep 21.99. In 2027 we, the founders, invest 60,000 dollars of our own money in the pool line. Running costs after that are 12,000 in 2028 and 20,000 in 2029."`,
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
@@ -90,8 +93,10 @@ export const TABLE_ROWS: readonly TableRow[] = [
   { key: "cogs", label: "Cost of goods", format: money, money: true },
   { key: "startupAndRunning", label: "Start-up and running costs", format: money, money: true },
   { key: "pmra", label: "PMRA annual charge", format: money, money: true },
+  { key: "investment", label: "Founders' investment", format: money, money: true, rule: true },
   { key: "net", label: "Net", format: money, money: true, strong: true, rule: true },
-  { key: "cumulative", label: "Cumulative cash", format: money, money: true, strong: true },
+  { key: "cashOnHand", label: "Cash on hand (year-end)", format: money, money: true, strong: true },
+  { key: "cumulative", label: "Cumulative net, before founders' money", format: money, money: true },
 ];
 
 /** The table exactly as it reads when settled: what the content check compares to the file. */
@@ -108,16 +113,19 @@ export const seasonsSlide = {
   ground: "deep",
   headline: "Three pool seasons.",
   hero: {
-    figure: STARTUP_CASH,
-    label: "Cash we need up front.",
+    figure: FOUNDERS_INVESTMENT,
+    label: "Founders' investment, one-time",
     tail: PAYBACK_YEAR === null ? "CHECK THE MODEL" : `Profitable and paid back in the ${PAYBACK_YEAR} season.`,
   },
   chart: {
-    label: "Revenue, total costs and cumulative cash, by season",
+    label: "Revenue, total costs and cash on hand at year-end, by season",
     seasons: RESULTS.map((r) => `${r.year} season`),
-    legend: { revenue: "Revenue", costs: "Total costs", cash: "Cumulative cash" },
+    legend: { revenue: "Revenue", costs: "Total costs", cash: "Cash on hand (year-end)" },
   },
   years: RESULTS.map((r) => String(r.year)),
+  // The source of the founders' investment, tagged: it is a plan, not yet in the bank.
+  capital: [claim("The founders' investment comes from the founders' own capital.", "founders-capital")] as Rich,
+  footnote: [claim("Year-end figures. Cash during 2027 may be lower before spring sales.", "year-end")] as Rich,
   assumptions: SEASONS.map((s) => `${s.year}: ${amount(s.litresEach)} of each${s.litresEach < 1000 ? " product" : ""}.`).join(" "),
   closing: [
     claim(
@@ -126,7 +134,7 @@ export const seasonsSlide = {
     ),
   ] as Rich,
   notes: [
-    `"Here are three pool seasons. In 2027 we sell 500 packages and spend the 60,000 dollars of start-up cash, so we end the season about 45,000 dollars down. In 2028 we sell 2,000 packages: we are profitable and the start-up cash is paid back. In 2029 we sell 4,000. These numbers are conservative. Do they look realistic to you?"`,
+    `"Here are three pool seasons. In 2027 we, the founders, invest 60,000 dollars of our own money, and we sell 500 packages. The first year loses 45,255 dollars, so we end 2027 with 14,745 in cash. In 2028 we sell 2,000 packages: we are profitable, the investment is paid back, and we end the year with 60,975. In 2029 we sell 4,000 and end with 155,936. These figures are at year-end, so cash in early 2027 may be lower before spring sales. These numbers are conservative. Do they look realistic to you?"`,
   ],
 } as const satisfies PageSlide & Record<string, unknown>;
 
